@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <sstream>
 #include <vector>
 
 using namespace std;
@@ -30,25 +31,82 @@ string getAppPath()
 	return string(app_path);
 }
 
+static string joinNormalizedPath(string root, string path)
+{
+	while (path.size() > 0)
+	{
+		size_t partend = path.find(PATH_SEPARATOR);
+		string part;
+		bool nosep = false;
+		if (partend == path.npos)
+		{
+			part = path;
+			path = "";
+			nosep = true;
+		}
+		else
+		{
+			part = path.substr(0, partend);
+			path = path.substr(partend + 1);
+		}
+		if (part == "..")
+		{
+			size_t rpos = root.rfind(PATH_SEPARATOR, root.size() - 2);
+			if (rpos == root.npos)
+			{
+				if (nosep)
+					root = root + part;
+				else
+					root = root + part + PATH_SEPARATOR;
+			}
+			else
+			{
+				string rootpart = root.substr(rpos + 1, root.size() - 2 - rpos);
+				if (rootpart == "..")
+				{
+					if (nosep)
+						root = root + part;
+					else
+						root = root + part + PATH_SEPARATOR;
+				}
+				else
+				{
+					root = root.substr(0, rpos + 1);
+				}
+			}
+		}
+		else if (part != "." && part != "")
+		{
+			if (nosep)
+				root = root + part;
+			else
+				root = root + part + PATH_SEPARATOR;
+		}
+	}
+	return root;
+}
+
 string joinPath(const string& root, const string& file)
 {
+	string path = unixPathToPlatformPath(file);
+
 	if (root.size() == 0)
-		return file;
+		return path;
 	if (file.size() == 0)
 		return root;
 	if (root[root.size() - 1] == PATH_SEPARATOR)
 	{
-		if (file[0] == PATH_SEPARATOR)
-			return root + file.substr(1, file.size() - 1);
+		if (path[0] == PATH_SEPARATOR)
+			return joinNormalizedPath(root, path.substr(1));
 		else
-			return root + file;
+			return joinNormalizedPath(root, path);
 	}
 	else
 	{
-		if (file[0] == PATH_SEPARATOR)
-			return root + file;
+		if (path[0] == PATH_SEPARATOR)
+			return joinNormalizedPath(root + PATH_SEPARATOR, path.substr(1));
 		else
-			return root + PATH_SEPARATOR + file;
+			return joinNormalizedPath(root + PATH_SEPARATOR, path);
 	}
 }
 
@@ -98,3 +156,26 @@ bool stringFromFile(std::string & output, const string& filename) {
 
 	return true;
 }
+
+#if PATH_SEPARATOR != '/'
+string unixPathToPlatformPath(const string& path)
+{
+	ostringstream ss;
+
+	size_t pos = path.find('/');
+	size_t start = 0;
+	while (pos != path.npos)
+	{
+		ss << path.substr(start, pos - start) << PATH_SEPARATOR;
+		start = pos + 1;
+		if (start >= path.size())
+			pos = path.npos;
+		else
+			pos = path.find('/', start);
+	}
+	if (start < path.size())
+		ss << path.substr(start);
+
+	return ss.str();
+}
+#endif
