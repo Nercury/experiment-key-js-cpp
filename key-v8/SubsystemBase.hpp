@@ -4,12 +4,12 @@
 
 namespace key {
 
-	class Scripting {
+	class SubsystemBase {
 	private:
 
 	public:
-		Scripting() {};
-		virtual ~Scripting() {};
+		SubsystemBase() {};
+		virtual ~SubsystemBase() {};
 		virtual void initCore(v8::Handle<v8::Object> & dest) = 0;
 	};
 

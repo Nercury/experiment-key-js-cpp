@@ -16,7 +16,7 @@
 #define V8STDINT_H_ // defined in types.h
 #include <v8.h>
 
-#include <key-v8/Scripting.hpp>
+#include <key-v8/SubsystemBase.hpp>
 #include <key-v8/lib_key_v8.h>
 
 #include <cvv8/ClassCreator.hpp>
@@ -44,7 +44,7 @@ namespace key {
 		void log( std::string val ) { std::cout << val << std::endl; }
 		v8::Handle<v8::Value> executeFile( const v8::Arguments& args );
 
-		static v8::Handle<BootStrapV8> run(std::list<std::shared_ptr<key::Scripting>> & subsystems, std::string short_filename);
+		static v8::Handle<BootStrapV8> run(std::list<std::shared_ptr<key::SubsystemBase>> & subsystems, std::string short_filename);
 		static v8::Handle<BootStrapV8> run(std::string short_filename);
 		static bool executeScript(v8::Handle<v8::String> script, std::string & short_filename);
 	};

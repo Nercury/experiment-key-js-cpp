@@ -10,29 +10,15 @@
 namespace cv = cvv8;
 using namespace v8;
 
-/*key::CodeV8::CodeV8() {
-
-}
-
-key::CodeV8::~CodeV8() {
-
-}
-
-std::string key::CodeV8::getVersion() {
-	return v8::V8::GetVersion();
-}*/
-
 namespace cvv8 {
-	// Out-of-line definition of TypeName<BootStrapV8>::Value. The declaration
-    // should be visible to any client code which will use the bindings,
-    // but the definition may only be done once (put it in the binding's
-    // implementation file).
     CVV8_TypeName_IMPL((key::BootStrapV8),"BootStrapJs");
 }
 
 static const char* ToCString(const v8::String::Utf8Value& value) {return*value ?*value : "<string conversion failed>";}
 
-static void ReportException(v8::TryCatch* try_catch) {  
+static void ReportException(v8::TryCatch* try_catch) {
+	// todo: refactor to something that returns a string without printing directly to console.
+
 	v8::HandleScope handle_scope;  
 	v8::String::Utf8Value exception(try_catch->Exception());
 	const char* exception_string = ToCString(exception);  
@@ -124,14 +110,12 @@ void key::BootStrapV8::bindCoreBootstrap(Handle<Object> & dest) {
 	dest->Set(String::New("js_main"), cc.CtorFunction()->CallAsConstructor(0, NULL));
 }
 
-
-
 Handle<key::BootStrapV8> key::BootStrapV8::run(std::string short_filename) {
-	std::list<std::shared_ptr<key::Scripting>> empty_subsystems(0);
+	std::list<std::shared_ptr<key::SubsystemBase>> empty_subsystems(0);
 	return run(empty_subsystems, short_filename);
 }
 
-Handle<key::BootStrapV8> key::BootStrapV8::run(std::list<std::shared_ptr<key::Scripting>> & subsystems, std::string short_filename) {
+Handle<key::BootStrapV8> key::BootStrapV8::run(std::list<std::shared_ptr<key::SubsystemBase>> & subsystems, std::string short_filename) {
 	std::string filename(fullPathTo(short_filename));
 	std::string contents;
 	if (!stringFromFile(contents, filename)) {
