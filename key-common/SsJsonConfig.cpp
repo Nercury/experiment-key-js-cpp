@@ -6,6 +6,8 @@ using namespace v8;
 #include <iostream>
 #include <fstream>
 
+#include <key-common/app.h>
+
 #include <json/reader.h>
 #include <json/value.h>
 
@@ -37,4 +39,9 @@ key::SsJsonConfig::~SsJsonConfig() {
 }
 
 void key::SsJsonConfig::initCore(v8::Handle<v8::Object> & dest) {
+	dest->Set(String::New("js_main_config_contents"), String::New(main_configuration_contents.c_str()));
+	dest->Set(String::New("js_main_app_path"), String::New(getAppPath().c_str()));
+	string s;
+	s.append(1, PATH_SEPARATOR);
+	dest->Set(String::New("js_main_app_path_separator"), String::New(s.c_str()));
 }

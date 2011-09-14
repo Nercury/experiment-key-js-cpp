@@ -10,7 +10,7 @@ namespace key {
 	private:
 	public:
 		virtual void initCore(v8::Handle<v8::Object> & dest) {
-			std::cout<< "Test" << std::endl;
+
 		}
 	};
 

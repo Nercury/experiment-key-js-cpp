@@ -1,4 +1,11 @@
-function Js() {}
+function Js() 
+{
+	this.config = JSON.parse(js_main_config_contents);
+	this.app = {
+		nativePath : js_main_app_path,
+		pathSeparator : js_main_app_path_separator
+	};
+}
 Js.prototype.log = function(o) {
 	if (typeof o == 'undefined')
 		js_main.textLog('[undefined]');
@@ -15,7 +22,7 @@ Js.prototype.script = function(filename) {
 		return true;
 	} else {
 		js_main.textLog(execute_result);
-		js_main.textLog(js_main.log_separator);
+		js_main.textLog(js_main_log_separator);
 		return false;
 	}
 }

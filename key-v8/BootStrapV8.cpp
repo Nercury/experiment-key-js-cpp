@@ -111,6 +111,7 @@ void key::BootStrapV8::bindCoreBootstrap(Handle<Object> & dest, std::string & wo
 	Handle<Value> param(String::New(working_dir.c_str()));
 
 	dest->Set(String::New("js_main"), cc.CtorFunction()->CallAsConstructor(1, &param));
+	dest->Set(String::New("js_main_log_separator"), String::New("--------------------------------------------------------------------------"));
 }
 
 Handle<key::BootStrapV8> key::BootStrapV8::run(std::string & working_dir, std::string short_filename) {

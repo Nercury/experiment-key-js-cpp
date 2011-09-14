@@ -2,7 +2,6 @@
 
 #include <string>
 
-#include <key-common/app.h>
 #include <key-v8/SubsystemBase.hpp>
 
 namespace key {
