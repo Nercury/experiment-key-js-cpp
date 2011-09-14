@@ -232,6 +232,10 @@ else()
 
 endif()
 
+#JSON
+
+set(JSON_LIBRARY "json_vc71")
+
 include_directories(${CMAKE_SOURCE_DIR})
 include_directories(${KEYLIB_INCLUDES})
 link_directories(${KEYLIB_LIBRARIES})

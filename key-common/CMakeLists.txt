@@ -10,10 +10,15 @@ add_library(key-common STATIC
 	types.h
 	app.h
 	app.cpp
+	SsJsonConfig.h
+	SsJsonConfig.cpp
+	JsonFile.h
+	JsonFile.cpp
 	)
 
 target_link_libraries(key-common 
 	${V8_LIBRARIES}
+	${JSON_LIBRARY}
 	${BULLET_LIBRARIES}
 	${OPENAL_LIBRARIES}
 	)

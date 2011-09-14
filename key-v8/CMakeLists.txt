@@ -10,6 +10,7 @@ add_library(key-v8 STATIC
 	BootStrapV8.h
 	BootStrapV8.cpp
 	SubsystemBase.hpp
+	expose_headers.hpp
 	)
 
 target_link_libraries(key-v8 

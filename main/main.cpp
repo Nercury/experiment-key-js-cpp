@@ -4,7 +4,12 @@
 
 #include <key-common/app.h>
 #include <key-v8/BootStrapV8.h>
-#include <key-window/WindowSubsystem.hpp>
+
+#include <key-window/SsWindow.hpp>
+#include <key-common/SsJsonConfig.h>
+
+#include <json/reader.h>
+#include <json/value.h>
 
 //#include <boost/thread.hpp>
 
@@ -27,10 +32,17 @@ int main(int argc, char* argv[])
 {
 	setAppPath(*argv);
 
-	list<shared_ptr<Scripting>> subsystems;
-	subsystems.push_back(make_shared<WindowSubsystem>());
+	list<shared_ptr<SubsystemBase>> subsystems;
 
-	BootStrapV8::run(subsystems, "js/engine/main.js");
+	auto ss_json_config = make_shared<SsJsonConfig>("config.js");
+	subsystems.push_back(ss_json_config);
+
+	auto ss_window = make_shared<SsWindow>();
+	subsystems.push_back(ss_window);
+
+	std::string js_dir(joinPath(getAppPath(), ss_json_config->js_root_dir));
+
+	BootStrapV8::run(subsystems, js_dir, ss_json_config->js_main_file);
 
 	//cout << "Using V8 " << v8_engine->getVersion() << " Javascript Engine" << endl;
 

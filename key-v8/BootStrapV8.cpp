@@ -75,7 +75,8 @@ Handle<Value> key::BootStrapV8::executeFile(const Arguments& args ) {
 	if (args.Length() < 1)
 		return String::New("Insufficient parameters for js file execution.");
 	std::string short_filename(cv::CastFromJS<std::string>(args[0]));
-	std::string filename(fullPathTo(short_filename));
+	std::cout << "loading " << working_dir << " -> " << short_filename << std::endl;
+	std::string filename(rootDirPathTo(working_dir, short_filename));
 	std::string contents;
 	if (!stringFromFile(contents, filename)) {
 		std::ostringstream ss;
@@ -93,7 +94,7 @@ Handle<Value> key::BootStrapV8::executeFile(const Arguments& args ) {
 	}
 }
 
-void key::BootStrapV8::bindCoreBootstrap(Handle<Object> & dest) {
+void key::BootStrapV8::bindCoreBootstrap(Handle<Object> & dest, std::string & working_dir) {
 	typedef cv::ClassCreator<BootStrapV8> CC;
     CC & cc(CC::Instance());
     if( cc.IsSealed() ) {
@@ -107,19 +108,22 @@ void key::BootStrapV8::bindCoreBootstrap(Handle<Object> & dest) {
 				&BootStrapV8::executeFile>::Call)
         .AddClassTo( cv::TypeName<BootStrapV8>::Value, dest );
 	
-	dest->Set(String::New("js_main"), cc.CtorFunction()->CallAsConstructor(0, NULL));
+	Handle<Value> param(String::New(working_dir.c_str()));
+
+	dest->Set(String::New("js_main"), cc.CtorFunction()->CallAsConstructor(1, &param));
 }
 
-Handle<key::BootStrapV8> key::BootStrapV8::run(std::string short_filename) {
+Handle<key::BootStrapV8> key::BootStrapV8::run(std::string & working_dir, std::string short_filename) {
 	std::list<std::shared_ptr<key::SubsystemBase>> empty_subsystems(0);
-	return run(empty_subsystems, short_filename);
+	return run(empty_subsystems, working_dir, short_filename);
 }
 
-Handle<key::BootStrapV8> key::BootStrapV8::run(std::list<std::shared_ptr<key::SubsystemBase>> & subsystems, std::string short_filename) {
-	std::string filename(fullPathTo(short_filename));
+Handle<key::BootStrapV8> key::BootStrapV8::run(std::list<std::shared_ptr<key::SubsystemBase>> & subsystems, std::string & working_dir, std::string short_filename) {
+	std::cout << "loading " << working_dir << " -> " << short_filename << std::endl;
+	std::string filename(rootDirPathTo(working_dir, short_filename));
 	std::string contents;
 	if (!stringFromFile(contents, filename)) {
-		std::cout << "Javascript file was not found." << std::endl;
+		std::cout << "Javascript file \"" << filename << "\" was not found." << std::endl;
 		return Handle<key::BootStrapV8>();
 	}
 
@@ -127,7 +131,7 @@ Handle<key::BootStrapV8> key::BootStrapV8::run(std::list<std::shared_ptr<key::Su
 	Handle<Context> context = Context::New();
 	Context::Scope context_scope(context);
 
-	bindCoreBootstrap(context->Global());
+	bindCoreBootstrap(context->Global(), working_dir);
 	for (auto it = subsystems.begin(); it != subsystems.end(); ++it)
 		(*it)->initCore(context->Global());
 

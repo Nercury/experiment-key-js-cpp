@@ -142,6 +142,19 @@ string fullPathTo(const string& file)
 #endif
 }
 
+string rootDirPathTo(const string& root, const string& file)
+{
+	if (root == "")
+		return file;
+#if PATH_SEPARATOR == '\\'
+	string winfile = file;
+	search_and_replace(winfile, "/", "\\");
+	return joinPath(root, winfile);
+#else
+	return joinPath(root, file);
+#endif
+}
+
 bool stringFromFile(std::string & output, const string& filename) {
 	ifstream ifs(filename);
 	if (!ifs)

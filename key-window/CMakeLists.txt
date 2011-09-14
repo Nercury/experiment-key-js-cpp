@@ -9,7 +9,7 @@ add_library(key-window STATIC
 	lib_key_window.h
 	Window.h
 	Window.cpp
-	WindowSubsystem.hpp
+	SsWindow.hpp
 	)
 
 target_link_libraries(key-window 

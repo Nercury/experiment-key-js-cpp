@@ -1,11 +1,11 @@
 #pragma once
 
-#include <key-v8/Scripting.hpp>
+#include <key-v8/SubsystemBase.hpp>
 
 namespace key {
 
-	class WindowSubsystem
-		: public key::Scripting
+	class SsWindow
+		: public key::SubsystemBase
 	{
 	private:
 	public:

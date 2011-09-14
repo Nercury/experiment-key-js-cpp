@@ -11,6 +11,7 @@
 
 LIB_KEY_COMMON void setAppPath(char p[]);
 LIB_KEY_COMMON std::string fullPathTo(const std::string& file);
+LIB_KEY_COMMON std::string rootDirPathTo(const std::string& root, const std::string& file);
 LIB_KEY_COMMON std::string getAppPath();
 /* append relative path to the root path */
 LIB_KEY_COMMON std::string joinPath(const std::string& root, const std::string& file);

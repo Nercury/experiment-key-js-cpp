@@ -1,12 +1,10 @@
 #pragma once
 
-#include <key-v8/BootStrapV8.h>
+#include <key-v8/expose_headers.hpp>
 
 namespace key {
 
 	class SubsystemBase {
-	private:
-
 	public:
 		SubsystemBase() {};
 		virtual ~SubsystemBase() {};
