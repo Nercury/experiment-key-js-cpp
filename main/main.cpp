@@ -5,7 +5,7 @@
 #include <key-common/app.h>
 #include <key-v8/BootStrapV8.h>
 
-#include <key-window/SsWindow.hpp>
+#include <key-window/SsWindow.h>
 #include <key-common/SsJsonConfig.h>
 
 #include <json/reader.h>

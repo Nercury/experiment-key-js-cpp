@@ -3,3 +3,6 @@
 /* end load main lib, use js.script to execute other scripts */
 
 js.log("hello world!");
+
+window = new Window();
+js.log(window.windowTitle);

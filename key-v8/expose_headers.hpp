@@ -8,3 +8,5 @@
 #include <v8.h>
 
 #include <cvv8/ClassCreator.hpp>
+
+#define JSTR v8::String::New

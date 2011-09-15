@@ -4,5 +4,6 @@ add_executable(key
 target_link_libraries(key
 key-v8
 key-common
+key-window
 ${SDLMAIN_LIBRARY}
 )

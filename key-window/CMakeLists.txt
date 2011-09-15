@@ -9,10 +9,12 @@ add_library(key-window STATIC
 	lib_key_window.h
 	Window.h
 	Window.cpp
-	SsWindow.hpp
+	SsWindow.h
+	SsWindow.cpp
 	)
 
 target_link_libraries(key-window 
 	key-common
+	key-v8
 	${SDL_LIBRARY}
 	)
