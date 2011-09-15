@@ -5,4 +5,4 @@
 js.log("hello world!");
 
 window = new Window();
-js.log(window.windowTitle);
+window.run();

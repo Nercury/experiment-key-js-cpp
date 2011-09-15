@@ -11,7 +11,7 @@ namespace key {
 	class Window
 	{
 	public:
-		Window() : windowTitle("Key Window") { std::cout << "Window started" << std::endl; }
+		Window() : windowTitle("Key Window") { }
 		LIB_KEY_WINDOW virtual ~Window();
 
 		typedef cvv8::Signature<key::Window (
@@ -19,6 +19,8 @@ namespace key {
 		)> Ctors;
 
 		std::string windowTitle;
+
+		void run();
 	};
 
 }
