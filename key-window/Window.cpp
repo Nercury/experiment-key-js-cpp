@@ -23,8 +23,11 @@ static bool SDLInit()
 			SDL_EnableUNICODE(true);
 			cout << "SDL " << SDL_MAJOR_VERSION << "." << SDL_MINOR_VERSION << "." << SDL_PATCHLEVEL << " initialized." << endl;
 		}
+		window_instances++;
+	} else {
+		cout << "Only one SDL window can be running at the same time." << endl;
+		return false;
 	}
-	window_instances++;
 	return true;
 }
 
