@@ -11,6 +11,8 @@ add_library(key-v8 STATIC
 	BootStrapV8.cpp
 	SubsystemBase.hpp
 	expose_headers.hpp
+	exception.h
+	exception.cpp
 	)
 
 target_link_libraries(key-v8 

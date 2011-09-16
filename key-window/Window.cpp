@@ -1,5 +1,7 @@
 #include "Window.h"
 
+#include <key-v8/exception.h>
+
 #include <iostream>
 #include <SDL.h>
 
@@ -45,16 +47,39 @@ namespace cvv8 {
 }
 
 key::Window::~Window() {
-
+	if (!onWindowInit.IsEmpty())
+		onWindowInit.Dispose();
 }
 
-void key::Window::run() {
+void key::Window::run(const Arguments & args) {
 	auto sdl_available = SDLInit();
 
 	if (sdl_available) {
+		auto This = args.This();
 
-
+		if (onWindowInit.IsEmpty()) {
+			cout << "Window init is empty" << endl;
+		} else {
+			Handle<Value> result = onWindowInit->Call(This, 0, NULL); 
+		}
 
 		SDLQuit();
 	}
+}
+
+Handle<Value> key::Window::getOnWindowInit() {
+	return this->onWindowInit;
+}
+
+void key::Window::setOnWindowInit(Handle<Value> value) {
+	HandleScope handle_scope;
+	if (value->IsFunction()) {
+		auto func = Handle<Function>::Cast(value);
+		this->onWindowInit = Persistent<Function>::New(func);
+	} else
+		cout << "Warning! Tried to set non-function as onWindowInit event callback!" << endl;
+}
+
+void key::Window::setWindowTitle(std::string newTitle) {
+	this->windowTitle = windowTitle;
 }

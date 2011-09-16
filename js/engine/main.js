@@ -4,5 +4,11 @@
 
 js.log("hello world!");
 
-window = new Window();
-window.run();
+for (var i = 0; i < 50000; i++) {
+	window = new Window();
+	window.onWindowInit = function() {
+		js.log("callback to js!");
+	};
+	window.run();
+}
+

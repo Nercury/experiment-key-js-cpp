@@ -19,8 +19,13 @@ namespace key {
 		)> Ctors;
 
 		std::string windowTitle;
+		void setWindowTitle(std::string newTitle);
 
-		void run();
+		void run(const v8::Arguments & args);
+
+		v8::Persistent<v8::Function> onWindowInit;
+		v8::Handle<v8::Value> getOnWindowInit();
+		void setOnWindowInit(v8::Handle<v8::Value> value);
 	};
 
 }
