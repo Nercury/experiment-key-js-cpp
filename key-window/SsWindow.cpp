@@ -25,6 +25,10 @@ void key::SsWindow::initCore(Handle<Object> & dest) {
 		cv::MemberToGetter<key::Window,Persistent<Function>, &key::Window::onWindowInit>::Get,
 		cv::MethodToSetter<key::Window,void (Handle<Value>),&key::Window::setOnWindowInit>::Set
 	);
+	proto->SetAccessor(JSTR("onWindowResize"),
+		cv::MemberToGetter<key::Window,Persistent<Function>, &key::Window::onWindowResize>::Get,
+		cv::MethodToSetter<key::Window,void (Handle<Value>),&key::Window::setOnWindowResize>::Set
+	);
 
 	cc
 		("run", cv::MethodToInCa<key::Window, void (const Arguments & args),

@@ -4,11 +4,9 @@
 
 js.log("hello world!");
 
-for (var i = 0; i < 50000; i++) {
-	window = new Window();
-	window.onWindowInit = function() {
-		js.log("callback to js!");
-	};
-	window.run();
-}
+window = new Window();
+window.onWindowInit = function() {
+	js.log("Window init");
+};
+window.run();
 

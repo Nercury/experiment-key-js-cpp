@@ -67,10 +67,6 @@ void key::Window::run(const Arguments & args) {
 	}
 }
 
-Handle<Value> key::Window::getOnWindowInit() {
-	return this->onWindowInit;
-}
-
 void key::Window::setOnWindowInit(Handle<Value> value) {
 	HandleScope handle_scope;
 	if (value->IsFunction()) {
@@ -78,6 +74,15 @@ void key::Window::setOnWindowInit(Handle<Value> value) {
 		this->onWindowInit = Persistent<Function>::New(func);
 	} else
 		cout << "Warning! Tried to set non-function as onWindowInit event callback!" << endl;
+}
+
+void key::Window::setOnWindowResize(Handle<Value> value) {
+	HandleScope handle_scope;
+	if (value->IsFunction()) {
+		auto func = Handle<Function>::Cast(value);
+		this->onWindowResize = Persistent<Function>::New(func);
+	} else
+		cout << "Warning! Tried to set non-function as onWindowResize event callback!" << endl;
 }
 
 void key::Window::setWindowTitle(std::string newTitle) {

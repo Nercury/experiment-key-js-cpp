@@ -23,9 +23,8 @@ namespace key {
 
 		void run(const v8::Arguments & args);
 
-		v8::Persistent<v8::Function> onWindowInit;
-		v8::Handle<v8::Value> getOnWindowInit();
-		void setOnWindowInit(v8::Handle<v8::Value> value);
+		v8::Persistent<v8::Function> onWindowInit; void setOnWindowInit(v8::Handle<v8::Value> value);
+		v8::Persistent<v8::Function> onWindowResize; void setOnWindowResize(v8::Handle<v8::Value> value);
 	};
 
 }
