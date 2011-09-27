@@ -7,6 +7,9 @@ project(key-window)
 
 add_library(key-window STATIC 
 	lib_key_window.h
+	Renderer.h
+	Renderer.cpp
+	DeviceInstance.hpp
 	Window.h
 	Window.cpp
 	SsWindow.h
@@ -16,5 +19,4 @@ add_library(key-window STATIC
 target_link_libraries(key-window 
 	key-common
 	key-v8
-	${SDL_LIBRARY}
 	)

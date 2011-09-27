@@ -5,8 +5,10 @@
 #include <key-common/app.h>
 #include <key-v8/BootStrapV8.h>
 
+#include <key-window/Renderer.h>
 #include <key-window/SsWindow.h>
 #include <key-common/SsJsonConfig.h>
+#include <key-opengl/OpenGL.h>
 
 #include <json/reader.h>
 #include <json/value.h>
@@ -41,6 +43,8 @@ int main(int argc, char* argv[])
 	subsystems.push_back(ss_window);
 
 	std::string js_dir(joinPath(getAppPath(), ss_json_config->js_root_dir));
+
+	Renderer::addRenderer("OpenGL", make_shared<key::OpenGL>());
 
 	BootStrapV8::run(subsystems, js_dir, ss_json_config->js_main_file);
 

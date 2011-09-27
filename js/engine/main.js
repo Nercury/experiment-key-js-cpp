@@ -5,8 +5,24 @@
 js.log("hello world!");
 
 window = new Window();
-window.onWindowInit = function() {
-	js.log("Window init");
+window.windowTitle = "Hello World";
+
+window.onKeyUp = function(code) {
+	
 };
+window.onKeyDown = function(code) {
+	
+};
+window.onMouseMove = function(code) {
+	
+};
+window.onMouseUp = function(code) {
+	
+};
+window.onMouseDown = function(code) {
+	
+};
+
+window.renderDevice = window.allRenderDevices[0];
 window.run();
 

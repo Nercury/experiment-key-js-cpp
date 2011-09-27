@@ -1,49 +1,24 @@
 #include "Window.h"
 
 #include <key-v8/exception.h>
+#include <key-window/Renderer.h>
 
 #include <iostream>
-#include <SDL.h>
 
+using namespace key;
 using namespace std;
 namespace cv = cvv8;
 using namespace v8;
 
-static bool sdl_initialized = false;
-static int window_instances = 0;
-
-static bool SDLInit()
-{
-	if (window_instances == 0)
-	{
-		/* initialize SDL */
-		if ( SDL_Init( SDL_INIT_EVERYTHING ) < 0 )
-		{
-			cout << "Failed to initialize SDL: " << SDL_GetError() << endl;
-			return false;
-		} else {
-			SDL_EnableUNICODE(true);
-			cout << "SDL " << SDL_MAJOR_VERSION << "." << SDL_MINOR_VERSION << "." << SDL_PATCHLEVEL << " initialized." << endl;
-		}
-		window_instances++;
-	} else {
-		cout << "Only one SDL window can be running at the same time." << endl;
-		return false;
-	}
-	return true;
-}
-
-static void SDLQuit()
-{
-	if (window_instances == 1)
-	{
-		SDL_Quit();
-	}
-	window_instances--;
-}
-
 namespace cvv8 {
     CVV8_TypeName_IMPL((key::Window),"Window");
+}
+
+key::Window::Window() : windowTitle("Key Window"), device(NULL) {
+	auto all_devices = Renderer::getInstances();
+	for (auto it = all_devices.begin(); it != all_devices.end(); ++it) {
+		this->allRenderDevices.push_back(it->first);
+	}
 }
 
 key::Window::~Window() {
@@ -52,9 +27,9 @@ key::Window::~Window() {
 }
 
 void key::Window::run(const Arguments & args) {
-	auto sdl_available = SDLInit();
+	/*auto sdl_available = SDLInit();
 
-	if (sdl_available) {
+	if (sdl_available) {*/
 		auto This = args.This();
 
 		if (onWindowInit.IsEmpty()) {
@@ -63,8 +38,8 @@ void key::Window::run(const Arguments & args) {
 			Handle<Value> result = onWindowInit->Call(This, 0, NULL); 
 		}
 
-		SDLQuit();
-	}
+		/*SDLQuit();
+	}*/
 }
 
 void key::Window::setOnWindowInit(Handle<Value> value) {

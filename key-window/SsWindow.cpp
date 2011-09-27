@@ -29,6 +29,9 @@ void key::SsWindow::initCore(Handle<Object> & dest) {
 		cv::MemberToGetter<key::Window,Persistent<Function>, &key::Window::onWindowResize>::Get,
 		cv::MethodToSetter<key::Window,void (Handle<Value>),&key::Window::setOnWindowResize>::Set
 	);
+	proto->SetAccessor(JSTR("allRenderDevices"),
+		cv::MemberToGetter<key::Window,std::vector<std::string>, &key::Window::allRenderDevices>::Get
+	);
 
 	cc
 		("run", cv::MethodToInCa<key::Window, void (const Arguments & args),

@@ -1,17 +1,19 @@
 #pragma once
 
 #include <string>
+#include <key-common/types.h>
 #include <key-v8/expose_headers.hpp>
-
-#include <SDL.h>
 #include <key-window/lib_key_window.h>
+#include <key-window/DeviceInstance.hpp>
 
 namespace key {
 
 	class Window
 	{
+	private:
+		DeviceInstance * device;
 	public:
-		Window() : windowTitle("Key Window") { }
+		Window();
 		LIB_KEY_WINDOW virtual ~Window();
 
 		typedef cvv8::Signature<key::Window (
@@ -22,6 +24,7 @@ namespace key {
 		void setWindowTitle(std::string newTitle);
 
 		void run(const v8::Arguments & args);
+		std::vector<std::string> allRenderDevices;
 
 		v8::Persistent<v8::Function> onWindowInit; void setOnWindowInit(v8::Handle<v8::Value> value);
 		v8::Persistent<v8::Function> onWindowResize; void setOnWindowResize(v8::Handle<v8::Value> value);
