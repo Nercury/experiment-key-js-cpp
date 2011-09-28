@@ -7,6 +7,7 @@ project(key-v8)
 
 add_library(key-v8 STATIC 
 	lib_key_v8.h
+	reflect.hpp
 	BootStrapV8.h
 	BootStrapV8.cpp
 	SubsystemBase.hpp

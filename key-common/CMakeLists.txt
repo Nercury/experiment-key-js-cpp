@@ -8,6 +8,7 @@ project(key-common)
 add_library(key-common STATIC 
 	lib_key_common.h
 	types.h
+	doc.hpp
 	app.h
 	app.cpp
 	SsJsonConfig.h

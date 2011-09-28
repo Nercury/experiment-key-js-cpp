@@ -27,6 +27,9 @@ key::Window::~Window() {
 }
 
 void key::Window::run(const Arguments & args) {
+	//auto all_devices = Renderer::getOne(this->);
+
+
 	/*auto sdl_available = SDLInit();
 
 	if (sdl_available) {*/

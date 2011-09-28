@@ -26,4 +26,19 @@ Js.prototype.script = function(filename) {
 		return false;
 	}
 }
+Js.prototype.man = function(obj) {
+	var fields = obj.__fields;
+	if (!fields)
+		return "Object has no documentation";
+	var str = '';
+	for (var i = 0; i < fields.length; i++) {
+		var info = obj[fields[i]];
+		str += "\n" + info.type + ' ' + fields[i] + ' (' + (info.read_only == '1' ? 'get' : 'get, set') + ')';
+		str += "\n" + info.doc + "\n";
+	}
+	return str;
+}
+Js.prototype.help = function(obj) {
+	return Js.prototype.log(Js.prototype.man(obj));
+}
 js = new Js();

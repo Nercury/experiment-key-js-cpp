@@ -17,24 +17,28 @@ void key::SsWindow::initCore(Handle<Object> & dest) {
 	}
 
 	Handle<ObjectTemplate> const & proto( cc.Prototype() );
-	proto->SetAccessor(JSTR("windowTitle"),
-		cv::MemberToGetter<key::Window,std::string,&key::Window::windowTitle>::Get,
-		cv::MethodToSetter<key::Window, void (std::string), &key::Window::setWindowTitle>::Set
-	);
-	proto->SetAccessor(JSTR("onWindowInit"),
+	std::vector<std::string> items;
+
+	Window::reflect(items, cc, proto, false);
+	cc("run", cv::MethodToInCa<key::Window, void (const Arguments & args), &key::Window::run>::Call);
+
+	Window::reflect(items, cc, proto, true);
+	cc.CtorFunction()->Set(JSTR("__fields"), cv::CastToJS(items));
+
+	cc.AddClassTo( cvv8::TypeName<key::Window>::Value, dest );
+
+
+	/*proto->SetAccessor(JSTR("onWindowInit"),
 		cv::MemberToGetter<key::Window,Persistent<Function>, &key::Window::onWindowInit>::Get,
 		cv::MethodToSetter<key::Window,void (Handle<Value>),&key::Window::setOnWindowInit>::Set
 	);
 	proto->SetAccessor(JSTR("onWindowResize"),
 		cv::MemberToGetter<key::Window,Persistent<Function>, &key::Window::onWindowResize>::Get,
 		cv::MethodToSetter<key::Window,void (Handle<Value>),&key::Window::setOnWindowResize>::Set
-	);
-	proto->SetAccessor(JSTR("allRenderDevices"),
+	);*/
+	/*proto->SetAccessor(JSTR("allRenderDevices"),
 		cv::MemberToGetter<key::Window,std::vector<std::string>, &key::Window::allRenderDevices>::Get
-	);
-
-	cc
-		("run", cv::MethodToInCa<key::Window, void (const Arguments & args),
-			&key::Window::run>::Call)
-		.AddClassTo( cvv8::TypeName<key::Window>::Value, dest );
+	);*/
+	
+	//cc.CtorFunction()->SetAccessor(JSTR("test"), cv::FunctionToGetter<std::string (), &key::Window::test>::Get);
 }

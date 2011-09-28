@@ -2,10 +2,9 @@
 { var r = js_main.executeFile('engine/lib.js'); if (r !== true) js_main.textLog(r);}
 /* end load main lib, use js.script to execute other scripts */
 
-js.log("hello world!");
+js.help(Window);
 
 window = new Window();
-window.windowTitle = "Hello World";
 
 window.onKeyUp = function(code) {
 	
@@ -21,6 +20,10 @@ window.onMouseUp = function(code) {
 };
 window.onMouseDown = function(code) {
 	
+};
+
+window.onWindowInit = function() {
+	js.log("running init");
 };
 
 window.renderDevice = window.allRenderDevices[0];
