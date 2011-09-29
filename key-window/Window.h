@@ -42,7 +42,10 @@ namespace key {
 			"function", "Set window resize callback")
 		v8::Persistent<v8::Function> onWindowResize; void setOnWindowResize(v8::Handle<v8::Value> value);
 
-		void run(const v8::Arguments & args);
+		FLECT_M(key::Window, run, void (), "void", "()", 
+			"Create window loop and run the window." "\n"
+			"Note: this call blocks until the window is closed.")
+		void run();
 
 		/* reflection */
 		typedef cvv8::Signature<key::Window (
@@ -55,6 +58,7 @@ namespace key {
 			REFLECT(allRenderDevices)
 			REFLECT(onWindowInit)
 			REFLECT(onWindowResize)
+			REFLECT(run)
 		}
 	};
 

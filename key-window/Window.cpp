@@ -26,19 +26,17 @@ key::Window::~Window() {
 		onWindowInit.Dispose();
 }
 
-void key::Window::run(const Arguments & args) {
+void key::Window::run() {
 	//auto all_devices = Renderer::getOne(this->);
 
 
 	/*auto sdl_available = SDLInit();
 
 	if (sdl_available) {*/
-		auto This = args.This();
-
 		if (onWindowInit.IsEmpty()) {
 			cout << "Window init is empty" << endl;
 		} else {
-			Handle<Value> result = onWindowInit->Call(This, 0, NULL); 
+			Handle<Value> result = onWindowInit->Call(v8::Object::New(), 0, NULL); 
 		}
 
 		/*SDLQuit();

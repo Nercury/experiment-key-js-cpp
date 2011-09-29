@@ -33,7 +33,11 @@ Js.prototype.man = function(obj) {
 	var str = '';
 	for (var i = 0; i < fields.length; i++) {
 		var info = obj[fields[i]];
-		str += "\n" + info.type + ' ' + fields[i] + ' (' + (info.read_only == '1' ? 'get' : 'get, set') + ')';
+		if (info.field == 'property') {
+			str += "\n" + info.type + ' ' + fields[i] + ' (' + (info.read_only == '1' ? 'get' : 'get, set') + ')';
+		} else if (info.field == 'method') {
+			str += "\n" + info.return_type + ' ' + fields[i] + info.parameters;
+		}
 		str += "\n" + info.doc + "\n";
 	}
 	return str;
