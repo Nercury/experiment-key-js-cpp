@@ -3,6 +3,9 @@
 #include <string>
 #include <sstream>
 #include <memory>
+
+#include <boost/format.hpp>
+
 #include <key-common/types.h>
 
 template<class T>
@@ -54,9 +57,39 @@ inline fun_res_obj<T> fun_error(const char * error_message, uint16_t error_code 
 	return res;
 }
 
+template<class T>
+inline fun_res_obj<T> fun_error(std::string error_message, uint16_t error_code = 0) {
+	fun_res_obj<T> res;
+	res.error_code = error_code;
+	res.error_message = std::make_shared<std::string>(error_message); 
+	return res;
+}
+
+template<class T>
+inline fun_res_obj<T> fun_error(boost::format & error_message, uint16_t error_code = 0) {
+	fun_res_obj<T> res;
+	res.error_code = error_code;
+	res.error_message = std::make_shared<std::string>(error_message.str()); 
+	return res;
+}
+
 inline fun_res fun_error(const char * error_message, uint16_t error_code = 0) {
 	fun_res res;
 	res.error_code = error_code;
 	res.error_message = std::make_shared<std::string>(error_message); 
+	return res;
+}
+
+inline fun_res fun_error(std::string error_message, uint16_t error_code = 0) {
+	fun_res res;
+	res.error_code = error_code;
+	res.error_message = std::make_shared<std::string>(error_message); 
+	return res;
+}
+
+inline fun_res fun_error(boost::format & error_message, uint16_t error_code = 0) {
+	fun_res res;
+	res.error_code = error_code;
+	res.error_message = std::make_shared<std::string>(error_message.str()); 
 	return res;
 }

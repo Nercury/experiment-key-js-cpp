@@ -48,22 +48,10 @@ int main(int argc, char* argv[])
 
 	BootStrapV8::run(subsystems, js_dir, ss_json_config->js_main_file);
 
-	//cout << "Using V8 " << v8_engine->getVersion() << " Javascript Engine" << endl;
-
-	//string main_file = "js/engine/main.js";
-
-	//v8_engine->addScriptingSubsystem(v8_engine);
-
-	/*if (!v8_engine->runFile(fullPathTo(main_file), main_file)) {
-		cout << "Failed to run " << main_file << endl;
-	} else {
-		cout << "Done." << endl;
-	}*/
+	//
 
 	/*btAlignedObjectArray<btCollisionShape*>	m_collisionShapes;
 
-	std::ostringstream ss;
-	cout << "Using V8 " << v8::V8::GetVersion() << " Javascript Engine" << endl;
 	cout << "Using Bullet Physics Engine" << endl;
 	
 	ALCdevice *device;

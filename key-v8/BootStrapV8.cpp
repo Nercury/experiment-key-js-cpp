@@ -63,6 +63,8 @@ Handle<key::BootStrapV8> key::BootStrapV8::run(std::string & working_dir, std::s
 }
 
 Handle<key::BootStrapV8> key::BootStrapV8::run(std::list<std::shared_ptr<key::SubsystemBase>> & subsystems, std::string & working_dir, std::string short_filename) {
+	std::cout << "Using V8 " << V8::GetVersion() << " Javascript Engine" << std::endl;
+
 	std::cout << "loading " << working_dir << " -> " << short_filename << std::endl;
 	std::string filename(rootDirPathTo(working_dir, short_filename));
 	std::string contents;
