@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <GL3/gl3.h>
+#include <GL/glew.h>
 
 #include <SDL.h>
 #include <key-common/types.h>
@@ -33,6 +33,7 @@ namespace key {
 	public:
 		OpenGLInstance() {};
 		virtual ~OpenGLInstance() {};
+		LIB_KEY_OPENGL virtual fun_res run();
 	};
 
 }

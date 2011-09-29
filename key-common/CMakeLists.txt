@@ -9,6 +9,7 @@ add_library(key-common STATIC
 	lib_key_common.h
 	types.h
 	app.h
+	error.hpp
 	app.cpp
 	SsJsonConfig.h
 	SsJsonConfig.cpp

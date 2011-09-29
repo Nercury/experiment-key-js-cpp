@@ -1,5 +1,7 @@
 #pragma once
 
+#include <key-common/error.hpp>
+
 namespace key {
 
 	class DeviceInstance
@@ -7,6 +9,7 @@ namespace key {
 	public:
 		DeviceInstance() {};
 		virtual ~DeviceInstance() {};
+		virtual fun_res run() = 0;
 	};
 
 }

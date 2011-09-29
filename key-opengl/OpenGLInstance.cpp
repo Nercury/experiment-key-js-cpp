@@ -37,3 +37,7 @@ static void SDLQuit()
 	}
 	window_instances--;
 }
+
+fun_res OpenGLInstance::run() {
+	return fun_ok();
+}

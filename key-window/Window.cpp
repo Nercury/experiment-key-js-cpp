@@ -15,8 +15,10 @@ namespace cvv8 {
 }
 
 key::Window::Window() : windowTitle("Key Window"), device(NULL) {
-	auto all_devices = Renderer::getInstances();
-	for (auto it = all_devices.begin(); it != all_devices.end(); ++it) {
+	auto all_renderers = Renderer::getRenderers();
+	for (auto it = all_renderers.begin(); it != all_renderers.end(); ++it) {
+		if (it == all_renderers.begin())
+			this->currentDevice = it->first;
 		this->allRenderDevices.push_back(it->first);
 	}
 }
@@ -26,21 +28,42 @@ key::Window::~Window() {
 		onWindowInit.Dispose();
 }
 
-void key::Window::run() {
-	//auto all_devices = Renderer::getOne(this->);
+bool key::Window::run() {
+	cout << "Current device is " << (this->currentDevice.empty() ? "empty" : this->currentDevice) << endl;
 
+	if (this->currentDevice.empty()) {
+		cout << "Can not initialize window on empty device" << endl;
+		return false;
+	} else {
+		auto all_renderers = Renderer::getRenderers();
+		auto it = all_renderers.find(this->currentDevice);
+		if (it == all_renderers.end()) {
+			cout << "Render device " << this->currentDevice << " was not found" << endl;
+		} else {
+			auto renderer = it->second;
+			cout << "Creating " << renderer->getName() << "..." << endl;
+			auto device_result = renderer->createDevice();
+			if (device_result.ok()) {
+				this->device = device_result.result;
+				auto run_result = this->device->run();
+				if (run_result.not_ok()) {
+					cout << run_result.message() << endl;
+					return false;
+				}
+			} else {
+				cout << device_result.message() << endl;
+				return false;
+			}
+		}
 
-	/*auto sdl_available = SDLInit();
-
-	if (sdl_available) {*/
-		if (onWindowInit.IsEmpty()) {
+		/*if (onWindowInit.IsEmpty()) {
 			cout << "Window init is empty" << endl;
 		} else {
 			Handle<Value> result = onWindowInit->Call(v8::Object::New(), 0, NULL); 
-		}
+		}*/
+	}
 
-		/*SDLQuit();
-	}*/
+	return true;
 }
 
 void key::Window::setOnWindowInit(Handle<Value> value) {

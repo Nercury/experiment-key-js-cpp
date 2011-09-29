@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <memory>
 
 #include <key-common/types.h>
 #include <key-v8/expose_headers.hpp>
@@ -13,7 +14,7 @@ namespace key {
 	class Window
 	{
 	private:
-		DeviceInstance * device;
+		std::shared_ptr<DeviceInstance> device;
 	public:
 		Window();
 		LIB_KEY_WINDOW virtual ~Window();
@@ -29,6 +30,10 @@ namespace key {
 			"array<string>", "Get all available render devices")
 		std::vector<std::string> allRenderDevices;
 
+		FLECT_PROP(key::Window, currentDevice, std::string,  
+			"string", "Get all available render devices")
+		std::string currentDevice;
+
 		FLECT_GS(key::Window, onWindowInit, 
 			Member, v8::Persistent<v8::Function>, onWindowInit, 
 			Method, void (v8::Handle<v8::Value>), setOnWindowInit, 
@@ -41,10 +46,10 @@ namespace key {
 			"function", "Set window resize callback")
 		v8::Persistent<v8::Function> onWindowResize; void setOnWindowResize(v8::Handle<v8::Value> value);
 
-		FLECT_M(key::Window, run, void (), "void", "()", 
+		FLECT_M(key::Window, run, bool (), "bool", "()", 
 			"Create window loop and run the window." "\n"
 			"Note: this call blocks until the window is closed.")
-		void run();
+		bool run();
 
 		/* reflection */
 		typedef cvv8::Signature<key::Window (
@@ -55,6 +60,7 @@ namespace key {
 			v8::Handle<v8::ObjectTemplate> proto, bool for_static) {
 			REFLECT(windowTitle)
 			REFLECT(allRenderDevices)
+			REFLECT(currentDevice)
 			REFLECT(onWindowInit)
 			REFLECT(onWindowResize)
 			REFLECT(run)
