@@ -3,7 +3,6 @@
 #include <string>
 
 #include <key-common/types.h>
-#include <key-common/doc.hpp>
 #include <key-v8/expose_headers.hpp>
 #include <key-v8/reflect.hpp>
 #include <key-window/lib_key_window.h>
