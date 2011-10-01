@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
 
 	BootStrapV8::run(subsystems, js_dir, ss_json_config->js_main_file);
 
-	critical_message("Error", "Stuff is not implemented yet!");
+	//critical_message("Error", "Stuff is not implemented yet!");
 
 	//
 

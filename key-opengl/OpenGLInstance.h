@@ -20,20 +20,20 @@ namespace key {
 	private:
 		SDL_Surface *surface;
 		/*Uint32 sdl_flags;*/
-		int videoFlags;
-		int screenBpp;
+		/*int videoFlags;
+		int screenBpp;*/
 
 		int16_t width;
 		int16_t height;
 
-		int16_t window_width;
+		/*int16_t window_width;
 		int16_t window_height;
 
 		int16_t full_width;
 		int16_t full_height;
 
 		int16_t desktop_width;
-		int16_t desktop_height;
+		int16_t desktop_height;*/
 	public:
 		OpenGLInstance() {};
 		virtual ~OpenGLInstance() {};

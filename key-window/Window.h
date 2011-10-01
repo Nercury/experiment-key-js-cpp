@@ -31,7 +31,7 @@ namespace key {
 		std::vector<std::string> allRenderDevices;
 
 		FLECT_PROP(key::Window, currentDevice, std::string,  
-			"string", "Get all available render devices")
+			"string", "Get or set current render device")
 		std::string currentDevice;
 
 		FLECT_GS(key::Window, onWindowInit, 

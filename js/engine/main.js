@@ -4,7 +4,7 @@
 
 window = new Window();
 
-app.criticalMessage("Miau", "Something went wrong!");
+js.help(Window);
 
 window.onKeyUp = function(code) {
 	
@@ -23,7 +23,7 @@ window.onMouseDown = function(code) {
 };
 
 window.onWindowInit = function() {
-	js.log("running init");
+	app.log("running init");
 };
 
 window.run();

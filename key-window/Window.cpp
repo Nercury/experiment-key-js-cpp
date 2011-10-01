@@ -45,6 +45,7 @@ bool key::Window::run() {
 			auto device_result = renderer->createDevice();
 			if (device_result.ok()) {
 				this->device = device_result.result;
+				// render loop is in renderer, after all it is very depenant on windowing stuff...
 				auto run_result = this->device->run();
 				if (run_result.not_ok()) {
 					cout << run_result.message() << endl;
@@ -55,12 +56,6 @@ bool key::Window::run() {
 				return false;
 			}
 		}
-
-		/*if (onWindowInit.IsEmpty()) {
-			cout << "Window init is empty" << endl;
-		} else {
-			Handle<Value> result = onWindowInit->Call(v8::Object::New(), 0, NULL); 
-		}*/
 	}
 
 	return true;
