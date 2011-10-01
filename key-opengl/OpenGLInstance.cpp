@@ -4,39 +4,13 @@
 
 #include <boost/format.hpp> 
 
+#include <key-opengl/OpenGL.h>
+
 using namespace std;
 using namespace key;
 
-static bool sdl_initialized = false;
-static int window_instances = 0;
-
-static fun_res SDLInit()
-{
-	if (window_instances == 0)
-	{
-		if ( SDL_Init( SDL_INIT_VIDEO ) < 0 )
-		{
-			return fun_error(boost::format("Failed to initialize SDL: %1%") % SDL_GetError());
-		} else {
-			SDL_StartTextInput();
-			cout << "SDL " << SDL_MAJOR_VERSION << "." << SDL_MINOR_VERSION << "." << SDL_PATCHLEVEL << " initialized." << endl;
-		}
-		window_instances++;
-	}
-	return fun_ok();
-}
-
-static void SDLQuit()
-{
-	if (window_instances == 1)
-	{
-		SDL_Quit();
-	}
-	window_instances--;
-}
-
 OpenGLInstance::OpenGLInstance(key::Window * window) 
-	: sdl_window(NULL), key_window(window), width(800), height(600) {
+	: sdl_window(NULL), key_window(window), width(800), height(600), running(false) {
 
 }
 
@@ -44,9 +18,40 @@ void OpenGLInstance::notifyWindowChange() {
 	//this->window_title = new_title;
 }
 
+void OpenGLInstance::unsetWindow() {
+	this->key_window = NULL;
+	this->running = false;
+}
+
+void OpenGLInstance::handleEvent(SDL_Event &evt, float dt)
+{
+    if (evt.type == SDL_QUIT)
+        running = false;
+}
+
+void OpenGLInstance::resize()
+{
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0.0f, width, height, 0.0f, 0.0f, 1000.0f);
+
+    glMatrixMode(GL_MODELVIEW);
+
+	glClearColor(0.3f, 0.6f, 0.9f, 1.0f);
+}
+
+void OpenGLInstance::update(float dt)
+{
+    /* TODO */
+}
+
+void OpenGLInstance::render()
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+}
 
 fun_res OpenGLInstance::run() {
-	auto sdl_init_result = SDLInit();
+	auto sdl_init_result = OpenGL::useSDL();
 	if (sdl_init_result.not_ok())
 		return sdl_init_result;
 
@@ -70,19 +75,37 @@ fun_res OpenGLInstance::run() {
     context = SDL_GL_CreateContext(sdl_window);
     SDL_GL_SetSwapInterval(1);
 
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0.0f, width, height, 0.0f, 0.0f, 1000.0f);
+	SDL_Event evt;
+    uint64_t old = SDL_GetPerformanceCounter();
 
-    glMatrixMode(GL_MODELVIEW);
+	this->running = true;
 
-    //mainloop();
+	this->resize();
+
+	while (running) {
+		uint64_t now = SDL_GetPerformanceCounter();
+        float dt = (now - old) / (float)SDL_GetPerformanceFrequency();
+        old = now;
+
+        if (dt > 0.1f)
+            dt = 0.0016f;
+
+        while (SDL_PollEvent(&evt))
+            this->handleEvent(evt, dt);
+
+        if (dt > 0.0f)
+            this->update(dt);
+        this->render();
+
+		SDL_GL_SwapWindow(sdl_window);
+        SDL_Delay(1);
+	}
 
     SDL_GL_DeleteContext(context);
     SDL_DestroyWindow(sdl_window);
 
 	sdl_window = NULL;
 
-	SDLQuit();
+	OpenGL::unuseSDL();
 	return fun_ok();
 }

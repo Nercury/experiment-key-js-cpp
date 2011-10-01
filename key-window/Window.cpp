@@ -15,9 +15,9 @@ namespace cvv8 {
 }
 
 key::Window::Window() : windowTitle("Key Window"), device(NULL) {
-	auto all_renderers = Renderer::getRenderers();
-	for (auto it = all_renderers.begin(); it != all_renderers.end(); ++it) {
-		if (it == all_renderers.begin())
+	this->allRenderers = Renderer::getRenderers();
+	for (auto it = this->allRenderers.begin(); it != this->allRenderers.end(); ++it) {
+		if (it == this->allRenderers.begin())
 			this->currentDevice = it->first;
 		this->allRenderDevices.push_back(it->first);
 	}
@@ -28,6 +28,15 @@ key::Window::~Window() {
 		onWindowInit.Dispose();
 }
 
+std::shared_ptr<key::Renderer> key::Window::getCurrentRenderer() {
+	auto it = this->allRenderers.find(this->currentDevice);
+	if (it == this->allRenderers.end()) {
+		cout << "Render device " << this->currentDevice << " was not found." << endl;
+		return std::shared_ptr<Renderer>();
+	} else
+		return it->second;
+}
+
 bool key::Window::run() {
 	cout << "Current device is " << (this->currentDevice.empty() ? "empty" : this->currentDevice) << endl;
 
@@ -35,18 +44,13 @@ bool key::Window::run() {
 		cout << "Can not initialize window on empty device" << endl;
 		return false;
 	} else {
-		auto all_renderers = Renderer::getRenderers();
-		auto it = all_renderers.find(this->currentDevice);
-		if (it == all_renderers.end()) {
-			cout << "Render device " << this->currentDevice << " was not found" << endl;
-		} else {
-			auto renderer = it->second;
+		auto renderer = getCurrentRenderer();
+		if (renderer.use_count() > 0) {
 			cout << "Creating " << renderer->getName() << "..." << endl;
 			auto device_result = renderer->createDevice(this);
 			if (device_result.ok()) {
 				this->device = device_result.result;
-				//this->device->setWindowTitle(this->
-				// render loop is in renderer, after all it is very depenant on windowing stuff...
+
 				auto run_result = this->device->run();
 				if (run_result.not_ok()) {
 					cout << run_result.message() << endl;
@@ -81,5 +85,18 @@ void key::Window::setOnWindowResize(Handle<Value> value) {
 }
 
 void key::Window::setWindowTitle(std::string newTitle) {
-	this->windowTitle = windowTitle;
+	this->windowTitle = newTitle;
+}
+
+void key::Window::setScreenSaverEnabled(bool value) {
+	auto renderer = getCurrentRenderer();
+	if (renderer.use_count() > 0)
+		renderer->setScreenSaverEnabled(value);
+}
+
+bool key::Window::getScreenSaverEnabled() {
+	auto renderer = getCurrentRenderer();
+	if (renderer.use_count() > 0)
+		return renderer->isScreenSaverEnabled();
+	return true;
 }

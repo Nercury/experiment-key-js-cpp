@@ -38,11 +38,19 @@ namespace key {
 
 		int16_t desktop_width;
 		int16_t desktop_height;*/
+
+		bool running;
+		
+		void resize();
+		void handleEvent(SDL_Event &evt, float dt);
+		void update(float dt);
+		void render();
 	public:
 		OpenGLInstance(key::Window * window);
-		virtual ~OpenGLInstance() {};
+		virtual ~OpenGLInstance() { std::cout<< "Device destroyed." << std::endl; };
 		LIB_KEY_OPENGL virtual fun_res run();
 		LIB_KEY_OPENGL virtual void notifyWindowChange();
+		LIB_KEY_OPENGL virtual void unsetWindow();
 	};
 
 }

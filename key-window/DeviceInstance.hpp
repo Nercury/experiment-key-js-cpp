@@ -12,6 +12,7 @@ namespace key {
 		virtual ~DeviceInstance() {};
 		virtual fun_res run() = 0;
 		virtual void notifyWindowChange() = 0;
+		virtual void unsetWindow() = 0;
 	};
 
 }

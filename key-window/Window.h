@@ -2,12 +2,14 @@
 
 #include <string>
 #include <memory>
+#include <map>
 
 #include <key-common/types.h>
 #include <key-v8/expose_headers.hpp>
 #include <key-v8/reflect.hpp>
 #include <key-window/lib_key_window.h>
 #include <key-window/DeviceInstance.hpp>
+#include <key-window/Renderer.h>
 
 namespace key {
 
@@ -16,6 +18,9 @@ namespace key {
 	{
 	private:
 		std::shared_ptr<DeviceInstance> device;
+
+		std::map<std::string, std::shared_ptr<key::Renderer>> allRenderers;
+		std::shared_ptr<key::Renderer> getCurrentRenderer();
 	public:
 		Window();
 		LIB_KEY_WINDOW virtual ~Window();
@@ -25,6 +30,14 @@ namespace key {
 			Method, void (std::string), setWindowTitle, 
 			"string", "Get or set window title")
 		std::string windowTitle; void setWindowTitle(std::string newTitle);
+
+		FLECT_GS(key::Window, screenSaverEnabled, 
+			Method, bool (), getScreenSaverEnabled, 
+			Method, void (bool), setScreenSaverEnabled, 
+			"bool", "Globally enable or disable screen saver")
+
+		void setScreenSaverEnabled(bool value);
+		bool getScreenSaverEnabled();
 	
 		FLECT_G(key::Window, allRenderDevices,
 			Member, std::vector<std::string>, allRenderDevices, 
@@ -60,6 +73,7 @@ namespace key {
 		static void reflect(std::vector<std::string> & items, cvv8::ClassCreator<key::Window> & cc, 
 			v8::Handle<v8::ObjectTemplate> proto, bool for_static) {
 			REFLECT(windowTitle)
+			REFLECT(screenSaverEnabled)
 			REFLECT(allRenderDevices)
 			REFLECT(currentDevice)
 			REFLECT(onWindowInit)

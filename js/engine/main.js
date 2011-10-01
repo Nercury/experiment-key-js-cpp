@@ -4,6 +4,11 @@
 
 window = new Window();
 
+js.help(Window);
+
+window.windowTitle = "Hello";
+app.log("screen saver enabled: " + (window.screenSaverEnabled ? 'true' : 'false'));
+
 window.onKeyUp = function(code) {
 	
 };
