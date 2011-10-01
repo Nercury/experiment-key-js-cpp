@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <key-common/error.hpp>
 
 namespace key {
@@ -10,6 +11,7 @@ namespace key {
 		DeviceInstance() {};
 		virtual ~DeviceInstance() {};
 		virtual fun_res run() = 0;
+		virtual void notifyWindowChange() = 0;
 	};
 
 }

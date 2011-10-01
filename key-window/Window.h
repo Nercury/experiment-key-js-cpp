@@ -12,6 +12,7 @@
 namespace key {
 
 	class Window
+		: public std::enable_shared_from_this<key::Window>
 	{
 	private:
 		std::shared_ptr<DeviceInstance> device;

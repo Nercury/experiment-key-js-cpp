@@ -42,9 +42,10 @@ bool key::Window::run() {
 		} else {
 			auto renderer = it->second;
 			cout << "Creating " << renderer->getName() << "..." << endl;
-			auto device_result = renderer->createDevice();
+			auto device_result = renderer->createDevice(this);
 			if (device_result.ok()) {
 				this->device = device_result.result;
+				//this->device->setWindowTitle(this->
 				// render loop is in renderer, after all it is very depenant on windowing stuff...
 				auto run_result = this->device->run();
 				if (run_result.not_ok()) {

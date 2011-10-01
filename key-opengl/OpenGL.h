@@ -14,7 +14,7 @@ namespace key {
 		OpenGL() {};
 		virtual ~OpenGL() {};
 		virtual std::string getName() { return "OpenGL Render Device"; };
-		LIB_KEY_OPENGL virtual fun_res_obj<DeviceInstance> createDevice();
+		LIB_KEY_OPENGL virtual fun_res_obj<DeviceInstance> createDevice(key::Window * window);
 	};
 
 }

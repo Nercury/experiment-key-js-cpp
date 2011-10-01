@@ -11,6 +11,7 @@
 #include <key-common/types.h>
 #include <key-opengl/lib_key_opengl.h>
 #include <key-window/DeviceInstance.hpp>
+#include <key-window/Window.h>
 
 namespace key {
 
@@ -18,7 +19,10 @@ namespace key {
 		: public DeviceInstance
 	{
 	private:
-		SDL_Surface *surface;
+		SDL_Window *sdl_window;
+		SDL_GLContext context;
+		key::Window * key_window;
+		
 		/*Uint32 sdl_flags;*/
 		/*int videoFlags;
 		int screenBpp;*/
@@ -35,9 +39,10 @@ namespace key {
 		int16_t desktop_width;
 		int16_t desktop_height;*/
 	public:
-		OpenGLInstance() {};
+		OpenGLInstance(key::Window * window);
 		virtual ~OpenGLInstance() {};
 		LIB_KEY_OPENGL virtual fun_res run();
+		LIB_KEY_OPENGL virtual void notifyWindowChange();
 	};
 
 }

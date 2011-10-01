@@ -4,8 +4,6 @@
 
 window = new Window();
 
-js.help(Window);
-
 window.onKeyUp = function(code) {
 	
 };
