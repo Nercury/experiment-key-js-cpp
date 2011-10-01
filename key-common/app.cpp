@@ -1,5 +1,7 @@
 #include "app.h"
 
+#include <key-common/platform.hpp>
+
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -192,3 +194,17 @@ string unixPathToPlatformPath(const string& path)
 	return ss.str();
 }
 #endif
+
+void critical_message(const std::string title, const std::string text)
+{
+#if defined(WIN32) || defined(_WINDOWS)
+    MessageBoxA(0, text.c_str(), title.c_str(),
+        MB_OK | MB_SETFOREGROUND | MB_ICONSTOP);
+#else
+    std::cout << "Critical error: " << title << std::endl << text << std::endl;
+#endif
+}
+
+void terminate_app() {
+	exit(1);
+}

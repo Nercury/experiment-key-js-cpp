@@ -14,16 +14,14 @@ static fun_res SDLInit()
 {
 	if (window_instances == 0)
 	{
-		if ( SDL_Init( SDL_INIT_EVERYTHING ) < 0 )
+		if ( SDL_Init( SDL_INIT_VIDEO ) < 0 )
 		{
 			return fun_error(boost::format("Failed to initialize SDL: %1%") % SDL_GetError());
 		} else {
-			SDL_EnableUNICODE(true);
+			SDL_StartTextInput();
 			cout << "SDL " << SDL_MAJOR_VERSION << "." << SDL_MINOR_VERSION << "." << SDL_PATCHLEVEL << " initialized." << endl;
 		}
 		window_instances++;
-	} else {
-		return fun_error("Only one SDL window can be running at the same time.");
 	}
 	return fun_ok();
 }
@@ -41,6 +39,7 @@ fun_res OpenGLInstance::run() {
 	auto sdl_init_result = SDLInit();
 	if (sdl_init_result.not_ok())
 		return sdl_init_result;
+
 
 
 

@@ -45,6 +45,10 @@ void key::BootStrapV8::bindCoreBootstrap(Handle<Object> & dest, std::string & wo
         return;
     }
     cc
+		("criticalMessage", cv::ToInCa<void, void (const std::string, const std::string),
+			::critical_message>::Call)
+		("terminateApp", cv::ToInCa<void, void (),
+			::terminate_app>::Call)
         ("textLog", cv::MethodToInCa<BootStrapV8, void (std::string),
                 &BootStrapV8::log>::Call)
 		("executeFile", cv::MethodToInCa<BootStrapV8, Handle<Value> (const Arguments& args),

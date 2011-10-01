@@ -6,12 +6,13 @@ project(key-common)
 #endif(WIN32)
 
 add_library(key-common STATIC 
-	lib_key_common.h
-	types.h
-	app.h
-	error.hpp
-	app.cpp
-	SsJsonConfig.h
+	lib_key_common.h 
+	platform.hpp # platform-specific includes (if you need windows.h)
+	types.h # common type definitions
+	app.h # app inialization path, path separator, relative path function
+	error.hpp # error object + message mechanism
+	app.cpp 
+	SsJsonConfig.h # json configuration file
 	SsJsonConfig.cpp
 	JsonFile.h
 	JsonFile.cpp

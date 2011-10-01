@@ -4,6 +4,8 @@
 
 window = new Window();
 
+app.criticalMessage("Miau", "Something went wrong!");
+
 window.onKeyUp = function(code) {
 	
 };

@@ -1,11 +1,4 @@
-function Js() 
-{
-	this.config = JSON.parse(js_main_config_contents);
-	this.app = {
-		nativePath : js_main_app_path,
-		pathSeparator : js_main_app_path_separator
-	};
-}
+function Js() {}
 Js.prototype.log = function(o) {
 	if (typeof o == 'undefined')
 		js_main.textLog('[undefined]');
@@ -46,3 +39,18 @@ Js.prototype.help = function(obj) {
 	return Js.prototype.log(Js.prototype.man(obj));
 }
 js = new Js();
+
+function App() 
+{
+	this.config = JSON.parse(js_main_config_contents);
+	this.nativePath = js_main_app_path;
+	this.pathSeparator = js_main_app_path_separator;
+}
+App.prototype.criticalMessage = function(title, text) {
+	return js_main.criticalMessage(title, text);
+}
+App.prototype.kill = function() {
+	return js_main.terminateApp();
+}
+
+app = new App();

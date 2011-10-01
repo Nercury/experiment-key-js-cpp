@@ -9,7 +9,7 @@ STRING(REGEX REPLACE "\\." "_" KEYLIB_WIN_BOOST_VERSION_UNDERSCORED ${KEYLIB_WIN
 # set mingw version (required to select appropriate boost library when linking)
 set(KEYLIB_MINGW_VERSION "34")
 
-set(KEYLIB_INCLUDES 
+set(KEYLIB_INCLUDES
 	"${CMAKE_SOURCE_DIR}/../third-party-include")
 
 # Attempt to guess the compiler suffix
@@ -127,30 +127,21 @@ endif()
 ### SDL
 
 if(WIN32)
-	find_path(SDL_INCLUDE_DIR SDL.h
-	  PATH_SUFFIXES include/SDL include
-	  PATHS
-	  ${KEYLIB_INCLUDES}
-	)
-	if (SDL_INCLUDE_DIR)
-		if (MSVC)
-			set(SDL_LIBRARY 
-				${KEYLIB_LIBRARIES}/SDL.lib 
-				${KEYLIB_LIBRARIES}/SDL_mixer.lib)
-			set(SDLMAIN_LIBRARY ${KEYLIB_LIBRARIES}/SDLmain.lib)
-		endif()
-		set(SDL_FOUND "YES")
+	if (MSVC)
+		set(SDL_LIBRARY "${KEYLIB_LIBRARIES}/sdl-2/SDL.lib")
+		set(SDLMAIN_LIBRARY "${KEYLIB_LIBRARIES}/sdl-2/SDLmain.lib")
+	else()
+		message("No SDL CMake configuration for your compiler.")
 	endif()
 else()
+	### now this should require sdl-2 libraries... not fixed yet.
 	find_package(SDL REQUIRED)
-endif()
-
-if(SDL_FOUND)
-	include_directories(${SDL_INCLUDE_DIR})
-endif()
-
-if(NOT SDL_FOUND)
-	message("SDL libraries were not found. Please install libsdl-dev libraries.")
+	if(SDL_FOUND)
+		include_directories(${SDL_INCLUDE_DIR})
+	endif()
+	if(NOT SDL_FOUND)
+		message("SDL libraries were not found. Please install libsdl-dev libraries.")
+	endif()
 endif()
 
 ### OpenCV

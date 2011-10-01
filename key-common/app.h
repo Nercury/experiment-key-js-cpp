@@ -27,3 +27,6 @@ LIB_KEY_COMMON std::string joinPath(const std::string& root, const std::string& 
 #endif
 
 LIB_KEY_COMMON bool stringFromFile(std::string & output, const std::string& filename);
+
+LIB_KEY_COMMON void critical_message(const std::string title, const std::string text);
+LIB_KEY_COMMON void terminate_app();

@@ -1,9 +1,13 @@
 #pragma once
 
 #include <string>
-#include <GL/glew.h>
 
-#include <SDL.h>
+#include <key-common/platform.hpp>
+
+#include <SDL2/SDL.h>
+#include <GL/glew.h>
+#include <SDL2/SDL_opengl.h>
+
 #include <key-common/types.h>
 #include <key-opengl/lib_key_opengl.h>
 #include <key-window/DeviceInstance.hpp>
