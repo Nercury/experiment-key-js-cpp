@@ -83,5 +83,7 @@ int main(int argc, char* argv[])
     alcDestroyContext(context);
     alcCloseDevice(device);*/
 
+	system("PAUSE");
+
 	return 0;
 }

@@ -1,4 +1,13 @@
-function Js() {}
+function Js() {
+	this.class2type = {};
+	var class2type_items = "Boolean Number String Function Array Date RegExp Object".split(" ");
+	for (var i = 0; i < class2type_items.length; i++) {
+		var name = class2type_items[i];
+		this.class2type[ "[object " + name + "]" ] = name.toLowerCase();
+	}
+	// Check for digits
+	this.rdigit = /\d/
+}
 Js.prototype.script = function(filename) {
 	var execute_result = js_main.executeFile(filename);
 	if (execute_result === true) {
@@ -26,8 +35,44 @@ Js.prototype.man = function(obj) {
 	return str;
 }
 Js.prototype.help = function(obj) {
-	return App.prototype.log(Js.prototype.man(obj));
+	return app.log(js.man(obj));
 }
+Js.prototype.each = function( object, callback, args ) {
+	var name, i = 0,
+		length = object.length,
+		isObj = length === undefined || js.isFunction( object );
+
+	// A special, fast, case for the most common use of each
+	if ( isObj ) {
+		for ( name in object ) {
+			if ( callback.call( object[ name ], name, object[ name ] ) === false ) {
+				break;
+			}
+		}
+	} else {
+		for ( ; i < length; ) {
+			if ( callback.call( object[ i ], i, object[ i++ ] ) === false ) {
+				break;
+			}
+		}
+	}
+
+	return object;
+};
+Js.prototype.type = function( obj ) {
+	return obj == null ?
+		String( obj ) :
+		this.class2type[ Object.prototype.toString.call(obj) ] || "object";
+};
+Js.prototype.isFunction = function( obj ) {
+	return js.type(obj) === "function";
+};
+Js.prototype.isArray = Array.isArray || function( obj ) {
+	return js.type(obj) === "array";
+};
+Js.prototype.isNaN = function( obj ) {
+	return obj == null || !this.rdigit.test( obj ) || isNaN( obj );
+};
 js = new Js();
 
 function App() 

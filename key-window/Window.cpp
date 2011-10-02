@@ -111,19 +111,9 @@ uint16_t key::Window::getNumDisplays() {
 std::list<std::map<std::string, int32_t>> key::Window::getDisplayModes(uint16_t displayIndex) {
 	std::list<std::map<std::string, int32_t>> modes;
 
-	{
-	std::map<std::string, int32_t> mode;
-	mode.insert(pair<std::string, int32_t>("width", 640));
-	mode.insert(pair<std::string, int32_t>("height", 480));
-	modes.push_back(mode);
-	}
-
-	{
-	std::map<std::string, int32_t> mode;
-	mode.insert(pair<std::string, int32_t>("width", 800));
-	mode.insert(pair<std::string, int32_t>("height", 600));
-	modes.push_back(mode);
-	}
-
+	auto renderer = getCurrentRenderer();
+	if (renderer.use_count() > 0)
+		renderer->getDisplayModes(displayIndex, modes);
+	
 	return modes;
 }
