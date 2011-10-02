@@ -14,7 +14,9 @@ namespace cvv8 {
     CVV8_TypeName_IMPL((key::Window),"Window");
 }
 
-key::Window::Window() : windowTitle("Key Window"), device() {
+key::Window::Window() 
+	: windowTitle("Key Window"), 
+	device(), fullScreen(false), hidden(false), resizable(true) {
 	this->allRenderers = Renderer::getRenderers();
 	for (auto it = this->allRenderers.begin(); it != this->allRenderers.end(); ++it) {
 		if (it == this->allRenderers.begin())
@@ -143,4 +145,46 @@ void key::Window::setFullScreen(bool value) {
 
 	if (this->device.use_count() > 0)
 		this->device->notifyWindowChange(NOTIFY_CHANGE_FULL_SCREEN);
+}
+
+void key::Window::setHidden(bool value) {
+	this->hidden = value;
+
+	if (this->device.use_count() > 0)
+		this->device->notifyWindowChange(NOTIFY_CHANGE_HIDDEN);
+}
+
+void key::Window::setResizable(bool value) {
+	this->resizable = value;
+
+	if (this->device.use_count() > 0)
+		this->device->notifyWindowChange(NOTIFY_CHANGE_RESIZABLE);
+}
+
+void key::Window::setMinimized(bool value) {
+	this->minimized = value;
+
+	if (this->device.use_count() > 0)
+		this->device->notifyWindowChange(NOTIFY_CHANGE_MINIMIZED);
+}
+
+void key::Window::setMaximized(bool value) {
+	this->maximized = value;
+
+	if (this->device.use_count() > 0)
+		this->device->notifyWindowChange(NOTIFY_CHANGE_MAXIMIZED);
+}
+
+void key::Window::setInputGrabbed(bool value) {
+	this->inputGrabbed = value;
+
+	if (this->device.use_count() > 0)
+		this->device->notifyWindowChange(NOTIFY_CHANGE_INPUT_GRAB);
+}
+
+void key::Window::setWindowSize(std::list<int32_t> value) {
+	this->windowSize = value;
+
+	if (this->device.use_count() > 0)
+		this->device->notifyWindowChange(NOTIFY_CHANGE_WINDOW_SIZE);
 }

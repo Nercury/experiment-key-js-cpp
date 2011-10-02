@@ -66,6 +66,42 @@ namespace key {
 			"bool", "Get or set full screen mode")
 		bool fullScreen; void setFullScreen(bool value);
 
+		FLECT_GS(key::Window, hidden, 
+			Member, bool, hidden, 
+			Method, void (bool), setHidden, 
+			"bool", "Hide or show the window")
+		bool hidden; void setHidden(bool value);
+
+		FLECT_GS(key::Window, resizable, 
+			Member, bool, resizable, 
+			Method, void (bool), setResizable, 
+			"bool", "Window resizing is allowed")
+		bool resizable; void setResizable(bool value);
+
+		FLECT_GS(key::Window, minimized, 
+			Member, bool, minimized, 
+			Method, void (bool), setMinimized, 
+			"bool", "Minimize or restore the window")
+		bool minimized; void setMinimized(bool value);
+
+		FLECT_GS(key::Window, maximized, 
+			Member, bool, maximized, 
+			Method, void (bool), setMaximized, 
+			"bool", "Maximize or restore the window")
+		bool maximized; void setMaximized(bool value);
+
+		FLECT_GS(key::Window, inputGrabbed, 
+			Member, bool, inputGrabbed, 
+			Method, void (bool), setInputGrabbed, 
+			"bool",  "Grab or ungrab mouse pointer (pointer is not allowed to move outside the window bounds when grabbed)")
+		bool inputGrabbed; void setInputGrabbed(bool value);
+
+		FLECT_GS(key::Window, windowSize, 
+			Member, std::list<int32_t>, windowSize, 
+			Method, void (std::list<int32_t>), setWindowSize, 
+			"bool",  "Grab or ungrab mouse pointer (pointer is not allowed to move outside the window bounds when grabbed)")
+		std::list<int32_t> windowSize; void setWindowSize(std::list<int32_t> value);
+
 		FLECT_G(key::Window, allRenderDevices,
 			Member, std::vector<std::string>, allRenderDevices, 
 			"array<string>", "Get all available render devices")
@@ -95,6 +131,12 @@ namespace key {
 		static const int16_t NOTIFY_CHANGE_TITLE = 1;
 		static const int16_t NOTIFY_CHANGE_DISPLAY_MODE = 2;
 		static const int16_t NOTIFY_CHANGE_FULL_SCREEN = 3;
+		static const int16_t NOTIFY_CHANGE_HIDDEN = 4;
+		static const int16_t NOTIFY_CHANGE_RESIZABLE = 5;
+		static const int16_t NOTIFY_CHANGE_MINIMIZED = 6;
+		static const int16_t NOTIFY_CHANGE_MAXIMIZED = 7;
+		static const int16_t NOTIFY_CHANGE_INPUT_GRAB = 8;
+		static const int16_t NOTIFY_CHANGE_WINDOW_SIZE = 9;
 
 		/* reflection */
 		typedef cvv8::Signature<key::Window (
@@ -109,6 +151,12 @@ namespace key {
 			REFLECT(getDisplayModes)
 			REFLECT(displayMode)
 			REFLECT(fullScreen)
+			REFLECT(hidden)
+			REFLECT(resizable)
+			REFLECT(minimized)
+			REFLECT(maximized)
+			REFLECT(inputGrabbed)
+			REFLECT(windowSize)
 			REFLECT(allRenderDevices)
 			REFLECT(currentDevice)
 			REFLECT(onWindowInit)
