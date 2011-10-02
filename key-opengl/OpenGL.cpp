@@ -85,14 +85,13 @@ void OpenGL::getDisplayModes(uint16_t displayIndex, std::list<std::map<std::stri
 			std::set<std::string> existing;
 			for (int i = 0; i < num_display_modes; i++) {
 				SDL_GetDisplayMode((int)displayIndex, i, &mode);
-				std::string mode_key = (boost::format("%1%%2%%3%%4%") % mode.w % mode.h % mode.refresh_rate % mode.format).str();
+				std::string mode_key = (boost::format("%1%%2%%3%") % mode.w % mode.h % mode.refresh_rate).str();
 				auto it = existing.find(mode_key);
 				if (it == existing.end()) {
 					std::map<std::string, int32_t> new_mode;
 					new_mode.insert(pair<std::string, int32_t>("width", mode.w));
 					new_mode.insert(pair<std::string, int32_t>("height", mode.h));
 					new_mode.insert(pair<std::string, int32_t>("refreshRate", mode.refresh_rate));
-					new_mode.insert(pair<std::string, int32_t>("format", mode.format));
 					modes.push_back(new_mode);
 					existing.insert(mode_key);
 				}

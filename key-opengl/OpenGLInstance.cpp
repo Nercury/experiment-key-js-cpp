@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include <boost/format.hpp> 
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include <key-opengl/OpenGL.h>
 
@@ -23,7 +24,7 @@ void OpenGLInstance::unsetWindow() {
 	this->running = false;
 }
 
-void OpenGLInstance::handleEvent(SDL_Event &evt, float dt)
+void OpenGLInstance::handleEvent(SDL_Event &evt, int64_t dt)
 {
     if (evt.type == SDL_QUIT)
         running = false;
@@ -40,7 +41,7 @@ void OpenGLInstance::resize()
 	glClearColor(0.3f, 0.6f, 0.9f, 1.0f);
 }
 
-void OpenGLInstance::update(float dt)
+void OpenGLInstance::update(int64_t dt)
 {
     /* TODO */
 }
@@ -48,6 +49,13 @@ void OpenGLInstance::update(float dt)
 void OpenGLInstance::render()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
+
+	glBegin(GL_QUADS);
+        glColor3f(1, 0, 0); glVertex3f(0, 0, 0);
+        glColor3f(1, 1, 0); glVertex3f(100, 0, 0);
+        glColor3f(1, 0, 1); glVertex3f(100, 100, 0);
+        glColor3f(1, 1, 1); glVertex3f(0, 100, 0);
+    glEnd();
 }
 
 fun_res OpenGLInstance::run() {
@@ -57,8 +65,9 @@ fun_res OpenGLInstance::run() {
 
 	cout << "Using SDL " << SDL_MAJOR_VERSION << "." << SDL_MINOR_VERSION << "." << SDL_PATCHLEVEL << "." << endl;
 
-	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+	//SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+	//SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+    //SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
@@ -84,23 +93,52 @@ fun_res OpenGLInstance::run() {
 
 	this->resize();
 
-	while (running) {
-		uint64_t now = SDL_GetPerformanceCounter();
-        float dt = (now - old) / (float)SDL_GetPerformanceFrequency();
-        old = now;
+	int seconds = 0;
+	uint64_t second_dt = 0;
 
-        if (dt > 0.1f)
-            dt = 0.0016f;
+	const int secs_for_avg = 8;
+	int sec_frames[secs_for_avg] = {0, 0, 0};
+
+	boost::posix_time::ptime last_time = boost::posix_time::microsec_clock::local_time();
+	boost::posix_time::ptime new_time;
+	boost::posix_time::ptime last_second_time = last_time;
+
+	float dt = 0;
+
+	while (running) {
+		new_time = boost::posix_time::microsec_clock::local_time();
+		int64_t dt = (new_time - last_time).total_microseconds();
+		last_time = new_time;
 
         while (SDL_PollEvent(&evt))
             this->handleEvent(evt, dt);
 
-        if (dt > 0.0f)
+        if (dt > 0)
             this->update(dt);
         this->render();
 
 		SDL_GL_SwapWindow(sdl_window);
-        SDL_Delay(1);
+        //SDL_Delay(5);
+
+		sec_frames[0]++;
+
+		if ((new_time - last_second_time).total_microseconds() >= 1000000)
+		{
+			if (seconds < secs_for_avg)
+				seconds++;
+			int sum = 0;
+			for (int x = 0; x < seconds; x++) {
+				sum += sec_frames[x];
+			}
+
+			cout << "AVG FPS: " << (sum / seconds) << endl;
+
+			last_second_time = new_time;
+			for (int x = secs_for_avg - 1; x > 0; x--) {
+				sec_frames[x] = sec_frames[x - 1];
+			}
+			sec_frames[0] = 0;
+		}
 	}
 
     SDL_GL_DeleteContext(context);

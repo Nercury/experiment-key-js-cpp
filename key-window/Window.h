@@ -48,8 +48,8 @@ namespace key {
 			"Get all available display modes for specified display." "\n"
 			"Function returns arry of objects with following structure:" "\n"
 			"{" "\n"
-			"  width" "\n"
-			"  height" "\n"
+			"  width : an integer" "\n"
+			"  height : an integer" "\n"
 			"  refreshRate : an integer value for refresh rate in Hz" "\n"
 			"}")
 		std::list<std::map<std::string, int32_t>> getDisplayModes(uint16_t displayIndex);
@@ -99,7 +99,7 @@ namespace key {
 		FLECT_GS(key::Window, windowSize, 
 			Member, std::list<int32_t>, windowSize, 
 			Method, void (std::list<int32_t>), setWindowSize, 
-			"bool",  "Grab or ungrab mouse pointer (pointer is not allowed to move outside the window bounds when grabbed)")
+			"array<int>",  "Get or set window size. Size uses two integer values in array [width, height].")
 		std::list<int32_t> windowSize; void setWindowSize(std::list<int32_t> value);
 
 		FLECT_G(key::Window, allRenderDevices,

@@ -42,8 +42,8 @@ namespace key {
 		bool running;
 		
 		void resize();
-		void handleEvent(SDL_Event &evt, float dt);
-		void update(float dt);
+		void handleEvent(SDL_Event &evt, int64_t dt);
+		void update(int64_t dt);
 		void render();
 	public:
 		OpenGLInstance(key::Window * window);
