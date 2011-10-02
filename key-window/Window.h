@@ -2,6 +2,7 @@
 
 #include <string>
 #include <memory>
+#include <list>
 #include <map>
 
 #include <key-common/types.h>
@@ -35,10 +36,24 @@ namespace key {
 			Method, bool (), getScreenSaverEnabled, 
 			Method, void (bool), setScreenSaverEnabled, 
 			"bool", "Globally enable or disable screen saver")
-
 		void setScreenSaverEnabled(bool value);
 		bool getScreenSaverEnabled();
 	
+		FLECT_G(key::Window, numDisplays,
+			Method, uint16_t (), getNumDisplays, 
+			"uint16", "Get number of displays")
+		uint16_t getNumDisplays();
+
+		FLECT_M(key::Window, getDisplayModes, std::list<std::map<std::string GOOD_COMMA int32_t>>(uint16_t), "array<map<string, int>>", "(int displayIndex)", 
+			"Get all available display modes for specified display." "\n"
+			"Function returns arry of objects with following structure:" "\n"
+			"{" "\n"
+			"  width" "\n"
+			"  height" "\n"
+			"  refreshRate : an integer value for refresh rate in Hz" "\n"
+			"}")
+		std::list<std::map<std::string, int32_t>> getDisplayModes(uint16_t displayIndex);
+
 		FLECT_G(key::Window, allRenderDevices,
 			Member, std::vector<std::string>, allRenderDevices, 
 			"array<string>", "Get all available render devices")
@@ -74,6 +89,8 @@ namespace key {
 			v8::Handle<v8::ObjectTemplate> proto, bool for_static) {
 			REFLECT(windowTitle)
 			REFLECT(screenSaverEnabled)
+			REFLECT(numDisplays)
+			REFLECT(getDisplayModes)
 			REFLECT(allRenderDevices)
 			REFLECT(currentDevice)
 			REFLECT(onWindowInit)

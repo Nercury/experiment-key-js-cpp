@@ -83,9 +83,5 @@ int main(int argc, char* argv[])
     alcDestroyContext(context);
     alcCloseDevice(device);*/
 
-#ifdef WIN32
-	system("PAUSE");
-#endif
-
 	return 0;
 }

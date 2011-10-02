@@ -94,7 +94,7 @@
 #define FLECT_M(class_definition, method_name, method_definition, return_type_name, parameters_text, doc_text) \
 	static void __reflect_ ## method_name ## (cvv8::ClassCreator<class_definition> & cc, v8::Handle<v8::ObjectTemplate> proto, bool for_static) { \
 		if (!for_static) { \
-			cc(#method_name, cvv8::MethodToInCa<class_definition, method_definition, & ## class_definition ## :: ## method_name ## >::Call); \
+		cc(#method_name, cvv8::MethodToInCa<class_definition, method_definition, & ## class_definition ## :: ## method_name ## >::Call); \
 		} \
 		if (for_static) { \
 			cc.CtorFunction()->SetAccessor(JSTR(#method_name), \
@@ -113,3 +113,9 @@
 
 #define REFLECT(name) __reflect_ ## name(cc, proto, for_static); \
 	if (for_static) items.push_back(#name);
+
+#define COMMA_1 , 
+#define COMMA_2 COMMA_1
+#define COMMA_3 COMMA_2
+#define GOOD_COMMA COMMA_3
+/* you can laugh if you figure the reason for this. */

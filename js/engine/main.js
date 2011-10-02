@@ -8,6 +8,7 @@ js.help(Window);
 
 window.windowTitle = "Hello";
 app.log("screen saver enabled: " + (window.screenSaverEnabled ? 'true' : 'false'));
+app.log("number of displays: " + window.numDisplays);
 
 window.onKeyUp = function(code) {
 	

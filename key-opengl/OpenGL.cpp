@@ -28,8 +28,6 @@ fun_res OpenGL::useSDL() {
 		} else {
 			SDL_StartTextInput();
 			OpenGL::setGlobalSDLValues();
-
-			cout << "SDL " << SDL_MAJOR_VERSION << "." << SDL_MINOR_VERSION << "." << SDL_PATCHLEVEL << " initialized." << endl;
 		}
 		window_instances++;
 	}
@@ -63,4 +61,14 @@ bool OpenGL::isScreenSaverEnabled() {
 void OpenGL::setScreenSaverEnabled(bool value) {
 	OpenGL::screenSaverEnabled = value;
 	OpenGL::setGlobalSDLValues();
+}
+
+uint16_t OpenGL::getNumDisplays() {
+	useSDL();
+	auto res = SDL_GetNumVideoDisplays();
+	unuseSDL();
+	if (res >= 1)
+		return (uint16_t)res;
+	std::cout << "Error getting number of displays. " << SDL_GetError() << endl;
+	return 0;
 }
