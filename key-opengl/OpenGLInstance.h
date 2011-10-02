@@ -49,7 +49,7 @@ namespace key {
 		OpenGLInstance(key::Window * window);
 		virtual ~OpenGLInstance() { std::cout<< "Device destroyed." << std::endl; };
 		LIB_KEY_OPENGL virtual fun_res run();
-		LIB_KEY_OPENGL virtual void notifyWindowChange();
+		LIB_KEY_OPENGL virtual void notifyWindowChange(int16_t window_change);
 		LIB_KEY_OPENGL virtual void unsetWindow();
 	};
 

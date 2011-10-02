@@ -13,6 +13,10 @@ js.each(window.getDisplayModes(0), function(i, mode) {
 	app.log("mode " + i + " = " + JSON.stringify(mode));
 });
 
+app.log(window.getDisplayModes(0)[0]);
+
+window.displayMode = window.getDisplayModes(0)[0];
+
 window.onKeyUp = function(code) {
 	
 };

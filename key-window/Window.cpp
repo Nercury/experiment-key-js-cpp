@@ -14,7 +14,7 @@ namespace cvv8 {
     CVV8_TypeName_IMPL((key::Window),"Window");
 }
 
-key::Window::Window() : windowTitle("Key Window"), device(NULL) {
+key::Window::Window() : windowTitle("Key Window"), device() {
 	this->allRenderers = Renderer::getRenderers();
 	for (auto it = this->allRenderers.begin(); it != this->allRenderers.end(); ++it) {
 		if (it == this->allRenderers.begin())
@@ -86,6 +86,8 @@ void key::Window::setOnWindowResize(Handle<Value> value) {
 
 void key::Window::setWindowTitle(std::string newTitle) {
 	this->windowTitle = newTitle;
+	if (this->device.use_count() > 0)
+		this->device->notifyWindowChange(NOTIFY_CHANGE_TITLE);
 }
 
 void key::Window::setScreenSaverEnabled(bool value) {
@@ -116,4 +118,29 @@ std::list<std::map<std::string, int32_t>> key::Window::getDisplayModes(uint16_t 
 		renderer->getDisplayModes(displayIndex, modes);
 	
 	return modes;
+}
+
+void key::Window::setDisplayMode(v8::Handle<v8::Value> newMode) {
+	HandleScope scope;
+
+	if (newMode->IsObject()) {
+		this->displayMode.clear();
+		auto modeObj = newMode->ToObject();
+		auto propertyNames = modeObj->GetPropertyNames();
+		for (uint32_t i = 0; i < propertyNames->Length(); i++) {
+			auto name = propertyNames->Get(i);
+			auto value = modeObj->Get(name);
+			this->displayMode[cvv8::CastFromJS<std::string>(name)] = cvv8::CastFromJS<int32_t>(value);
+		}
+
+		if (this->device.use_count() > 0)
+			this->device->notifyWindowChange(NOTIFY_CHANGE_DISPLAY_MODE);
+	}
+}
+
+void key::Window::setFullScreen(bool value) {
+	this->fullScreen = value;
+
+	if (this->device.use_count() > 0)
+		this->device->notifyWindowChange(NOTIFY_CHANGE_FULL_SCREEN);
 }

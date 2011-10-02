@@ -54,6 +54,18 @@ namespace key {
 			"}")
 		std::list<std::map<std::string, int32_t>> getDisplayModes(uint16_t displayIndex);
 
+		FLECT_GS(key::Window, displayMode, 
+			Member, std::map<std::string GOOD_COMMA int32_t>, displayMode, 
+			Method, void (v8::Handle<v8::Value>), setDisplayMode, 
+			"map<string, int>", "Get or set current display mode")
+		std::map<std::string, int32_t> displayMode; void setDisplayMode(v8::Handle<v8::Value> newMode);
+
+		FLECT_GS(key::Window, fullScreen, 
+			Member, bool, fullScreen, 
+			Method, void (bool), setFullScreen, 
+			"bool", "Get or set full screen mode")
+		bool fullScreen; void setFullScreen(bool value);
+
 		FLECT_G(key::Window, allRenderDevices,
 			Member, std::vector<std::string>, allRenderDevices, 
 			"array<string>", "Get all available render devices")
@@ -80,6 +92,10 @@ namespace key {
 			"Note: this call blocks until the window is closed.")
 		bool run();
 
+		static const int16_t NOTIFY_CHANGE_TITLE = 1;
+		static const int16_t NOTIFY_CHANGE_DISPLAY_MODE = 2;
+		static const int16_t NOTIFY_CHANGE_FULL_SCREEN = 3;
+
 		/* reflection */
 		typedef cvv8::Signature<key::Window (
 			cvv8::CtorForwarder<key::Window *()>
@@ -91,6 +107,8 @@ namespace key {
 			REFLECT(screenSaverEnabled)
 			REFLECT(numDisplays)
 			REFLECT(getDisplayModes)
+			REFLECT(displayMode)
+			REFLECT(fullScreen)
 			REFLECT(allRenderDevices)
 			REFLECT(currentDevice)
 			REFLECT(onWindowInit)

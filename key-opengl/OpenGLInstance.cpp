@@ -14,7 +14,7 @@ OpenGLInstance::OpenGLInstance(key::Window * window)
 
 }
 
-void OpenGLInstance::notifyWindowChange() {
+void OpenGLInstance::notifyWindowChange(int16_t window_change) {
 	//this->window_title = new_title;
 }
 
