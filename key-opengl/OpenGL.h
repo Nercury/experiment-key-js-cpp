@@ -28,6 +28,7 @@ namespace key {
 		static fun_res useSDL();
 		static void unuseSDL();
 
+		static bool parseDisplayMode(std::map<std::string, int32_t> modeValues, int & w, int & h, int & refreshRate);
 		static void setGlobalSDLValues();
 	};
 

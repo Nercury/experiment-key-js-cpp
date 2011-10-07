@@ -75,6 +75,8 @@ fun_res OpenGLInstance::run() {
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
 
+	
+
 	sdl_window = SDL_CreateWindow(this->key_window->windowTitle.c_str(),
 			SDL_WINDOWPOS_CENTERED,
 			SDL_WINDOWPOS_CENTERED,

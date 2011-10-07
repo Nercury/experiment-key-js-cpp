@@ -38,4 +38,6 @@ window.onWindowInit = function() {
 };
 
 window.run();
+window.run();
+window.run();
 

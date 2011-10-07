@@ -13,8 +13,6 @@ bool OpenGL::screenSaverEnabled = true;
 fun_res_obj<DeviceInstance> OpenGL::createDevice(key::Window * window) {
 	OpenGLInstance * device = new OpenGLInstance(window);
 	shared_ptr<DeviceInstance> instance(device);
-
-	// todo: pass settings to device.
 	
 	return fun_ok(instance);
 }
@@ -73,6 +71,7 @@ uint16_t OpenGL::getNumDisplays() {
 	return 0;
 }
 
+
 void OpenGL::getDisplayModes(uint16_t displayIndex, std::list<std::map<std::string, int32_t>> & modes) {
 	useSDL();
 
@@ -100,4 +99,19 @@ void OpenGL::getDisplayModes(uint16_t displayIndex, std::list<std::map<std::stri
 	}
 
 	unuseSDL();
+}
+
+/**
+ * @brief Try to get with, height, refresh values from mode value map
+ */
+bool OpenGL::parseDisplayMode(std::map<std::string, int32_t> modeValues, int & w, int & h, int & refreshRate) {
+	auto withIt = modeValues.find("width");
+	auto heightIt = modeValues.find("height");
+	auto refreshRateIt = modeValues.find("refreshRate");
+	if (withIt == modeValues.end() || heightIt == modeValues.end() || refreshRateIt == modeValues.end())
+		return false;
+	w = withIt->second;
+	h = heightIt->second;
+	refreshRate = refreshRateIt->second;
+	return true;
 }
