@@ -14,13 +14,8 @@ add_library(key-common STATIC
 	app.cpp 
 	SsJsonConfig.h # json configuration file
 	SsJsonConfig.cpp
-	JsonFile.h
-	JsonFile.cpp
 	)
 
 target_link_libraries(key-common 
-	${V8_LIBRARIES}
 	${JSON_LIBRARY}
-	${BULLET_LIBRARIES}
-	${OPENAL_LIBRARIES}
 	)

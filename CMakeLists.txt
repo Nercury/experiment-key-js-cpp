@@ -26,6 +26,8 @@ elseif (MSVC90)
   SET (KEYLIB_LIB_COMPILER "vc90")
 elseif (MSVC10)
   SET (KEYLIB_LIB_COMPILER "vc100")
+elseif (MSVC11)
+  SET (KEYLIB_LIB_COMPILER "vc110")
 elseif (MSVC80)
   SET (KEYLIB_LIB_COMPILER "vc80")
 elseif (MSVC71)
@@ -75,6 +77,7 @@ else()
 endif()
 
 if (MSVC)
+	set(WITH_SHARED_LIBS NO)
 	set(KEYLIB_LIBRARIES 
 		"${CMAKE_SOURCE_DIR}/../third-party-lib/windows/${KEYLIB_LIB_ARCH}-${KEYLIB_LIB_COMPILER}/${CMAKE_CFG_INTDIR}")
 else()
@@ -146,7 +149,7 @@ endif()
 
 ### OpenCV
 
-find_package(OpenCV REQUIRED)
+#find_package(OpenCV REQUIRED)
 
 ### OpenGL
 
@@ -170,8 +173,11 @@ if(WIN32) # libraries for windows are prepared in known location
 		set(V8_LIBRARIES 
 				Ws2_32.lib
 				WINMM.LIB
-				${KEYLIB_LIBRARIES}/v8/v8.lib
-				${KEYLIB_LIBRARIES}/v8/v8preparser.lib)
+				${KEYLIB_LIBRARIES}/v8/preparser_lib.lib
+				${KEYLIB_LIBRARIES}/v8/v8_base.lib
+				${KEYLIB_LIBRARIES}/v8/v8_nosnapshot.lib
+				${KEYLIB_LIBRARIES}/v8/v8_snapshot.lib
+			)
 	elseif(MINGW)
 		message("Using mingw for V8 on windows is not yet implemented.")
 	endif()
@@ -190,16 +196,12 @@ if(WIN32) # libraries for windows are prepared in known location
 				${KEYLIB_LIBRARIES}/bullet/BulletCollision.lib
 				${KEYLIB_LIBRARIES}/bullet/BulletDynamics.lib
 				${KEYLIB_LIBRARIES}/bullet/BulletFileLoader.lib
-				${KEYLIB_LIBRARIES}/bullet/BulletMultiThreaded.lib
 				${KEYLIB_LIBRARIES}/bullet/BulletSoftBody.lib
-				${KEYLIB_LIBRARIES}/bullet/BulletSoftBodySolvers_CPU.lib
-				${KEYLIB_LIBRARIES}/bullet/BulletSoftBodySolvers_DX11.lib
-				${KEYLIB_LIBRARIES}/bullet/BulletSoftBodySolvers_OpenCL_Mini.lib
 				${KEYLIB_LIBRARIES}/bullet/BulletWorldImporter.lib
 				${KEYLIB_LIBRARIES}/bullet/ConvexDecomposition.lib
-				${KEYLIB_LIBRARIES}/bullet/GIMPACTUtils.lib
+				${KEYLIB_LIBRARIES}/bullet/HACD.lib
 				${KEYLIB_LIBRARIES}/bullet/LinearMath.lib
-				${KEYLIB_LIBRARIES}/bullet/MiniCL.lib
+				${KEYLIB_LIBRARIES}/bullet/OpenGLSupport.lib
 				)
 	elseif(MINGW)
 		message("Using mingw for bullet on windows is not yet implemented.")

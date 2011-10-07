@@ -5,8 +5,9 @@
 #else
 #  ifdef _MSC_VER
 #	 include <stddef.h>
-#    ifndef MSC_TYPE_REDEFINITIONS
-#      define MSC_TYPE_REDEFINITIONS
+#    if _MSC_VER < 1700
+#      ifndef MSC_TYPE_REDEFINITIONS
+#        define MSC_TYPE_REDEFINITIONS
 
 typedef signed __int8 int8_t;
 typedef unsigned __int8 uint8_t;
@@ -16,6 +17,11 @@ typedef signed __int32 int32_t;
 typedef unsigned __int32 uint32_t;
 typedef signed __int64 int64_t;
 typedef unsigned __int64 uint64_t;
+
+#      endif
+#    else
+
+#include <stdint.h>
 
 #    endif
 #  else

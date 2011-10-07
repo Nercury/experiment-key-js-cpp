@@ -3,11 +3,10 @@
 #include <list>
 
 #include <key-common/app.h>
+#include <key-common/SsJsonConfig.h>
 #include <key-v8/BootStrapV8.h>
 
-#include <key-window/Renderer.h>
 #include <key-window/SsWindow.h>
-#include <key-common/SsJsonConfig.h>
 #include <key-opengl/OpenGL.h>
 
 #include <json/reader.h>
