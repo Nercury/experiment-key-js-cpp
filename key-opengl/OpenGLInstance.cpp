@@ -11,7 +11,8 @@ using namespace std;
 using namespace key;
 
 OpenGLInstance::OpenGLInstance(key::Window * window) 
-	: sdl_window(NULL), key_window(window), width(800), height(600), running(false) {
+	: sdl_window(NULL), key_window(window), width(800), height(600), 
+	running(false) {
 
 }
 
@@ -63,7 +64,8 @@ fun_res OpenGLInstance::run() {
 	if (sdl_init_result.not_ok())
 		return sdl_init_result;
 
-	cout << "Using SDL " << SDL_MAJOR_VERSION << "." << SDL_MINOR_VERSION << "." << SDL_PATCHLEVEL << "." << endl;
+	cout << boost::format("Using SDL %1%.%2%.%3%.") 
+		% SDL_MAJOR_VERSION % SDL_MINOR_VERSION % SDL_PATCHLEVEL << endl;
 
 	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
@@ -75,13 +77,33 @@ fun_res OpenGLInstance::run() {
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
 
-	
+	uint32_t windowFlags = SDL_WINDOW_OPENGL;
+
+	if (this->key_window->hidden)
+		windowFlags |= SDL_WINDOW_HIDDEN;
+	else
+		windowFlags |= SDL_WINDOW_SHOWN;
+
+	if (this->key_window->fullScreen)
+		windowFlags |= SDL_WINDOW_FULLSCREEN;
+
+	if (this->key_window->resizable)
+		windowFlags |= SDL_WINDOW_RESIZABLE;
+
+	if (this->key_window->minimized)
+		windowFlags |= SDL_WINDOW_MINIMIZED;
+
+	if (this->key_window->maximized)
+		windowFlags |= SDL_WINDOW_MAXIMIZED;
+
+	if (this->key_window->inputGrabbed)
+		windowFlags |= SDL_WINDOW_INPUT_GRABBED;
 
 	sdl_window = SDL_CreateWindow(this->key_window->windowTitle.c_str(),
 			SDL_WINDOWPOS_CENTERED,
 			SDL_WINDOWPOS_CENTERED,
 			width, height,
-			SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN);
+			windowFlags);
     if (!sdl_window)
 		return fun_error(boost::format("Unable to create render window. %1%") % SDL_GetError());
 

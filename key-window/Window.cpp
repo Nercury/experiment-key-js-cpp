@@ -16,13 +16,21 @@ namespace cvv8 {
 
 key::Window::Window() 
 	: windowTitle("Key Window"), 
-	device(), fullScreen(false), hidden(false), resizable(true) {
+	device(), 
+	fullScreen(false), 
+	hidden(false), 
+	resizable(true),
+	inputGrabbed(false),
+	maximized(false),
+	minimized(false) {
+
 	this->allRenderers = Renderer::getRenderers();
 	for (auto it = this->allRenderers.begin(); it != this->allRenderers.end(); ++it) {
 		if (it == this->allRenderers.begin())
 			this->currentDevice = it->first;
 		this->allRenderDevices.push_back(it->first);
 	}
+
 }
 
 key::Window::~Window() {
