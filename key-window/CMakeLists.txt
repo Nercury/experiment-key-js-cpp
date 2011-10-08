@@ -12,8 +12,6 @@ add_library(key-window STATIC
 	DeviceInstance.hpp
 	Window.h
 	Window.cpp
-	SsWindow.h
-	SsWindow.cpp
 	)
 
 target_link_libraries(key-window 

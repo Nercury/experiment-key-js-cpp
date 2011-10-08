@@ -1,7 +1,6 @@
-#include "SsJsonConfig.h"
+#include "JsonConfig.h"
 
 using namespace std;
-using namespace v8;
 
 #include <iostream>
 #include <fstream>
@@ -12,7 +11,7 @@ using namespace v8;
 #include <json/writer.h>
 #include <json/value.h>
 
-key::SsJsonConfig::SsJsonConfig(std::string main_config_filename) : configuration_is_valid(false) {
+key::JsonConfig::JsonConfig(std::string main_config_filename) : configuration_is_valid(false) {
 	bool could_read = false;
 	
 	std::string & full_config_filename = fullPathTo(main_config_filename);
@@ -59,14 +58,6 @@ key::SsJsonConfig::SsJsonConfig(std::string main_config_filename) : configuratio
 	}
 }
 
-key::SsJsonConfig::~SsJsonConfig() {
+key::JsonConfig::~JsonConfig() {
 
-}
-
-void key::SsJsonConfig::initCore(v8::Handle<v8::Object> & dest) {
-	dest->Set(String::New("js_main_config_contents"), String::New(main_configuration_contents.c_str()));
-	dest->Set(String::New("js_main_app_path"), String::New(getAppPath().c_str()));
-	string s;
-	s.append(1, PATH_SEPARATOR);
-	dest->Set(String::New("js_main_app_path_separator"), String::New(s.c_str()));
 }

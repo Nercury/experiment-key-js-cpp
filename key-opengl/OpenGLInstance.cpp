@@ -143,17 +143,30 @@ fun_res OpenGLInstance::run() {
 			SDL_WINDOWPOS_CENTERED,
 			renderWidth, renderHeight,
 			windowFlags);
+
+	auto sdl_window2 = SDL_CreateWindow(this->key_window->windowTitle.c_str(),
+			SDL_WINDOWPOS_CENTERED,
+			SDL_WINDOWPOS_CENTERED,
+			renderWidth, renderHeight,
+			windowFlags);
+
     if (!sdl_window)
 		return fun_error(boost::format("Unable to create render window. %1%") % SDL_GetError());
 
     context = SDL_GL_CreateContext(sdl_window);
-    SDL_GL_SetSwapInterval(1);
+	
+	auto context2 = SDL_GL_CreateContext(sdl_window2);
 
 	SDL_Event evt;
     uint64_t old = SDL_GetPerformanceCounter();
 
 	this->running = true;
 
+	SDL_GL_MakeCurrent(sdl_window, context);
+	SDL_GL_SetSwapInterval(1);
+	this->resize();
+	SDL_GL_MakeCurrent(sdl_window2, context2);
+	SDL_GL_SetSwapInterval(1);
 	this->resize();
 
 	int seconds = 0;
@@ -176,12 +189,19 @@ fun_res OpenGLInstance::run() {
         while (SDL_PollEvent(&evt))
             this->handleEvent(evt, dt);
 
+		SDL_GL_MakeCurrent(sdl_window, context);
         if (dt > 0)
             this->update(dt);
         this->render();
-
 		SDL_GL_SwapWindow(sdl_window);
-        //SDL_Delay(5);
+
+		SDL_GL_MakeCurrent(sdl_window2, context2);
+		if (dt > 0)
+            this->update(dt);
+        this->render();
+		SDL_GL_SwapWindow(sdl_window2);
+		
+        SDL_Delay(5);
 
 		sec_frames[0]++;
 
@@ -205,7 +225,9 @@ fun_res OpenGLInstance::run() {
 	}
 
     SDL_GL_DeleteContext(context);
+	SDL_GL_DeleteContext(context2);
     SDL_DestroyWindow(sdl_window);
+	SDL_DestroyWindow(sdl_window2);
 
 	sdl_window = NULL;
 

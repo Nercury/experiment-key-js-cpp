@@ -9,13 +9,13 @@ js.help(Window);
 window.windowTitle = "Hello";
 //app.log("screen saver enabled: " + (window.screenSaverEnabled ? 'true' : 'false'));
 //app.log("number of displays: " + window.numDisplays);
-/*js.each(window.getDisplayModes(0), function(i, mode) {
+js.each(window.getDisplayModes(0), function(i, mode) {
 	app.log("mode " + i + " = " + JSON.stringify(mode));
-});*/
+});
 
-//app.log(window.getDisplayModes(0)[0]);
+app.log(window.getDisplayModes(0)[0]);
 
-//window.displayMode = window.getDisplayModes(0)[0];
+window.displayMode = window.getDisplayModes(0)[0];
 
 window.onKeyUp = function(code) {
 	
@@ -38,7 +38,7 @@ window.onWindowInit = function() {
 };
 
 window.displayMode = window.getDesktopDisplayMode();
-window.fullScreen = true;
+window.fullScreen = false;
 window.run();
 
 //window.run();

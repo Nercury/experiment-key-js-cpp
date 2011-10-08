@@ -12,8 +12,8 @@ add_library(key-common STATIC
 	app.h # app inialization path, path separator, relative path function
 	error.hpp # error object + message mechanism
 	app.cpp 
-	SsJsonConfig.h # json configuration file
-	SsJsonConfig.cpp
+	JsonConfig.h # json configuration file
+	JsonConfig.cpp
 	)
 
 target_link_libraries(key-common 

@@ -77,7 +77,6 @@ js = new Js();
 
 function App() 
 {
-	this.config = JSON.parse(js_main_config_contents);
 	this.nativePath = js_main_app_path;
 	this.pathSeparator = js_main_app_path_separator;
 }
