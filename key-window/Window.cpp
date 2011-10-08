@@ -152,6 +152,14 @@ void key::Window::setDisplayMode(v8::Handle<v8::Value> newMode) {
 	}
 }
 
+std::map<std::string, int32_t> key::Window::getDesktopDisplayMode() {
+	auto renderer = getCurrentRenderer();
+	if (renderer.use_count() > 0)
+		return renderer->getDesktopDisplayMode(this->displayIndex);
+	std::map<std::string, int32_t> empty;
+	return empty;
+}
+
 void key::Window::setDisplayIndex(uint16_t value) {
 	this->displayIndex = value;
 

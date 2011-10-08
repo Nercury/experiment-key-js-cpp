@@ -24,6 +24,7 @@ namespace key {
 		LIB_KEY_OPENGL virtual void setScreenSaverEnabled(bool value);
 		LIB_KEY_OPENGL virtual uint16_t getNumDisplays();
 		LIB_KEY_OPENGL virtual void getDisplayModes(uint16_t displayIndex, std::list<std::map<std::string, int32_t>> & modes);
+		LIB_KEY_OPENGL virtual std::map<std::string, int32_t> getDesktopDisplayMode(uint16_t displayIndex);
 
 		static fun_res useSDL();
 		static void unuseSDL();

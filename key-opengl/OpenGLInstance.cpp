@@ -128,6 +128,10 @@ fun_res OpenGLInstance::run() {
 		renderWidth = final_dm.w;
 		renderHeight = final_dm.h;
 
+		this->key_window->displayMode["width"] = final_dm.w;
+		this->key_window->displayMode["height"] = final_dm.h;
+		this->key_window->displayMode["refreshRate"] = final_dm.refresh_rate;
+
 		this->key_window->windowSize = boost::assign::list_of(renderWidth)(renderHeight);
 	} else {
 		renderWidth = this->key_window->windowSize[0];

@@ -15,7 +15,7 @@ window.windowTitle = "Hello";
 
 //app.log(window.getDisplayModes(0)[0]);
 
-window.displayMode = window.getDisplayModes(0)[0];
+//window.displayMode = window.getDisplayModes(0)[0];
 
 window.onKeyUp = function(code) {
 	
@@ -37,9 +37,8 @@ window.onWindowInit = function() {
 	app.log("running init");
 };
 
-window.windowSize = [300, 200];
-window.inputGrabbed = false;
+window.displayMode = window.getDesktopDisplayMode();
 window.fullScreen = true;
+window.run();
 
-window.run();
-window.run();
+//window.run();

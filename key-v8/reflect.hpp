@@ -114,8 +114,4 @@
 #define REFLECT(name) __reflect_ ## name(cc, proto, for_static); \
 	if (for_static) items.push_back(#name);
 
-#define COMMA_1 , 
-#define COMMA_2 COMMA_1
-#define COMMA_3 COMMA_2
-#define GOOD_COMMA COMMA_3
-/* you can laugh if you figure the reason for this. */
+#define GOOD_COMMA ,

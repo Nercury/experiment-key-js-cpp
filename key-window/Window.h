@@ -60,6 +60,10 @@ namespace key {
 			"map<string, int>", "Get or set current display mode")
 		std::map<std::string, int32_t> displayMode; void setDisplayMode(v8::Handle<v8::Value> newMode);
 
+		FLECT_M(key::Window, getDesktopDisplayMode, std::map<std::string GOOD_COMMA int32_t> (), "map<string, int>", "()", 
+			"Get desktop display mode.")
+		std::map<std::string, int32_t> getDesktopDisplayMode();
+
 		FLECT_GS(key::Window, displayIndex, 
 			Member, uint16_t, displayIndex, 
 			Method, void (uint16_t), setDisplayIndex, 
@@ -156,6 +160,8 @@ namespace key {
 			REFLECT(screenSaverEnabled)
 			REFLECT(numDisplays)
 			REFLECT(getDisplayModes)
+			REFLECT(getDesktopDisplayMode)
+			REFLECT(displayIndex)
 			REFLECT(displayMode)
 			REFLECT(fullScreen)
 			REFLECT(hidden)

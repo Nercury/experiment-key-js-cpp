@@ -101,6 +101,27 @@ void OpenGL::getDisplayModes(uint16_t displayIndex, std::list<std::map<std::stri
 	unuseSDL();
 }
 
+std::map<std::string, int32_t> OpenGL::getDesktopDisplayMode(uint16_t displayIndex) {
+	useSDL();
+
+	SDL_DisplayMode mode;
+	std::map<std::string, int32_t> dt_mode;
+
+	if (SDL_GetDesktopDisplayMode((int)displayIndex, &mode) == 0) {
+		
+		dt_mode.insert(pair<std::string, int32_t>("width", mode.w));
+		dt_mode.insert(pair<std::string, int32_t>("height", mode.h));
+		dt_mode.insert(pair<std::string, int32_t>("refreshRate", mode.refresh_rate));
+
+	} else {
+		cout << "Failed to get desktop display mode. " << SDL_GetError() << endl;
+	}
+
+	unuseSDL();
+
+	return dt_mode;
+}
+
 /**
  * @brief Try to get with, height, refresh values from mode value map
  */
