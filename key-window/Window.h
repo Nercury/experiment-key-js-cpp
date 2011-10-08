@@ -2,7 +2,7 @@
 
 #include <string>
 #include <memory>
-#include <list>
+#include <vector>
 #include <map>
 
 #include <key-common/types.h>
@@ -60,6 +60,12 @@ namespace key {
 			"map<string, int>", "Get or set current display mode")
 		std::map<std::string, int32_t> displayMode; void setDisplayMode(v8::Handle<v8::Value> newMode);
 
+		FLECT_GS(key::Window, displayIndex, 
+			Member, uint16_t, displayIndex, 
+			Method, void (uint16_t), setDisplayIndex, 
+			"uint16", "Get or set full screen display index")
+		uint16_t displayIndex; void setDisplayIndex(uint16_t value);
+
 		FLECT_GS(key::Window, fullScreen, 
 			Member, bool, fullScreen, 
 			Method, void (bool), setFullScreen, 
@@ -97,10 +103,10 @@ namespace key {
 		bool inputGrabbed; void setInputGrabbed(bool value);
 
 		FLECT_GS(key::Window, windowSize, 
-			Member, std::list<int32_t>, windowSize, 
-			Method, void (std::list<int32_t>), setWindowSize, 
+			Member, std::vector<int32_t>, windowSize, 
+			Method, void (std::vector<int32_t>), setWindowSize, 
 			"array<int>",  "Get or set window size. Size uses two integer values in array [width, height].")
-		std::list<int32_t> windowSize; void setWindowSize(std::list<int32_t> value);
+		std::vector<int32_t> windowSize; void setWindowSize(std::vector<int32_t> value);
 
 		FLECT_G(key::Window, allRenderDevices,
 			Member, std::vector<std::string>, allRenderDevices, 
@@ -137,6 +143,7 @@ namespace key {
 		static const int16_t NOTIFY_CHANGE_MAXIMIZED = 7;
 		static const int16_t NOTIFY_CHANGE_INPUT_GRAB = 8;
 		static const int16_t NOTIFY_CHANGE_WINDOW_SIZE = 9;
+		static const int16_t NOTIFY_CHANGE_DISPLAY_INDEX = 10;
 
 		/* reflection */
 		typedef cvv8::Signature<key::Window (

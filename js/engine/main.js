@@ -37,7 +37,9 @@ window.onWindowInit = function() {
 	app.log("running init");
 };
 
+window.windowSize = [300, 200];
 window.inputGrabbed = false;
+window.fullScreen = true;
 
 window.run();
 window.run();

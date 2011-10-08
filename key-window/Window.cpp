@@ -1,5 +1,7 @@
 #include "Window.h"
 
+#include <boost/assign.hpp>
+
 #include <key-v8/exception.h>
 #include <key-window/Renderer.h>
 
@@ -14,15 +16,18 @@ namespace cvv8 {
     CVV8_TypeName_IMPL((key::Window),"Window");
 }
 
-key::Window::Window() 
-	: windowTitle("Key Window"), 
+key::Window::Window() : 
+	windowTitle("Key Window"), 
 	device(), 
+	displayIndex(0),
 	fullScreen(false), 
 	hidden(false), 
 	resizable(true),
 	inputGrabbed(false),
 	maximized(false),
-	minimized(false) {
+	minimized(false) 
+{
+	this->windowSize = boost::assign::list_of(640)(480);
 
 	this->allRenderers = Renderer::getRenderers();
 	for (auto it = this->allRenderers.begin(); it != this->allRenderers.end(); ++it) {
@@ -30,7 +35,6 @@ key::Window::Window()
 			this->currentDevice = it->first;
 		this->allRenderDevices.push_back(it->first);
 	}
-
 }
 
 key::Window::~Window() {
@@ -148,6 +152,13 @@ void key::Window::setDisplayMode(v8::Handle<v8::Value> newMode) {
 	}
 }
 
+void key::Window::setDisplayIndex(uint16_t value) {
+	this->displayIndex = value;
+
+	if (this->device.use_count() > 0)
+		this->device->notifyWindowChange(NOTIFY_CHANGE_DISPLAY_INDEX);
+}
+
 void key::Window::setFullScreen(bool value) {
 	this->fullScreen = value;
 
@@ -190,7 +201,10 @@ void key::Window::setInputGrabbed(bool value) {
 		this->device->notifyWindowChange(NOTIFY_CHANGE_INPUT_GRAB);
 }
 
-void key::Window::setWindowSize(std::list<int32_t> value) {
+void key::Window::setWindowSize(std::vector<int32_t> value) {
+	if (value.size() != 2)
+		return;
+
 	this->windowSize = value;
 
 	if (this->device.use_count() > 0)

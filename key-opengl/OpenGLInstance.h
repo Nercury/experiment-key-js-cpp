@@ -27,8 +27,8 @@ namespace key {
 		/*int videoFlags;
 		int screenBpp;*/
 
-		int16_t width;
-		int16_t height;
+		int32_t renderWidth;
+		int32_t renderHeight;
 
 		/*int16_t window_width;
 		int16_t window_height;

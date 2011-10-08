@@ -2,7 +2,10 @@
 
 #include <iostream>
 
+#include <SDL2/SDL.h>
+
 #include <boost/format.hpp> 
+#include <boost/assign.hpp> 
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 #include <key-opengl/OpenGL.h>
@@ -10,9 +13,12 @@
 using namespace std;
 using namespace key;
 
-OpenGLInstance::OpenGLInstance(key::Window * window) 
-	: sdl_window(NULL), key_window(window), width(800), height(600), 
-	running(false) {
+OpenGLInstance::OpenGLInstance(key::Window * window) : 
+	sdl_window(NULL), 
+	key_window(window), 
+	renderWidth(window->windowSize[0]), renderHeight(window->windowSize[1]), 
+	running(false) 
+{
 
 }
 
@@ -35,7 +41,7 @@ void OpenGLInstance::resize()
 {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0.0f, width, height, 0.0f, 0.0f, 1000.0f);
+	glOrtho(0.0f, renderWidth, renderHeight, 0.0f, 0.0f, 1000.0f);
 
     glMatrixMode(GL_MODELVIEW);
 
@@ -79,30 +85,59 @@ fun_res OpenGLInstance::run() {
 
 	uint32_t windowFlags = SDL_WINDOW_OPENGL;
 
-	if (this->key_window->hidden)
-		windowFlags |= SDL_WINDOW_HIDDEN;
-	else
-		windowFlags |= SDL_WINDOW_SHOWN;
-
 	if (this->key_window->fullScreen)
 		windowFlags |= SDL_WINDOW_FULLSCREEN;
 
-	if (this->key_window->resizable)
-		windowFlags |= SDL_WINDOW_RESIZABLE;
+	if (!this->key_window->fullScreen) {
 
-	if (this->key_window->minimized)
-		windowFlags |= SDL_WINDOW_MINIMIZED;
+		if (this->key_window->hidden)
+			windowFlags |= SDL_WINDOW_HIDDEN;
+		else
+			windowFlags |= SDL_WINDOW_SHOWN;
 
-	if (this->key_window->maximized)
-		windowFlags |= SDL_WINDOW_MAXIMIZED;
+		if (this->key_window->resizable)
+			windowFlags |= SDL_WINDOW_RESIZABLE;
 
-	if (this->key_window->inputGrabbed)
-		windowFlags |= SDL_WINDOW_INPUT_GRABBED;
+		if (this->key_window->minimized)
+			windowFlags |= SDL_WINDOW_MINIMIZED;
+
+		if (this->key_window->maximized)
+			windowFlags |= SDL_WINDOW_MAXIMIZED;
+
+		if (this->key_window->inputGrabbed)
+			windowFlags |= SDL_WINDOW_INPUT_GRABBED;
+
+	}
+
+	// widow width and height are only for windowed mode, for
+	// fullscreen display mode is used
+
+	if (this->key_window->fullScreen) {
+		SDL_DisplayMode dm;
+		dm.format = SDL_PIXELFORMAT_UNKNOWN;
+		dm.driverdata = 0;
+		if (!OpenGL::parseDisplayMode(this->key_window->displayMode, dm.w, dm.h, dm.refresh_rate)) {
+			dm.w = this->key_window->windowSize[0];
+			dm.h = this->key_window->windowSize[1];
+			dm.refresh_rate = 100;
+		}
+		SDL_DisplayMode final_dm;
+		if (SDL_GetClosestDisplayMode(this->key_window->displayIndex, &dm, &final_dm) == NULL) {
+			return fun_error(boost::format("Unable to create render window. %1%") % SDL_GetError());
+		}
+		renderWidth = final_dm.w;
+		renderHeight = final_dm.h;
+
+		this->key_window->windowSize = boost::assign::list_of(renderWidth)(renderHeight);
+	} else {
+		renderWidth = this->key_window->windowSize[0];
+		renderHeight = this->key_window->windowSize[1];
+	}
 
 	sdl_window = SDL_CreateWindow(this->key_window->windowTitle.c_str(),
 			SDL_WINDOWPOS_CENTERED,
 			SDL_WINDOWPOS_CENTERED,
-			width, height,
+			renderWidth, renderHeight,
 			windowFlags);
     if (!sdl_window)
 		return fun_error(boost::format("Unable to create render window. %1%") % SDL_GetError());
