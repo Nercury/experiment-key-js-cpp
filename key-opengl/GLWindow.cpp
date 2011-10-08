@@ -1,4 +1,4 @@
-#include "OpenGLInstance.h"
+#include "GLWindow.h"
 
 #include <iostream>
 
@@ -8,12 +8,12 @@
 #include <boost/assign.hpp> 
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-#include <key-opengl/OpenGL.h>
+#include <key-opengl/GLWindows.h>
 
 using namespace std;
 using namespace key;
 
-OpenGLInstance::OpenGLInstance(key::Window * window) : 
+GLWindow::GLWindow(key::Window * window) : 
 	sdl_window(NULL), 
 	key_window(window), 
 	renderWidth(window->windowSize[0]), renderHeight(window->windowSize[1]), 
@@ -22,22 +22,22 @@ OpenGLInstance::OpenGLInstance(key::Window * window) :
 
 }
 
-void OpenGLInstance::notifyWindowChange(int16_t window_change) {
+void GLWindow::notifyWindowChange(int16_t window_change) {
 	//this->window_title = new_title;
 }
 
-void OpenGLInstance::unsetWindow() {
+void GLWindow::unsetWindow() {
 	this->key_window = NULL;
 	this->running = false;
 }
 
-void OpenGLInstance::handleEvent(SDL_Event &evt, int64_t dt)
+void GLWindow::handleEvent(SDL_Event &evt, int64_t dt)
 {
     if (evt.type == SDL_QUIT)
         running = false;
 }
 
-void OpenGLInstance::resize()
+void GLWindow::resize()
 {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -48,12 +48,12 @@ void OpenGLInstance::resize()
 	glClearColor(0.3f, 0.6f, 0.9f, 1.0f);
 }
 
-void OpenGLInstance::update(int64_t dt)
+void GLWindow::update(int64_t dt)
 {
     /* TODO */
 }
 
-void OpenGLInstance::render()
+void GLWindow::render()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 
@@ -65,8 +65,8 @@ void OpenGLInstance::render()
     glEnd();
 }
 
-fun_res OpenGLInstance::run() {
-	auto sdl_init_result = OpenGL::useSDL();
+fun_res GLWindow::run() {
+	auto sdl_init_result = GLWindows::useSDL();
 	if (sdl_init_result.not_ok())
 		return sdl_init_result;
 
@@ -116,7 +116,7 @@ fun_res OpenGLInstance::run() {
 		SDL_DisplayMode dm;
 		dm.format = SDL_PIXELFORMAT_UNKNOWN;
 		dm.driverdata = 0;
-		if (!OpenGL::parseDisplayMode(this->key_window->displayMode, dm.w, dm.h, dm.refresh_rate)) {
+		if (!GLWindows::parseDisplayMode(this->key_window->displayMode, dm.w, dm.h, dm.refresh_rate)) {
 			dm.w = this->key_window->windowSize[0];
 			dm.h = this->key_window->windowSize[1];
 			dm.refresh_rate = 100;
@@ -231,6 +231,6 @@ fun_res OpenGLInstance::run() {
 
 	sdl_window = NULL;
 
-	OpenGL::unuseSDL();
+	GLWindows::unuseSDL();
 	return fun_ok();
 }

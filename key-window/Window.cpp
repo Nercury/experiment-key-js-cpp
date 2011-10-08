@@ -18,7 +18,6 @@ namespace cvv8 {
 
 key::Window::Window() : 
 	windowTitle("Key Window"), 
-	device(), 
 	displayIndex(0),
 	fullScreen(false), 
 	hidden(false), 
@@ -61,7 +60,7 @@ bool key::Window::run() {
 		auto renderer = getCurrentRenderer();
 		if (renderer.use_count() > 0) {
 			cout << "Creating " << renderer->getName() << "..." << endl;
-			auto device_result = renderer->createDevice(this);
+			/*auto device_result = renderer->createDevice(this);
 			if (device_result.ok()) {
 				this->device = device_result.result;
 
@@ -73,7 +72,7 @@ bool key::Window::run() {
 			} else {
 				cout << device_result.message() << endl;
 				return false;
-			}
+			}*/
 		}
 	}
 
@@ -100,8 +99,8 @@ void key::Window::setOnWindowResize(Handle<Value> value) {
 
 void key::Window::setWindowTitle(std::string newTitle) {
 	this->windowTitle = newTitle;
-	if (this->device.use_count() > 0)
-		this->device->notifyWindowChange(NOTIFY_CHANGE_TITLE);
+	/*if (this->device.use_count() > 0)
+		this->device->notifyWindowChange(NOTIFY_CHANGE_TITLE);*/
 }
 
 void key::Window::setScreenSaverEnabled(bool value) {
@@ -147,8 +146,8 @@ void key::Window::setDisplayMode(v8::Handle<v8::Value> newMode) {
 			this->displayMode[cvv8::CastFromJS<std::string>(name)] = cvv8::CastFromJS<int32_t>(value);
 		}
 
-		if (this->device.use_count() > 0)
-			this->device->notifyWindowChange(NOTIFY_CHANGE_DISPLAY_MODE);
+		/*if (this->device.use_count() > 0)
+			this->device->notifyWindowChange(NOTIFY_CHANGE_DISPLAY_MODE);*/
 	}
 }
 
@@ -163,50 +162,50 @@ std::map<std::string, int32_t> key::Window::getDesktopDisplayMode() {
 void key::Window::setDisplayIndex(uint16_t value) {
 	this->displayIndex = value;
 
-	if (this->device.use_count() > 0)
-		this->device->notifyWindowChange(NOTIFY_CHANGE_DISPLAY_INDEX);
+	/*if (this->device.use_count() > 0)
+		this->device->notifyWindowChange(NOTIFY_CHANGE_DISPLAY_INDEX);*/
 }
 
 void key::Window::setFullScreen(bool value) {
 	this->fullScreen = value;
 
-	if (this->device.use_count() > 0)
-		this->device->notifyWindowChange(NOTIFY_CHANGE_FULL_SCREEN);
+	/*if (this->device.use_count() > 0)
+		this->device->notifyWindowChange(NOTIFY_CHANGE_FULL_SCREEN);*/
 }
 
 void key::Window::setHidden(bool value) {
 	this->hidden = value;
 
-	if (this->device.use_count() > 0)
-		this->device->notifyWindowChange(NOTIFY_CHANGE_HIDDEN);
+	/*if (this->device.use_count() > 0)
+		this->device->notifyWindowChange(NOTIFY_CHANGE_HIDDEN);*/
 }
 
 void key::Window::setResizable(bool value) {
 	this->resizable = value;
 
-	if (this->device.use_count() > 0)
-		this->device->notifyWindowChange(NOTIFY_CHANGE_RESIZABLE);
+	/*if (this->device.use_count() > 0)
+		this->device->notifyWindowChange(NOTIFY_CHANGE_RESIZABLE);*/
 }
 
 void key::Window::setMinimized(bool value) {
 	this->minimized = value;
 
-	if (this->device.use_count() > 0)
-		this->device->notifyWindowChange(NOTIFY_CHANGE_MINIMIZED);
+	/*if (this->device.use_count() > 0)
+		this->device->notifyWindowChange(NOTIFY_CHANGE_MINIMIZED);*/
 }
 
 void key::Window::setMaximized(bool value) {
 	this->maximized = value;
 
-	if (this->device.use_count() > 0)
-		this->device->notifyWindowChange(NOTIFY_CHANGE_MAXIMIZED);
+	/*if (this->device.use_count() > 0)
+		this->device->notifyWindowChange(NOTIFY_CHANGE_MAXIMIZED);*/
 }
 
 void key::Window::setInputGrabbed(bool value) {
 	this->inputGrabbed = value;
 
-	if (this->device.use_count() > 0)
-		this->device->notifyWindowChange(NOTIFY_CHANGE_INPUT_GRAB);
+	/*if (this->device.use_count() > 0)
+		this->device->notifyWindowChange(NOTIFY_CHANGE_INPUT_GRAB);*/
 }
 
 void key::Window::setWindowSize(std::vector<int32_t> value) {
@@ -215,6 +214,6 @@ void key::Window::setWindowSize(std::vector<int32_t> value) {
 
 	this->windowSize = value;
 
-	if (this->device.use_count() > 0)
-		this->device->notifyWindowChange(NOTIFY_CHANGE_WINDOW_SIZE);
+	/*if (this->device.use_count() > 0)
+		this->device->notifyWindowChange(NOTIFY_CHANGE_WINDOW_SIZE);*/
 }

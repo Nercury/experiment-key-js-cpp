@@ -1,38 +1,31 @@
-#include "OpenGL.h"
+#include "GLWindows.h"
 
 #include <set>
 
-#include <key-opengl/OpenGLInstance.h>
+#include <key-opengl/GLWindow.h>
 #include <key-window/Window.h>
 
 using namespace key;
 using namespace std;
 
-bool OpenGL::screenSaverEnabled = true;
-
-fun_res_obj<DeviceInstance> OpenGL::createDevice(key::Window * window) {
-	OpenGLInstance * device = new OpenGLInstance(window);
-	shared_ptr<DeviceInstance> instance(device);
-	
-	return fun_ok(instance);
-}
+bool GLWindows::screenSaverEnabled = true;
 
 static int window_instances = 0;
 
-fun_res OpenGL::useSDL() {
+fun_res GLWindows::useSDL() {
 	if ( SDL_Init( SDL_INIT_VIDEO ) < 0 )
 	{
 		return fun_error(boost::format("Failed to initialize SDL: %1%") % SDL_GetError());
 	} else {
 		SDL_StartTextInput();
-		OpenGL::setGlobalSDLValues();
+		GLWindows::setGlobalSDLValues();
 	}
 		
 	window_instances++;
 	return fun_ok();
 }
 
-void OpenGL::unuseSDL() {
+void GLWindows::unuseSDL() {
 	if (window_instances == 1)
 	{
 		SDL_Quit();
@@ -40,28 +33,28 @@ void OpenGL::unuseSDL() {
 	window_instances--;
 }
 
-void OpenGL::setGlobalSDLValues() {
+void GLWindows::setGlobalSDLValues() {
 	if (window_instances > 0) {
 		if (SDL_IsScreenSaverEnabled() == SDL_TRUE) {
-			if (!OpenGL::screenSaverEnabled)
+			if (!GLWindows::screenSaverEnabled)
 				SDL_DisableScreenSaver();
 		} else {
-			if (OpenGL::screenSaverEnabled)
+			if (GLWindows::screenSaverEnabled)
 				SDL_EnableScreenSaver();
 		}
 	}
 }
 
-bool OpenGL::isScreenSaverEnabled() {
-	return OpenGL::screenSaverEnabled;
+bool GLWindows::isScreenSaverEnabled() {
+	return GLWindows::screenSaverEnabled;
 }
 
-void OpenGL::setScreenSaverEnabled(bool value) {
-	OpenGL::screenSaverEnabled = value;
-	OpenGL::setGlobalSDLValues();
+void GLWindows::setScreenSaverEnabled(bool value) {
+	GLWindows::screenSaverEnabled = value;
+	GLWindows::setGlobalSDLValues();
 }
 
-uint16_t OpenGL::getNumDisplays() {
+uint16_t GLWindows::getNumDisplays() {
 	useSDL();
 	auto res = SDL_GetNumVideoDisplays();
 	unuseSDL();
@@ -72,7 +65,7 @@ uint16_t OpenGL::getNumDisplays() {
 }
 
 
-void OpenGL::getDisplayModes(uint16_t displayIndex, std::list<std::map<std::string, int32_t>> & modes) {
+void GLWindows::getDisplayModes(uint16_t displayIndex, std::list<std::map<std::string, int32_t>> & modes) {
 	useSDL();
 
 	auto num_displays = getNumDisplays();
@@ -101,7 +94,7 @@ void OpenGL::getDisplayModes(uint16_t displayIndex, std::list<std::map<std::stri
 	unuseSDL();
 }
 
-std::map<std::string, int32_t> OpenGL::getDesktopDisplayMode(uint16_t displayIndex) {
+std::map<std::string, int32_t> GLWindows::getDesktopDisplayMode(uint16_t displayIndex) {
 	useSDL();
 
 	SDL_DisplayMode mode;
@@ -125,7 +118,7 @@ std::map<std::string, int32_t> OpenGL::getDesktopDisplayMode(uint16_t displayInd
 /**
  * @brief Try to get with, height, refresh values from mode value map
  */
-bool OpenGL::parseDisplayMode(std::map<std::string, int32_t> modeValues, int & w, int & h, int & refreshRate) {
+bool GLWindows::parseDisplayMode(std::map<std::string, int32_t> modeValues, int & w, int & h, int & refreshRate) {
 	auto withIt = modeValues.find("width");
 	auto heightIt = modeValues.find("height");
 	auto refreshRateIt = modeValues.find("refreshRate");

@@ -10,7 +10,6 @@
 
 namespace key {
 
-	class DeviceInstance;
 	class Window;
 
 	class Renderer
@@ -19,7 +18,6 @@ namespace key {
 		Renderer() {};
 		virtual ~Renderer() {};
 		virtual std::string getName() = 0;
-		virtual fun_res_obj<DeviceInstance> createDevice(key::Window * window) = 0;
 		virtual bool isScreenSaverEnabled() = 0;
 		virtual void setScreenSaverEnabled(bool value) = 0;
 		virtual uint16_t getNumDisplays() = 0;

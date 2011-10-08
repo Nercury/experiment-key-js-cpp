@@ -9,7 +9,6 @@ add_library(key-window STATIC
 	lib_key_window.h
 	Renderer.h
 	Renderer.cpp
-	DeviceInstance.hpp
 	Window.h
 	Window.cpp
 	)

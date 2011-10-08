@@ -9,7 +9,6 @@
 #include <key-v8/expose_headers.hpp>
 #include <key-v8/reflect.hpp>
 #include <key-window/lib_key_window.h>
-#include <key-window/DeviceInstance.hpp>
 #include <key-window/Renderer.h>
 
 namespace key {
@@ -18,8 +17,6 @@ namespace key {
 		: public std::enable_shared_from_this<key::Window>
 	{
 	private:
-		std::shared_ptr<DeviceInstance> device;
-
 		std::map<std::string, std::shared_ptr<key::Renderer>> allRenderers;
 		std::shared_ptr<key::Renderer> getCurrentRenderer();
 	public:
