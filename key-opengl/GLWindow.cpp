@@ -8,7 +8,7 @@
 #include <boost/assign.hpp> 
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-#include <key-opengl/GLWindows.h>
+#include <key-opengl/GLRenderer.h>
 
 using namespace std;
 using namespace key;
@@ -66,7 +66,7 @@ void GLWindow::render()
 }
 
 fun_res GLWindow::run() {
-	auto sdl_init_result = GLWindows::useSDL();
+	auto sdl_init_result = GLRenderer::useSDL();
 	if (sdl_init_result.not_ok())
 		return sdl_init_result;
 
@@ -116,7 +116,7 @@ fun_res GLWindow::run() {
 		SDL_DisplayMode dm;
 		dm.format = SDL_PIXELFORMAT_UNKNOWN;
 		dm.driverdata = 0;
-		if (!GLWindows::parseDisplayMode(this->key_window->displayMode, dm.w, dm.h, dm.refresh_rate)) {
+		if (!GLRenderer::parseDisplayMode(this->key_window->displayMode, dm.w, dm.h, dm.refresh_rate)) {
 			dm.w = this->key_window->windowSize[0];
 			dm.h = this->key_window->windowSize[1];
 			dm.refresh_rate = 100;
@@ -231,6 +231,6 @@ fun_res GLWindow::run() {
 
 	sdl_window = NULL;
 
-	GLWindows::unuseSDL();
+	GLRenderer::unuseSDL();
 	return fun_ok();
 }

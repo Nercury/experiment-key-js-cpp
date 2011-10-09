@@ -13,6 +13,10 @@
 
 namespace key {
 
+	/**
+	* Window interface for javascript.
+	* In backround it creates a 
+	*/
 	class Window
 		: public std::enable_shared_from_this<key::Window>
 	{
@@ -130,9 +134,22 @@ namespace key {
 			"function", "Set window resize callback")
 		v8::Persistent<v8::Function> onWindowResize; void setOnWindowResize(v8::Handle<v8::Value> value);
 
+		FLECT_M(key::Window, open, bool (), "bool", "()", 
+			"Open a window with current configuration. Actual window update is deferred to the \"run\" call." "\n"
+			"Recommended pattern is this:" "\n"
+			" - Set up window options and callbacks." "\n"
+			" - Use \"open()\" to open one or more windows." "\n"
+			" - Use \"run()\" on any of opened windows to keep them running" "\n"
+			" - On a window callback, use close() to close a window." "\n"
+			" - \"run()\" call stops only when all windows on related device are closed.")
+		bool open();
+
+		FLECT_M(key::Window, close, bool (), "bool", "()", 
+			"Request to close the window.")
+		bool close();
+
 		FLECT_M(key::Window, run, bool (), "bool", "()", 
-			"Create window loop and run the window." "\n"
-			"Note: this call blocks until the window is closed.")
+			"If a window is not already opened, opens it and runs it until all windows on the same device are closed.")
 		bool run();
 
 		static const int16_t NOTIFY_CHANGE_TITLE = 1;
@@ -171,6 +188,8 @@ namespace key {
 			REFLECT(currentDevice)
 			REFLECT(onWindowInit)
 			REFLECT(onWindowResize)
+			REFLECT(open)
+			REFLECT(close)
 			REFLECT(run)
 		}
 	};

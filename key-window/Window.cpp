@@ -50,7 +50,18 @@ std::shared_ptr<key::Renderer> key::Window::getCurrentRenderer() {
 		return it->second;
 }
 
-bool key::Window::run() {
+bool key::Window::open() 
+{
+	return true;
+}
+
+bool key::Window::close() 
+{
+	return true;
+}
+
+bool key::Window::run() 
+{
 	cout << "Current device is " << (this->currentDevice.empty() ? "empty" : this->currentDevice) << endl;
 
 	if (this->currentDevice.empty()) {

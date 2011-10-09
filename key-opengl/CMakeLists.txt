@@ -7,8 +7,8 @@ project(key-opengl)
 
 add_library(key-opengl STATIC 
 	lib_key_opengl.h
-	GLWindows.h
-	GLWindows.cpp
+	GLRenderer.h
+	GLRenderer.cpp
 	GLWindow.h
 	GLWindow.cpp
 	)

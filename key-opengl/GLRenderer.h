@@ -9,15 +9,15 @@
 
 namespace key {
 
-	class GLWindows
+	class GLRenderer
 		: public Renderer
 	{
 	private:
 		static bool screenSaverEnabled;
 
 	public:
-		GLWindows() {};
-		virtual ~GLWindows() {};
+		GLRenderer() {};
+		virtual ~GLRenderer() {};
 		virtual std::string getName() { return "OpenGL Render Device"; };
 		LIB_KEY_OPENGL virtual bool isScreenSaverEnabled();
 		LIB_KEY_OPENGL virtual void setScreenSaverEnabled(bool value);
