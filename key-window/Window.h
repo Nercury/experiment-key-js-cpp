@@ -18,7 +18,7 @@ namespace key {
 	* In backround it creates a 
 	*/
 	class Window
-		: public std::enable_shared_from_this<key::Window>
+		//: public std::enable_shared_from_this<key::Window>
 	{
 	private:
 		std::map<std::string, std::shared_ptr<key::Renderer>> allRenderers;
