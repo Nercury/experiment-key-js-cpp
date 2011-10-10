@@ -1,11 +1,14 @@
 #pragma once
 
 #include <string>
+#include <unordered_map>
 
 #include <key-common/types.h>
 #include <key-common/error.hpp>
 #include <key-opengl/lib_key_opengl.h>
 #include <key-window/Renderer.h>
+#include <key-v8/KeyV8.h>
+#include <key-window/Window.h>
 
 namespace key {
 
@@ -14,7 +17,7 @@ namespace key {
 	{
 	private:
 		static bool screenSaverEnabled;
-
+		std::unordered_map<uint64_t, std::shared_ptr<key::PersistentV8<key::Window>>> openedWindows;
 	public:
 		GLRenderer() {};
 		virtual ~GLRenderer() {};
@@ -24,6 +27,10 @@ namespace key {
 		LIB_KEY_OPENGL virtual uint16_t getNumDisplays();
 		LIB_KEY_OPENGL virtual void getDisplayModes(uint16_t displayIndex, std::list<std::map<std::string, int32_t>> & modes);
 		LIB_KEY_OPENGL virtual std::map<std::string, int32_t> getDesktopDisplayMode(uint16_t displayIndex);
+
+		virtual bool addWindow(v8::Handle<v8::Object> v8_window);
+		virtual bool removeWindow(uint64_t id);
+		virtual bool runWindowLoop();
 
 		static fun_res useSDL();
 		static void unuseSDL();

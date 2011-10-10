@@ -16,8 +16,17 @@ namespace cvv8 {
     CVV8_TypeName_IMPL((key::Window),"Window");
 }
 
+static uint64_t next_window_id = 0;
+
+static uint64_t get_next_window_id() {
+	next_window_id++;
+	return next_window_id;
+}
+
 key::Window::Window() : 
 	windowTitle("Key Window"), 
+	id(get_next_window_id()),
+	isOpened(false),
 	displayIndex(0),
 	fullScreen(false), 
 	hidden(false), 
@@ -41,6 +50,14 @@ key::Window::~Window() {
 		onWindowInit.Dispose();
 }
 
+void key::Window::setCurrentDevice(std::string value) {
+	if (this->isOpened) {
+		cout << "Can not change render device while window is opened." << endl;
+	} else {
+		this->currentDevice = value;
+	}
+}
+
 std::shared_ptr<key::Renderer> key::Window::getCurrentRenderer() {
 	auto it = this->allRenderers.find(this->currentDevice);
 	if (it == this->allRenderers.end()) {
@@ -50,40 +67,64 @@ std::shared_ptr<key::Renderer> key::Window::getCurrentRenderer() {
 		return it->second;
 }
 
-bool key::Window::open() 
+bool key::Window::open(const v8::Arguments & args) 
 {
-	return true;
+	if (isOpened)
+		return false;
+
+	auto renderer = getCurrentRenderer();
+	if (renderer.use_count() == 0)
+		return false;
+
+	HandleScope handle_scope;
+
+	Handle<Object> v8_window = args.This();
+
+	if (renderer->addWindow(v8_window)) {
+		this->isOpened = true;
+		return true;
+	}
+
+	return false;
 }
 
 bool key::Window::close() 
 {
-	return true;
+	if (!isOpened)
+		return false;
+
+	auto renderer = getCurrentRenderer();
+	if (renderer.use_count() == 0)
+		return false;
+
+	if (renderer->removeWindow(this->id)) {
+		this->isOpened = false;
+		return true;
+	}
+
+	return false;
 }
 
-bool key::Window::run() 
+bool key::Window::run(const v8::Arguments & args) 
 {
 	cout << "Current device is " << (this->currentDevice.empty() ? "empty" : this->currentDevice) << endl;
 
 	if (this->currentDevice.empty()) {
-		cout << "Can not initialize window on empty device" << endl;
+		cout << "Can not initialize window on empty device." << endl;
 		return false;
 	} else {
 		auto renderer = getCurrentRenderer();
 		if (renderer.use_count() > 0) {
-			cout << "Creating " << renderer->getName() << "..." << endl;
-			/*auto device_result = renderer->createDevice(this);
-			if (device_result.ok()) {
-				this->device = device_result.result;
+			if (!this->isOpened)
+				this->open(args);
 
-				auto run_result = this->device->run();
-				if (run_result.not_ok()) {
-					cout << run_result.message() << endl;
-					return false;
-				}
-			} else {
-				cout << device_result.message() << endl;
+			if (!this->isOpened)
+			{
+				cout << "Can not run closed window." << endl;
 				return false;
-			}*/
+			}
+
+			return renderer->runWindowLoop();
 		}
 	}
 

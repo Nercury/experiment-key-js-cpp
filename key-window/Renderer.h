@@ -7,10 +7,13 @@
 #include <key-common/types.h>
 #include <key-common/error.hpp>
 #include <key-window/lib_key_window.h>
+#include <key-v8/expose_headers.hpp>
 
 namespace key {
 
 	class Window;
+	template<class T>
+	class PersistentV8;
 
 	class Renderer
 	{
@@ -36,6 +39,10 @@ namespace key {
 			they like. For desktop.
 		*/
 		virtual std::map<std::string, int32_t> getDesktopDisplayMode(uint16_t displayIndex) = 0;
+
+		virtual bool addWindow(v8::Handle<v8::Object> v8_window) = 0;
+		virtual bool removeWindow(uint64_t id) = 0;
+		virtual bool runWindowLoop() = 0;
 
 		/**
 			Add global renderer instance to available renderer list. Will be visible in window.renderDevices list on Javascript side. If your monitor is not so wide, I am sorry.

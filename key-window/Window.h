@@ -21,11 +21,14 @@ namespace key {
 		//: public std::enable_shared_from_this<key::Window>
 	{
 	private:
+		uint64_t id;
 		std::map<std::string, std::shared_ptr<key::Renderer>> allRenderers;
 		std::shared_ptr<key::Renderer> getCurrentRenderer();
 	public:
 		Window();
 		LIB_KEY_WINDOW virtual ~Window();
+
+		uint64_t getId() { return this->id; }
 
 		FLECT_GS(key::Window, windowTitle, 
 			Member, std::string, windowTitle, 
@@ -77,6 +80,11 @@ namespace key {
 			"bool", "Get or set full screen mode")
 		bool fullScreen; void setFullScreen(bool value);
 
+		FLECT_G(key::Window, isOpened, 
+			Member, bool, isOpened, 
+			"bool", "Check if window is opened")
+		bool isOpened;
+
 		FLECT_GS(key::Window, hidden, 
 			Member, bool, hidden, 
 			Method, void (bool), setHidden, 
@@ -118,9 +126,11 @@ namespace key {
 			"array<string>", "Get all available render devices")
 		std::vector<std::string> allRenderDevices;
 
-		FLECT_PROP(key::Window, currentDevice, std::string,  
+		FLECT_GS(key::Window, currentDevice, 
+			Member, std::string, currentDevice, 
+			Method, void (std::string), setCurrentDevice, 
 			"string", "Get or set current render device")
-		std::string currentDevice;
+		std::string currentDevice; void setCurrentDevice(std::string value);
 
 		FLECT_GS(key::Window, onWindowInit, 
 			Member, v8::Persistent<v8::Function>, onWindowInit, 
@@ -134,7 +144,7 @@ namespace key {
 			"function", "Set window resize callback")
 		v8::Persistent<v8::Function> onWindowResize; void setOnWindowResize(v8::Handle<v8::Value> value);
 
-		FLECT_M(key::Window, open, bool (), "bool", "()", 
+		FLECT_M(key::Window, open, bool (const v8::Arguments &), "bool", "()", 
 			"Open a window with current configuration. Actual window update is deferred to the \"run\" call." "\n"
 			"Recommended pattern is this:" "\n"
 			" - Set up window options and callbacks." "\n"
@@ -142,15 +152,15 @@ namespace key {
 			" - Use \"run()\" on any of opened windows to keep them running" "\n"
 			" - On a window callback, use close() to close a window." "\n"
 			" - \"run()\" call stops only when all windows on related device are closed.")
-		bool open();
+		bool open(const v8::Arguments & args);
 
 		FLECT_M(key::Window, close, bool (), "bool", "()", 
 			"Request to close the window.")
 		bool close();
 
-		FLECT_M(key::Window, run, bool (), "bool", "()", 
+		FLECT_M(key::Window, run, bool (const v8::Arguments &), "bool", "()", 
 			"If a window is not already opened, opens it and runs it until all windows on the same device are closed.")
-		bool run();
+		bool run(const v8::Arguments & args);
 
 		static const int16_t NOTIFY_CHANGE_TITLE = 1;
 		static const int16_t NOTIFY_CHANGE_DISPLAY_MODE = 2;

@@ -39,6 +39,6 @@ window.onWindowInit = function() {
 
 window.displayMode = window.getDesktopDisplayMode();
 window.fullScreen = false;
-window.run();
 
-//window.run();
+window.open();
+window.run();

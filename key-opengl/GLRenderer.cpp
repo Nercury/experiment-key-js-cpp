@@ -1,12 +1,13 @@
 #include "GLRenderer.h"
 
 #include <set>
+#include <map>
 
 #include <key-opengl/GLWindow.h>
 #include <key-window/Window.h>
 
-using namespace key;
 using namespace std;
+using namespace key;
 
 bool GLRenderer::screenSaverEnabled = true;
 
@@ -113,6 +114,37 @@ std::map<std::string, int32_t> GLRenderer::getDesktopDisplayMode(uint16_t displa
 	unuseSDL();
 
 	return dt_mode;
+}
+
+bool GLRenderer::addWindow(v8::Handle<v8::Object> v8_window) 
+{
+	auto persistent_w = make_shared<PersistentV8<Window>>(v8_window);
+
+	uint64_t id = persistent_w->NativeObject()->getId();
+	auto existingIt = this->openedWindows.find(id);
+	if (existingIt != this->openedWindows.end())
+		return false;
+
+	this->openedWindows.insert(pair<uint64_t, shared_ptr<PersistentV8<Window>>>(id, persistent_w));
+	return true;
+}
+
+bool GLRenderer::removeWindow(uint64_t id)
+{
+	auto existingIt = this->openedWindows.find(id);
+	if (existingIt == this->openedWindows.end())
+		return false;
+	this->openedWindows.erase(existingIt);
+	return true;
+}
+
+bool GLRenderer::runWindowLoop()
+{
+	for (auto it = this->openedWindows.begin(); it != this->openedWindows.end(); ++it)
+	{
+		cout << "Window " << it->first << endl;
+	}
+	return true;
 }
 
 /**
