@@ -151,6 +151,7 @@ bool GLRenderer::removeWindow(uint64_t id)
 		if (it->refV8->NativeObject()->getId() == id) {
 			auto wi = *it;
 			this->openedWindows.erase(it);
+			this->windowRemoved = true; // if this action came from loop, notify loop about closed window
 			destroyWindow(wi);
 			return true;
 		}
@@ -287,24 +288,27 @@ bool GLRenderer::runWindowLoop()
 	auto runResult = true;
 
 	SDL_Event event;
+	key::Window * keyWindow;
 
 	int seconds = 0; // second count for measuring average fps
 	uint64_t second_dt = 0;
 
-	const int secs_for_avg = 8;
-	int sec_frames[secs_for_avg] = {0, 0, 0};
+	const int secs_for_avg = 4;
+	int sec_frames[secs_for_avg] = {0, 0, 0, 0};
 
 	vector<SDLWindowInfo>::iterator it;
 
 	boost::posix_time::ptime lastTime = boost::posix_time::microsec_clock::local_time();
 	boost::posix_time::ptime newTime;
-	boost::posix_time::ptime lastSecondTime = boost::posix_time::microsec_clock::local_time();
+	boost::posix_time::ptime lastSecondTime = lastTime;
 
 	while (this->openedWindows.size() > 0)
 	{
 		newTime = boost::posix_time::microsec_clock::local_time();
 		int64_t dt = (newTime - lastTime).total_microseconds();
 		lastTime = newTime;
+
+		this->windowRemoved = false;
 
 		while (SDL_PollEvent(&event)) {
 			//SDL_EventType::
@@ -314,55 +318,72 @@ bool GLRenderer::runWindowLoop()
 			case SDL_WINDOWEVENT:
 				for (it = this->openedWindows.begin(); it != this->openedWindows.end(); ++it) {
 					if (it->sdlWindowID == event.window.windowID) {
+						keyWindow = it->refV8->NativeObject();
+
 						switch (event.window.event)
 						{
 							case SDL_WINDOWEVENT_SHOWN:
 								fprintf(stderr, "Window %d shown\n", event.window.windowID);
+								keyWindow->hidden = false;
 								break;
 							case SDL_WINDOWEVENT_HIDDEN:
 								fprintf(stderr, "Window %d hidden\n", event.window.windowID);
+								keyWindow->hidden = true;
 								break;
-							case SDL_WINDOWEVENT_EXPOSED:
+							/*case SDL_WINDOWEVENT_EXPOSED:
 								fprintf(stderr, "Window %d exposed\n", event.window.windowID);
-								break;
-							case SDL_WINDOWEVENT_MOVED:
+								break;*/
+							/*case SDL_WINDOWEVENT_MOVED:
 								fprintf(stderr, "Window %d moved to %d,%d\n",
 										event.window.windowID, event.window.data1,
 										event.window.data2);
-								break;
+								break;*/
 							case SDL_WINDOWEVENT_RESIZED:
 								fprintf(stderr, "Window %d resized to %dx%d\n",
 										event.window.windowID, event.window.data1,
 										event.window.data2);
+								keyWindow->windowSize = boost::assign::list_of((int32_t)event.window.data1)((int32_t)event.window.data2);
+								it->renderWidth = (int32_t)event.window.data1;
+								it->renderHeight = (int32_t)event.window.data2;
 								break;
 							case SDL_WINDOWEVENT_MINIMIZED:
 								fprintf(stderr, "Window %d minimized\n", event.window.windowID);
+								keyWindow->minimized = true;
 								break;
-							case SDL_WINDOWEVENT_MAXIMIZED:
+							// can't receive maximize event. oh well.
+							/*case SDL_WINDOWEVENT_MAXIMIZED:
 								fprintf(stderr, "Window %d maximized\n", event.window.windowID);
-								break;
+								keyWindow->maximized = true;
+								break;*/
 							case SDL_WINDOWEVENT_RESTORED:
 								fprintf(stderr, "Window %d restored\n", event.window.windowID);
+								keyWindow->minimized = false;
 								break;
 							case SDL_WINDOWEVENT_ENTER:
 								fprintf(stderr, "Mouse entered window %d\n",
 										event.window.windowID);
+								for (int i = 0; i < openedWindows.size(); i++)
+									openedWindows[i].hasMouseFocus = false;
+								it->hasMouseFocus = true;
 								break;
-							case SDL_WINDOWEVENT_LEAVE:
+							// seems like bug, mouse leave does not fire under windows.
+							/*case SDL_WINDOWEVENT_LEAVE:
 								fprintf(stderr, "Mouse left window %d\n", event.window.windowID);
-								break;
+								break;*/
 							case SDL_WINDOWEVENT_FOCUS_GAINED:
 								fprintf(stderr, "Window %d gained keyboard focus\n",
 										event.window.windowID);
+								it->hasKeyboardFocus = true;
 								break;
 							case SDL_WINDOWEVENT_FOCUS_LOST:
 								fprintf(stderr, "Window %d lost keyboard focus\n",
 										event.window.windowID);
+								it->hasKeyboardFocus = false;
 								break;
 							case SDL_WINDOWEVENT_CLOSE:
 								fprintf(stderr, "Window %d closed\n", event.window.windowID);
 
-								it->refV8->NativeObject()->close();
+								keyWindow->close();
 								break;
 						default:
 							break;
@@ -372,9 +393,45 @@ bool GLRenderer::runWindowLoop()
 					}
 				}
 				break;
+			case SDL_MOUSEMOTION:
+				for (it = this->openedWindows.begin(); it != this->openedWindows.end(); ++it) {
+					if (it->hasMouseFocus) {
+
+						cout << "mouse motion baby!" << endl;
+
+						break;
+					}
+				}
+				
+				break;
 			default:
 				break;
 			}
+		}
+
+		if (this->windowRemoved) // if some window was removed as a result of some event, restart loop
+			continue;
+
+		//SDL_Delay(5);
+
+		sec_frames[0]++;
+
+		if ((newTime - lastSecondTime).total_microseconds() >= 1000000)
+		{
+			if (seconds < secs_for_avg)
+				seconds++;
+			int sum = 0;
+			for (int x = 0; x < seconds; x++) {
+				sum += sec_frames[x];
+			}
+
+			cout << "AVG FPS: " << (sum / seconds) << endl;
+
+			lastSecondTime = newTime;
+			for (int x = secs_for_avg - 1; x > 0; x--) {
+				sec_frames[x] = sec_frames[x - 1];
+			}
+			sec_frames[0] = 0;
 		}
 	}
 

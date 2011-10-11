@@ -22,7 +22,7 @@ namespace key {
 	class SDLWindowInfo
 	{
 	public:
-		SDLWindowInfo() : sdlWindow(NULL), context(0), renderWidth(800), renderHeight(600), sdlWindowID(0) {}
+		SDLWindowInfo() : sdlWindow(NULL), context(0), renderWidth(800), renderHeight(600), sdlWindowID(0), hasKeyboardFocus(false), hasMouseFocus(false) {}
 		SDLWindowInfo(std::shared_ptr<key::PersistentV8<key::Window>> & refV8) : refV8(refV8), sdlWindow(NULL), context(0) {}
 		~SDLWindowInfo() {}
 
@@ -30,6 +30,8 @@ namespace key {
 		int32_t renderHeight;
 
 		uint32_t sdlWindowID;
+		bool hasKeyboardFocus;
+		bool hasMouseFocus;
 
 		std::shared_ptr<key::PersistentV8<key::Window>> refV8;
 		SDL_Window *sdlWindow;
@@ -45,11 +47,14 @@ namespace key {
 		static bool screenSaverEnabled;
 		std::vector<SDLWindowInfo> openedWindows;
 
+		// used to notify window loop about a closed window
+		bool windowRemoved;
+
 		bool createWindow(SDLWindowInfo & wi);
 		void destroyWindow(SDLWindowInfo & wi);
 		void unuseSdlIfNoWindows();
 	public:
-		GLRenderer() {};
+		GLRenderer() : windowRemoved(false) {};
 		virtual ~GLRenderer() {};
 		virtual std::string getName() { return "OpenGL Render Device"; };
 		LIB_KEY_OPENGL virtual bool isScreenSaverEnabled();

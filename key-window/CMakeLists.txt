@@ -11,6 +11,8 @@ add_library(key-window STATIC
 	Renderer.cpp
 	Window.h
 	Window.cpp
+	MouseMotion.h
+	MouseMotion.cpp
 	)
 
 target_link_libraries(key-window 

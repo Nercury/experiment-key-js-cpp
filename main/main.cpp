@@ -2,8 +2,12 @@
 
 #include <key-common/app.h>
 #include <key-common/JsonConfig.h>
+
 #include <key-v8/KeyV8.h>
 #include <key-opengl/GLRenderer.h>
+
+#include <key-window/Window.h>
+#include <key-window/MouseMotion.h>
 
 using namespace std;
 using namespace key;
@@ -19,6 +23,7 @@ int main(int argc, char* argv[])
 
 	auto v8 = KeyV8::New(js_dir);
 	v8->Reflect<Window>();
+	v8->Reflect<MouseMotion>();
 
 	v8->Run(config.js_main_file);
 
