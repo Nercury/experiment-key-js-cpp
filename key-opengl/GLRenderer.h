@@ -3,6 +3,10 @@
 #include <string>
 #include <unordered_map>
 
+#include <SDL2/SDL.h>
+#include <GL/glew.h>
+#include <SDL2/SDL_opengl.h>
+
 #include <key-common/types.h>
 #include <key-common/error.hpp>
 #include <key-opengl/lib_key_opengl.h>
@@ -12,12 +16,23 @@
 
 namespace key {
 
+	class SDLWindowInfo
+	{
+	public:
+		SDLWindowInfo() : sdl_window(NULL), context(0) {}
+		~SDLWindowInfo() {}
+
+		std::shared_ptr<key::PersistentV8<key::Window>> refV8;
+		SDL_Window *sdl_window;
+		SDL_GLContext context;
+	};
+
 	class GLRenderer
 		: public Renderer
 	{
 	private:
 		static bool screenSaverEnabled;
-		std::unordered_map<uint64_t, std::shared_ptr<key::PersistentV8<key::Window>>> openedWindows;
+		std::unordered_map<uint64_t, SDLWindowInfo> openedWindows;
 	public:
 		GLRenderer() {};
 		virtual ~GLRenderer() {};
