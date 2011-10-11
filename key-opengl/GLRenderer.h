@@ -16,6 +16,7 @@
 #include <key-window/Renderer.h>
 #include <key-v8/KeyV8.h>
 #include <key-window/Window.h>
+#include <key-window/MouseMotion.h>
 
 namespace key {
 
@@ -47,6 +48,8 @@ namespace key {
 		static bool screenSaverEnabled;
 		std::vector<SDLWindowInfo> openedWindows;
 
+		std::shared_ptr<key::PersistentV8<key::MouseMotion>> mouseMotion;
+
 		// used to notify window loop about a closed window
 		bool windowRemoved;
 
@@ -54,7 +57,7 @@ namespace key {
 		void destroyWindow(SDLWindowInfo & wi);
 		void unuseSdlIfNoWindows();
 	public:
-		GLRenderer() : windowRemoved(false) {};
+		GLRenderer();
 		virtual ~GLRenderer() {};
 		virtual std::string getName() { return "OpenGL Render Device"; };
 		LIB_KEY_OPENGL virtual bool isScreenSaverEnabled();
@@ -65,7 +68,7 @@ namespace key {
 
 		virtual bool addWindow(v8::Handle<v8::Object> v8_window);
 		virtual bool removeWindow(uint64_t id);
-		virtual bool runWindowLoop();
+		virtual bool runWindowLoop(v8::Handle<v8::Context> context);
 
 		static fun_res useSDL();
 		static void unuseSDL();

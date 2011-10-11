@@ -21,11 +21,13 @@ int main(int argc, char* argv[])
 	JsonConfig config("config.js");
 	std::string js_dir(joinPath(getAppPath(), config.js_root_dir));
 
-	auto v8 = KeyV8::New(js_dir);
-	v8->Reflect<Window>();
-	v8->Reflect<MouseMotion>();
+	{
+		auto v8 = KeyV8::New(js_dir);
+		v8->Reflect<Window>();
+		v8->Reflect<MouseMotion>();
 
-	v8->Run(config.js_main_file);
+		v8->Run(config.js_main_file);
+	}
 
 	system("PAUSE");
 

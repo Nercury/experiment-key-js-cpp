@@ -44,7 +44,7 @@ namespace key {
 
 		virtual bool addWindow(v8::Handle<v8::Object> v8_window) = 0;
 		virtual bool removeWindow(uint64_t id) = 0;
-		virtual bool runWindowLoop() = 0;
+		virtual bool runWindowLoop(v8::Handle<v8::Context> context) = 0;
 
 		/**
 			Add global renderer instance to available renderer list. Will be visible in window.renderDevices list on Javascript side. If your monitor is not so wide, I am sorry.

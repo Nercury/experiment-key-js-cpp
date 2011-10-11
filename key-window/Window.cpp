@@ -23,7 +23,7 @@ static uint64_t get_next_window_id() {
 	return next_window_id;
 }
 
-key::Window::Window() : 
+key::Window::Window(const v8::Arguments & args) : 
 	windowTitle("Key Window"), 
 	id(get_next_window_id()),
 	isOpened(false),
@@ -43,11 +43,17 @@ key::Window::Window() :
 			this->currentDevice = it->first;
 		this->allRenderDevices.push_back(it->first);
 	}
+
+	this->context = v8::Persistent<v8::Context>(args.This()->CreationContext());
 }
 
 key::Window::~Window() {
 	if (!onWindowInit.IsEmpty())
 		onWindowInit.Dispose();
+	if (!onWindowResize.IsEmpty())
+		onWindowResize.Dispose();
+	if (!onMouseMotion.IsEmpty())
+		onMouseMotion.Dispose();
 }
 
 void key::Window::setCurrentDevice(std::string value) {
@@ -124,11 +130,20 @@ bool key::Window::run(const v8::Arguments & args)
 				return false;
 			}
 
-			return renderer->runWindowLoop();
+			return renderer->runWindowLoop(context);
 		}
 	}
 
 	return true;
+}
+
+void key::Window::setOnMouseMotion(Handle<Value> value) {
+	HandleScope handle_scope;
+	if (value->IsFunction()) {
+		auto func = Handle<Function>::Cast(value);
+		this->onMouseMotion = Persistent<Function>::New(func);
+	} else
+		cout << "Warning! Tried to set non-function as onWindowInit event callback!" << endl;
 }
 
 void key::Window::setOnWindowInit(Handle<Value> value) {

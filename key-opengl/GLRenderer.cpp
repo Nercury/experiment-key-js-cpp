@@ -47,6 +47,11 @@ void GLRenderer::setGlobalSDLValues() {
 	}
 }
 
+GLRenderer::GLRenderer() : windowRemoved(false)
+{
+
+}
+
 bool GLRenderer::isScreenSaverEnabled() {
 	return GLRenderer::screenSaverEnabled;
 }
@@ -283,8 +288,10 @@ void GLRenderer::unuseSdlIfNoWindows() {
 	}
 }
 
-bool GLRenderer::runWindowLoop()
+bool GLRenderer::runWindowLoop(v8::Handle<v8::Context> context)
 {
+	this->mouseMotion = KeyV8::NewObject<key::MouseMotion>(context, 0, NULL);
+
 	auto runResult = true;
 
 	SDL_Event event;
@@ -397,7 +404,24 @@ bool GLRenderer::runWindowLoop()
 				for (it = this->openedWindows.begin(); it != this->openedWindows.end(); ++it) {
 					if (it->hasMouseFocus) {
 
-						cout << "mouse motion baby!" << endl;
+						keyWindow = it->refV8->NativeObject();
+
+						if (!keyWindow->onMouseMotion.IsEmpty()) {
+							auto motion = this->mouseMotion->NativeObject();
+
+							motion->x = event.motion.x;
+							motion->y = event.motion.y;
+							motion->xRel = event.motion.xrel;
+							motion->yRel = event.motion.yrel;
+							motion->bLeft = event.motion.state && SDL_BUTTON_LMASK;
+							motion->bMiddle = event.motion.state && SDL_BUTTON_MMASK;
+							motion->bRight = event.motion.state && SDL_BUTTON_RMASK;
+							motion->bX1 = event.motion.state && SDL_BUTTON_X1MASK;
+							motion->bX2 = event.motion.state && SDL_BUTTON_X2MASK;
+
+							v8::Handle<v8::Value> values[] = { this->mouseMotion->JsObject() };
+							keyWindow->onMouseMotion->Call(v8::Object::New(), 1, values);
+						}
 
 						break;
 					}
@@ -434,6 +458,8 @@ bool GLRenderer::runWindowLoop()
 			sec_frames[0] = 0;
 		}
 	}
+
+	this->mouseMotion.reset();
 
 	return runResult;
 }

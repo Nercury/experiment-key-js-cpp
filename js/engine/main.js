@@ -9,6 +9,10 @@ window.onWindowInit = function() {
 	app.log("running init");
 };
 
+window.onMouseMotion = function(event) {
+    app.log(event.xRel + ", " + event.yRel);
+};
+
 window.displayMode = window.getDesktopDisplayMode();
 window.fullScreen = false;
 window.open();

@@ -24,8 +24,9 @@ namespace key {
 		uint64_t id;
 		std::map<std::string, std::shared_ptr<key::Renderer>> allRenderers;
 		std::shared_ptr<key::Renderer> getCurrentRenderer();
+		v8::Persistent<v8::Context> context;
 	public:
-		Window();
+		Window(const v8::Arguments & args);
 		LIB_KEY_WINDOW virtual ~Window();
 
 		uint64_t getId() { return this->id; }
@@ -132,6 +133,12 @@ namespace key {
 			"string", "Get or set current render device")
 		std::string currentDevice; void setCurrentDevice(std::string value);
 
+		FLECT_GS(key::Window, onMouseMotion, 
+			Member, v8::Persistent<v8::Function>, onMouseMotion, 
+			Method, void (v8::Handle<v8::Value>), setOnMouseMotion, 
+			"function", "Set mouse motion callback")
+		v8::Persistent<v8::Function> onMouseMotion; void setOnMouseMotion(v8::Handle<v8::Value> value);
+
 		FLECT_GS(key::Window, onWindowInit, 
 			Member, v8::Persistent<v8::Function>, onWindowInit, 
 			Method, void (v8::Handle<v8::Value>), setOnWindowInit, 
@@ -175,7 +182,7 @@ namespace key {
 
 		/* reflection */
 		typedef cvv8::Signature<key::Window (
-			cvv8::CtorForwarder<key::Window *()>
+			cvv8::CtorForwarder<key::Window *(const v8::Arguments &)>
 		)> Ctors;
 
 		static void reflect(std::vector<std::string> & items, cvv8::ClassCreator<key::Window> & cc, 
@@ -196,6 +203,7 @@ namespace key {
 			REFLECT(windowSize)
 			REFLECT(allRenderDevices)
 			REFLECT(currentDevice)
+			REFLECT(onMouseMotion)
 			REFLECT(onWindowInit)
 			REFLECT(onWindowResize)
 			REFLECT(open)

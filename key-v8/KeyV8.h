@@ -18,17 +18,19 @@ namespace key
 	class PersistentV8
 	{
 	private:
+		bool owned;
 		v8::Persistent<v8::Value> keeper;
 		PersistentV8& operator=(const PersistentV8&) {}
 	protected:
 		T * native;
 	public:
-		PersistentV8(v8::Handle<v8::Value> handle) 
-			: keeper(handle), native(cvv8::CastFromJS<T>(handle)) {}
+		PersistentV8(v8::Handle<v8::Value> handle, bool owned = true) 
+			: keeper(v8::Persistent<v8::Value>::New(handle)), native(cvv8::CastFromJS<T>(handle)), owned(owned) {}
 
-		virtual ~PersistentV8() { native = NULL; }
+		virtual ~PersistentV8() { if (owned) keeper.Dispose(); }
 
 		T * NativeObject() { return native; }
+		v8::Handle<v8::Value> JsObject() { return keeper; }
 	};
 
 	class PersistentKeyV8;
@@ -50,16 +52,22 @@ namespace key
 		static bool ExecuteScript(v8::Handle<v8::String> script, std::string & short_filename);
 
 		template<class T>
-		void Reflect() {
+		static std::shared_ptr<key::PersistentV8<T>> NewObject(v8::Handle<v8::Context> context, int argc, v8::Handle<v8::Value> * argv)
+		{
 			v8::HandleScope handle_scope;
-			v8::Context::Scope context_scope(context);
 
+			auto & cc = KeyV8::Class<T>();
+			auto value = cc.CtorFunction()->CallAsConstructor(argc, argv);
+
+			return std::make_shared<key::PersistentV8<T>>(value);
+		}
+
+		template<class T>
+		static cvv8::ClassCreator<T> & Class() {
 			cvv8::ClassCreator<T> & cc(cvv8::ClassCreator<T>::Instance());
 
-			if( cc.IsSealed() ) {
-				cc.AddClassTo( cvv8::TypeName<T>::Value, context->Global() );
-				return;
-			}
+			if( cc.IsSealed() )
+				return cc;
 
 			v8::Handle<v8::ObjectTemplate> const & proto( cc.Prototype() );
 			std::vector<std::string> items;
@@ -69,6 +77,15 @@ namespace key
 			auto ctor = cc.CtorFunction();
 			ctor->Set(JSTR("__fields"), cvv8::CastToJS(items));
 
+			return cc;
+		}
+
+		template<class T>
+		void Reflect() {
+			v8::HandleScope handle_scope;
+			v8::Context::Scope context_scope(context);
+
+			auto cc = KeyV8::Class<T>();
 			cc.AddClassTo( cvv8::TypeName<T>::Value, context->Global() );
 		}
 
