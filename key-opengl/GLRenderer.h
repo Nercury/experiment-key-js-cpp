@@ -1,7 +1,10 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include <unordered_map>
+
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include <SDL2/SDL.h>
 #include <GL/glew.h>
@@ -19,12 +22,20 @@ namespace key {
 	class SDLWindowInfo
 	{
 	public:
-		SDLWindowInfo() : sdl_window(NULL), context(0) {}
+		SDLWindowInfo() : sdlWindow(NULL), context(0), renderWidth(800), renderHeight(600), sdlWindowID(0) {}
+		SDLWindowInfo(std::shared_ptr<key::PersistentV8<key::Window>> & refV8) : refV8(refV8), sdlWindow(NULL), context(0) {}
 		~SDLWindowInfo() {}
 
+		int32_t renderWidth;
+		int32_t renderHeight;
+
+		uint32_t sdlWindowID;
+
 		std::shared_ptr<key::PersistentV8<key::Window>> refV8;
-		SDL_Window *sdl_window;
+		SDL_Window *sdlWindow;
 		SDL_GLContext context;
+
+		void makeCurrent();
 	};
 
 	class GLRenderer
@@ -32,7 +43,11 @@ namespace key {
 	{
 	private:
 		static bool screenSaverEnabled;
-		std::unordered_map<uint64_t, SDLWindowInfo> openedWindows;
+		std::vector<SDLWindowInfo> openedWindows;
+
+		bool createWindow(SDLWindowInfo & wi);
+		void destroyWindow(SDLWindowInfo & wi);
+		void unuseSdlIfNoWindows();
 	public:
 		GLRenderer() {};
 		virtual ~GLRenderer() {};

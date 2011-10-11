@@ -4,10 +4,12 @@
 #include <memory>
 #include <map>
 #include <list>
+
+#include <key-v8/expose_headers.hpp>
+
 #include <key-common/types.h>
 #include <key-common/error.hpp>
 #include <key-window/lib_key_window.h>
-#include <key-v8/expose_headers.hpp>
 
 namespace key {
 

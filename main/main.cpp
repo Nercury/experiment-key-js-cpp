@@ -3,7 +3,6 @@
 #include <key-common/app.h>
 #include <key-common/JsonConfig.h>
 #include <key-v8/KeyV8.h>
-#include <key-window/Window.h>
 #include <key-opengl/GLRenderer.h>
 
 using namespace std;

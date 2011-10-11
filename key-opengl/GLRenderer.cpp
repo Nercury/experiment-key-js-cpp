@@ -3,7 +3,8 @@
 #include <set>
 #include <map>
 
-#include <key-opengl/GLWindow.h>
+#include <boost/assign.hpp>
+
 #include <key-window/Window.h>
 
 using namespace std;
@@ -118,33 +119,266 @@ std::map<std::string, int32_t> GLRenderer::getDesktopDisplayMode(uint16_t displa
 
 bool GLRenderer::addWindow(v8::Handle<v8::Object> v8_window) 
 {
+	cout << "add window" << endl;
+
 	auto persistent_w = make_shared<PersistentV8<Window>>(v8_window);
 
 	uint64_t id = persistent_w->NativeObject()->getId();
-	auto existingIt = this->openedWindows.find(id);
-	if (existingIt != this->openedWindows.end())
+	auto idExists = false;
+	for (auto it = this->openedWindows.cbegin(); it != openedWindows.cend(); ++it) {
+		if (it->refV8->NativeObject()->getId() == id) {
+			idExists = true;
+			break;
+		}
+	}
+
+	if (idExists)
 		return false;
 
-	this->openedWindows.insert(pair<uint64_t, shared_ptr<PersistentV8<Window>>>(id, persistent_w));
-	return true;
+	SDLWindowInfo wi(persistent_w);
+
+	if (this->createWindow(wi)) {
+		this->openedWindows.push_back(wi);
+		return true;
+	} else {
+		return false;
+	}
 }
 
 bool GLRenderer::removeWindow(uint64_t id)
 {
-	auto existingIt = this->openedWindows.find(id);
-	if (existingIt == this->openedWindows.end())
+	for (auto it = this->openedWindows.begin(); it != openedWindows.end(); ++it) {
+		if (it->refV8->NativeObject()->getId() == id) {
+			auto wi = *it;
+			this->openedWindows.erase(it);
+			destroyWindow(wi);
+			return true;
+		}
+	}
+	
+	return false;
+}
+
+bool GLRenderer::createWindow(SDLWindowInfo & wi) {
+	// if first window, initialize SDL/GL stuff
+	if (this->openedWindows.size() == 0) {
+		cout << "Use SDL" << endl;
+		auto sdl_init_result = GLRenderer::useSDL();
+		if (sdl_init_result.not_ok()) {
+			cout << "Failed to use SDL. " << sdl_init_result.message() << endl;
+			return false;
+		}
+
+		cout << boost::format("Using SDL %1%.%2%.%3%.") 
+		% SDL_MAJOR_VERSION % SDL_MINOR_VERSION % SDL_PATCHLEVEL << endl;
+
+		SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
+		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+		SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+	}
+
+	uint32_t windowFlags = SDL_WINDOW_OPENGL;
+
+	auto keyWindow = wi.refV8->NativeObject();
+
+	if (keyWindow->fullScreen)
+		windowFlags |= SDL_WINDOW_FULLSCREEN;
+
+	if (!keyWindow->fullScreen) {
+
+		if (keyWindow->hidden)
+			windowFlags |= SDL_WINDOW_HIDDEN;
+		else
+			windowFlags |= SDL_WINDOW_SHOWN;
+
+		if (keyWindow->resizable)
+			windowFlags |= SDL_WINDOW_RESIZABLE;
+
+		if (keyWindow->minimized)
+			windowFlags |= SDL_WINDOW_MINIMIZED;
+
+		if (keyWindow->maximized)
+			windowFlags |= SDL_WINDOW_MAXIMIZED;
+
+		if (keyWindow->inputGrabbed)
+			windowFlags |= SDL_WINDOW_INPUT_GRABBED;
+	}
+
+	// widow width and height are only for windowed mode, for
+	// fullscreen display mode is used
+
+	if (keyWindow->fullScreen) {
+		SDL_DisplayMode dm;
+		dm.format = SDL_PIXELFORMAT_UNKNOWN;
+		dm.driverdata = 0;
+		if (!GLRenderer::parseDisplayMode(keyWindow->displayMode, dm.w, dm.h, dm.refresh_rate)) {
+			dm.w = keyWindow->windowSize[0];
+			dm.h = keyWindow->windowSize[1];
+			dm.refresh_rate = 100;
+		}
+		SDL_DisplayMode final_dm;
+		if (SDL_GetClosestDisplayMode(keyWindow->displayIndex, &dm, &final_dm) == NULL) {
+			this->unuseSdlIfNoWindows();
+			cout << boost::format("Unable to create render window. %1%") % SDL_GetError() << endl;
+			return false;
+		}
+		wi.renderWidth = final_dm.w;
+		wi.renderHeight = final_dm.h;
+
+		keyWindow->displayMode["width"] = final_dm.w;
+		keyWindow->displayMode["height"] = final_dm.h;
+		keyWindow->displayMode["refreshRate"] = final_dm.refresh_rate;
+
+		keyWindow->windowSize = boost::assign::list_of(wi.renderWidth)(wi.renderHeight);
+	} else {
+		wi.renderWidth = keyWindow->windowSize[0];
+		wi.renderHeight = keyWindow->windowSize[1];
+	}
+
+	wi.sdlWindow = SDL_CreateWindow(keyWindow->windowTitle.c_str(),
+			SDL_WINDOWPOS_CENTERED,
+			SDL_WINDOWPOS_CENTERED,
+			wi.renderWidth, wi.renderHeight,
+			windowFlags);
+
+	if (wi.sdlWindow == 0) {
+		this->unuseSdlIfNoWindows();
+		cout << boost::format("Failed to create a window. %1%") % SDL_GetError() << endl;
 		return false;
-	this->openedWindows.erase(existingIt);
+	}
+
+	wi.sdlWindowID = SDL_GetWindowID(wi.sdlWindow);
+
+	wi.context = SDL_GL_CreateContext(wi.sdlWindow);
+	wi.makeCurrent();
+
+	SDL_GL_SetSwapInterval(1);
+
 	return true;
+}
+
+void SDLWindowInfo::makeCurrent()
+{
+	SDL_GL_MakeCurrent(sdlWindow, context);
+}
+
+void GLRenderer::destroyWindow(SDLWindowInfo & wi) {
+	SDL_GL_DeleteContext(wi.context);
+	SDL_DestroyWindow(wi.sdlWindow);
+
+	this->unuseSdlIfNoWindows();
+}
+
+void GLRenderer::unuseSdlIfNoWindows() {
+	if (this->openedWindows.size() == 0) {
+		cout << "unuse SDL" << endl;
+		unuseSDL();
+	}
 }
 
 bool GLRenderer::runWindowLoop()
 {
-	for (auto it = this->openedWindows.begin(); it != this->openedWindows.end(); ++it)
+	auto runResult = true;
+
+	SDL_Event event;
+
+	int seconds = 0; // second count for measuring average fps
+	uint64_t second_dt = 0;
+
+	const int secs_for_avg = 8;
+	int sec_frames[secs_for_avg] = {0, 0, 0};
+
+	vector<SDLWindowInfo>::iterator it;
+
+	boost::posix_time::ptime lastTime = boost::posix_time::microsec_clock::local_time();
+	boost::posix_time::ptime newTime;
+	boost::posix_time::ptime lastSecondTime = boost::posix_time::microsec_clock::local_time();
+
+	while (this->openedWindows.size() > 0)
 	{
-		cout << "Window " << it->first << endl;
+		newTime = boost::posix_time::microsec_clock::local_time();
+		int64_t dt = (newTime - lastTime).total_microseconds();
+		lastTime = newTime;
+
+		while (SDL_PollEvent(&event)) {
+			//SDL_EventType::
+			
+			switch (event.type)
+			{
+			case SDL_WINDOWEVENT:
+				for (it = this->openedWindows.begin(); it != this->openedWindows.end(); ++it) {
+					if (it->sdlWindowID == event.window.windowID) {
+						switch (event.window.event)
+						{
+							case SDL_WINDOWEVENT_SHOWN:
+								fprintf(stderr, "Window %d shown\n", event.window.windowID);
+								break;
+							case SDL_WINDOWEVENT_HIDDEN:
+								fprintf(stderr, "Window %d hidden\n", event.window.windowID);
+								break;
+							case SDL_WINDOWEVENT_EXPOSED:
+								fprintf(stderr, "Window %d exposed\n", event.window.windowID);
+								break;
+							case SDL_WINDOWEVENT_MOVED:
+								fprintf(stderr, "Window %d moved to %d,%d\n",
+										event.window.windowID, event.window.data1,
+										event.window.data2);
+								break;
+							case SDL_WINDOWEVENT_RESIZED:
+								fprintf(stderr, "Window %d resized to %dx%d\n",
+										event.window.windowID, event.window.data1,
+										event.window.data2);
+								break;
+							case SDL_WINDOWEVENT_MINIMIZED:
+								fprintf(stderr, "Window %d minimized\n", event.window.windowID);
+								break;
+							case SDL_WINDOWEVENT_MAXIMIZED:
+								fprintf(stderr, "Window %d maximized\n", event.window.windowID);
+								break;
+							case SDL_WINDOWEVENT_RESTORED:
+								fprintf(stderr, "Window %d restored\n", event.window.windowID);
+								break;
+							case SDL_WINDOWEVENT_ENTER:
+								fprintf(stderr, "Mouse entered window %d\n",
+										event.window.windowID);
+								break;
+							case SDL_WINDOWEVENT_LEAVE:
+								fprintf(stderr, "Mouse left window %d\n", event.window.windowID);
+								break;
+							case SDL_WINDOWEVENT_FOCUS_GAINED:
+								fprintf(stderr, "Window %d gained keyboard focus\n",
+										event.window.windowID);
+								break;
+							case SDL_WINDOWEVENT_FOCUS_LOST:
+								fprintf(stderr, "Window %d lost keyboard focus\n",
+										event.window.windowID);
+								break;
+							case SDL_WINDOWEVENT_CLOSE:
+								fprintf(stderr, "Window %d closed\n", event.window.windowID);
+
+								it->refV8->NativeObject()->close();
+								break;
+						default:
+							break;
+						}
+
+						break;
+					}
+				}
+				break;
+			default:
+				break;
+			}
+		}
 	}
-	return true;
+
+	return runResult;
 }
 
 /**

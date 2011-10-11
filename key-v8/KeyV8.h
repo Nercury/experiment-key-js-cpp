@@ -26,7 +26,7 @@ namespace key
 		PersistentV8(v8::Handle<v8::Value> handle) 
 			: keeper(handle), native(cvv8::CastFromJS<T>(handle)) {}
 
-		virtual ~PersistentV8() { keeper.Dispose(); native = NULL; }
+		virtual ~PersistentV8() { native = NULL; }
 
 		T * NativeObject() { return native; }
 	};
