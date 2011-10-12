@@ -19,6 +19,8 @@ namespace key {
 		FLECT_PROP(key::KeyEvent, mod, uint16_t, "int", "Current key modifiers (Ctrl, Alt, Shift).")
 		uint16_t mod;
 
+		// following two methods require linking key-window with SDL. This should be generally avoided.
+
 		FLECT_M(key::KeyEvent, getVk, std::string (), "string", "()", 
 			"Get string for virtual key code (if not available, returns false).")
 		std::string getVk() { 
