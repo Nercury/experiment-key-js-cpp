@@ -9,6 +9,8 @@
 #include <key-window/Window.h>
 #include <key-window/MouseMotion.h>
 #include <key-window/Scancode.h>
+#include <key-window/Keycode.h>
+#include <key-window/KeyEvent.h>
 
 using namespace std;
 using namespace key;
@@ -27,6 +29,8 @@ int main(int argc, char* argv[])
 		v8->Reflect<Window>();
 		v8->Reflect<MouseMotion>();
 		v8->Reflect<Scancode>();
+		v8->Reflect<Keycode>();
+		v8->Reflect<KeyEvent>();
 
 		v8->Run(config.js_main_file);
 	}

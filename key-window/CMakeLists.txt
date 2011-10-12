@@ -17,6 +17,8 @@ add_library(key-window STATIC
 	Keycode.cpp
 	Scancode.h
 	Scancode.cpp
+	KeyEvent.h
+	KeyEvent.cpp
 	)
 
 target_link_libraries(key-window 

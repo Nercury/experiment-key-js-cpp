@@ -2,13 +2,6 @@
 { var r = js_main.executeFile('engine/lib.js'); if (r !== true) js_main.textLog(r);}
 /* end load main lib, use js.script to execute other scripts */
 
-var sc = new Scancode();
-
-js.help(Scancode);
-app.log(Scancode.A);
-
-if (0) {
-
 window = new Window();
 window.windowTitle = "Hello";
 
@@ -17,22 +10,19 @@ window.onWindowInit = function() {
 };
 
 window.onMouseMotion = function(event) {
-    app.log(event.xRel + ", " + event.yRel);
+    app.log(event.x + ", " + event.y);
+};
+
+window.onKeyDown = function(event) {
+	app.log("Key " + event.getVkName() + " pressed");
+};
+
+window.onKeyUp = function(event) {
+	js.help(event);
+	//app.log("Key " + event.getVkName() + " released");
 };
 
 window.displayMode = window.getDesktopDisplayMode();
-window.fullScreen = false;
+
 window.open();
-
-logWindow = new Window();
-logWindow.windowTitle = "Log window";
-
-logWindow.resizable = false;
-logWindow.open();
-
 window.run();
-
-window.open();
-logWindow.open();
-logWindow.run();
-}

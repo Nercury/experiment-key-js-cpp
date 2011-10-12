@@ -139,6 +139,18 @@ namespace key {
 			"function", "Set mouse motion callback")
 		v8::Persistent<v8::Function> onMouseMotion; void setOnMouseMotion(v8::Handle<v8::Value> value);
 
+		FLECT_GS(key::Window, onKeyUp, 
+			Member, v8::Persistent<v8::Function>, onKeyUp, 
+			Method, void (v8::Handle<v8::Value>), setOnKeyUp, 
+			"function", "Set key up callback")
+		v8::Persistent<v8::Function> onKeyUp; void setOnKeyUp(v8::Handle<v8::Value> value);
+
+		FLECT_GS(key::Window, onKeyDown, 
+			Member, v8::Persistent<v8::Function>, onKeyDown, 
+			Method, void (v8::Handle<v8::Value>), setOnKeyDown, 
+			"function", "Set key down callback")
+		v8::Persistent<v8::Function> onKeyDown; void setOnKeyDown(v8::Handle<v8::Value> value);
+
 		FLECT_GS(key::Window, onWindowInit, 
 			Member, v8::Persistent<v8::Function>, onWindowInit, 
 			Method, void (v8::Handle<v8::Value>), setOnWindowInit, 
@@ -204,6 +216,8 @@ namespace key {
 			REFLECT(allRenderDevices)
 			REFLECT(currentDevice)
 			REFLECT(onMouseMotion)
+			REFLECT(onKeyUp)
+			REFLECT(onKeyDown)
 			REFLECT(onWindowInit)
 			REFLECT(onWindowResize)
 			REFLECT(open)

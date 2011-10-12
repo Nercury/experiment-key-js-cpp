@@ -143,7 +143,25 @@ void key::Window::setOnMouseMotion(Handle<Value> value) {
 		auto func = Handle<Function>::Cast(value);
 		this->onMouseMotion = Persistent<Function>::New(func);
 	} else
-		cout << "Warning! Tried to set non-function as onWindowInit event callback!" << endl;
+		cout << "Warning! Tried to set non-function as onMouseMotion event callback!" << endl;
+}
+
+void key::Window::setOnKeyUp(Handle<Value> value) {
+	HandleScope handle_scope;
+	if (value->IsFunction()) {
+		auto func = Handle<Function>::Cast(value);
+		this->onKeyUp = Persistent<Function>::New(func);
+	} else
+		cout << "Warning! Tried to set non-function as onKeyUp event callback!" << endl;
+}
+
+void key::Window::setOnKeyDown(Handle<Value> value) {
+	HandleScope handle_scope;
+	if (value->IsFunction()) {
+		auto func = Handle<Function>::Cast(value);
+		this->onKeyDown = Persistent<Function>::New(func);
+	} else
+		cout << "Warning! Tried to set non-function as onKeyDown event callback!" << endl;
 }
 
 void key::Window::setOnWindowInit(Handle<Value> value) {

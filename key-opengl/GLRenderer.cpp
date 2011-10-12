@@ -292,6 +292,7 @@ void GLRenderer::unuseSdlIfNoWindows() {
 bool GLRenderer::runWindowLoop(v8::Handle<v8::Context> context)
 {
 	KeyV8::NewObjectRef<key::MouseMotion>(this->mouseMotion, context, 0, NULL);
+	KeyV8::NewObjectRef<key::KeyEvent>(this->keyEvent, context, 0, NULL);
 
 	auto runResult = true;
 
@@ -428,6 +429,33 @@ bool GLRenderer::runWindowLoop(v8::Handle<v8::Context> context)
 				}
 				
 				break;
+			case SDL_KEYUP:
+			case SDL_KEYDOWN:
+				for (it = this->openedWindows.begin(); it != this->openedWindows.end(); ++it) {
+					if (it->hasKeyboardFocus) {
+
+						keyWindow = it->refV8->NativeObject();
+
+						if ((event.key.type == SDL_KEYUP && !keyWindow->onKeyUp.IsEmpty())
+							|| (event.key.type == SDL_KEYDOWN && !keyWindow->onKeyDown.IsEmpty())) {
+							auto key = keyEvent.NativeObject();
+
+							key->keyCode = event.key.keysym.sym;
+							key->scanCode = event.key.keysym.scancode;
+							key->mod = event.key.keysym.mod;
+
+							if (event.key.type == SDL_KEYUP)
+								keyWindow->onKeyUp->Call(v8::Object::New(), 1, &keyEvent.JsObject());
+							else
+								keyWindow->onKeyDown->Call(v8::Object::New(), 1, &keyEvent.JsObject());
+						}
+
+						break;
+					}
+				}
+				
+				break;
+
 			default:
 				break;
 			}
@@ -460,6 +488,7 @@ bool GLRenderer::runWindowLoop(v8::Handle<v8::Context> context)
 	}
 
 	this->mouseMotion.Reset();
+	this->keyEvent.Reset();
 
 	return runResult;
 }

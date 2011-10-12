@@ -17,6 +17,7 @@
 #include <key-v8/PersistentV8.h>
 #include <key-window/Window.h>
 #include <key-window/MouseMotion.h>
+#include <key-window/KeyEvent.h>
 
 namespace key {
 
@@ -49,6 +50,7 @@ namespace key {
 		std::vector<SDLWindowInfo> openedWindows;
 
 		key::PersistentV8<key::MouseMotion> mouseMotion;
+		key::PersistentV8<key::KeyEvent> keyEvent;
 
 		// used to notify window loop about a closed window
 		bool windowRemoved;
