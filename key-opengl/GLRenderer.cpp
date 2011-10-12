@@ -6,6 +6,7 @@
 #include <boost/assign.hpp>
 
 #include <key-window/Window.h>
+#include <key-v8/KeyV8.h>
 
 using namespace std;
 using namespace key;
@@ -290,7 +291,7 @@ void GLRenderer::unuseSdlIfNoWindows() {
 
 bool GLRenderer::runWindowLoop(v8::Handle<v8::Context> context)
 {
-	this->mouseMotion = KeyV8::NewObject<key::MouseMotion>(context, 0, NULL);
+	KeyV8::NewObjectRef<key::MouseMotion>(this->mouseMotion, context, 0, NULL);
 
 	auto runResult = true;
 
@@ -407,7 +408,7 @@ bool GLRenderer::runWindowLoop(v8::Handle<v8::Context> context)
 						keyWindow = it->refV8->NativeObject();
 
 						if (!keyWindow->onMouseMotion.IsEmpty()) {
-							auto motion = this->mouseMotion->NativeObject();
+							auto motion = mouseMotion.NativeObject();
 
 							motion->x = event.motion.x;
 							motion->y = event.motion.y;
@@ -419,8 +420,7 @@ bool GLRenderer::runWindowLoop(v8::Handle<v8::Context> context)
 							motion->bX1 = event.motion.state && SDL_BUTTON_X1MASK;
 							motion->bX2 = event.motion.state && SDL_BUTTON_X2MASK;
 
-							v8::Handle<v8::Value> values[] = { this->mouseMotion->JsObject() };
-							keyWindow->onMouseMotion->Call(v8::Object::New(), 1, values);
+							keyWindow->onMouseMotion->Call(v8::Object::New(), 1, &mouseMotion.JsObject());
 						}
 
 						break;
@@ -459,7 +459,7 @@ bool GLRenderer::runWindowLoop(v8::Handle<v8::Context> context)
 		}
 	}
 
-	this->mouseMotion.reset();
+	this->mouseMotion.Reset();
 
 	return runResult;
 }

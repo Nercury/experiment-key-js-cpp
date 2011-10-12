@@ -14,7 +14,7 @@
 #include <key-common/error.hpp>
 #include <key-opengl/lib_key_opengl.h>
 #include <key-window/Renderer.h>
-#include <key-v8/KeyV8.h>
+#include <key-v8/PersistentV8.h>
 #include <key-window/Window.h>
 #include <key-window/MouseMotion.h>
 
@@ -48,7 +48,7 @@ namespace key {
 		static bool screenSaverEnabled;
 		std::vector<SDLWindowInfo> openedWindows;
 
-		std::shared_ptr<key::PersistentV8<key::MouseMotion>> mouseMotion;
+		key::PersistentV8<key::MouseMotion> mouseMotion;
 
 		// used to notify window loop about a closed window
 		bool windowRemoved;

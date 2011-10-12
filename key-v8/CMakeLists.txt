@@ -10,6 +10,7 @@ add_library(key-v8 STATIC
 	reflect.hpp
 	KeyV8.h
 	KeyV8.cpp
+	PersistentV8.h
 	expose_headers.hpp
 	exception.h
 	exception.cpp
