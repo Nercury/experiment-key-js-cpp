@@ -2,6 +2,13 @@
 { var r = js_main.executeFile('engine/lib.js'); if (r !== true) js_main.textLog(r);}
 /* end load main lib, use js.script to execute other scripts */
 
+var sc = new Scancode();
+
+js.help(Scancode);
+app.log(Scancode.A);
+
+if (0) {
+
 window = new Window();
 window.windowTitle = "Hello";
 
@@ -25,5 +32,7 @@ logWindow.open();
 
 window.run();
 
+window.open();
 logWindow.open();
 logWindow.run();
+}

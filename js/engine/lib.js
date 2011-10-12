@@ -18,19 +18,29 @@ Js.prototype.script = function(filename) {
 		return false;
 	}
 }
-Js.prototype.man = function(obj) {
+Js.prototype.typeOf = function(obj){
+    return Object.prototype.toString.call(obj).match(/^\[object (.*)\]$/)[1];
+}
+Js.prototype.man = function(obj, finalLookup) {
 	var fields = obj.__fields;
-	if (!fields)
-		return "Object has no documentation";
 	var str = '';
-	for (var i = 0; i < fields.length; i++) {
-		var info = obj[fields[i]];
-		if (info.field == 'property') {
-			str += "\n" + info.type + ' ' + fields[i] + ' (' + (info.read_only == '1' ? 'get' : 'get, set') + ')';
-		} else if (info.field == 'method') {
-			str += "\n" + info.return_type + ' ' + fields[i] + info.parameters;
+	if (!fields && finalLookup !== true) {
+		var objType = js.typeOf(obj);
+		str = objType + " object";
+		str += "\n";
+		eval("str += js.man(" + objType + ", true);");
+	} else {
+		for (var i = 0; i < fields.length; i++) {
+			var info = obj["reflect__" + fields[i]];
+			if (info.field == 'property') {
+				str += "\n" + info.type + ' ' + fields[i] + ' (' + (info.read_only == '1' ? 'get' : 'get, set') + ')';
+			} else if (info.field == 'method') {
+				str += "\n" + info.return_type + ' ' + fields[i] + info.parameters;
+			} else if (info.field == 'static enum') {
+				str += "\nstatic " + info.return_type + ' ' + fields[i];
+			}
+			str += (info.doc == "" ? "" : "\n" + info.doc + "\n");
 		}
-		str += "\n" + info.doc + "\n";
 	}
 	return str;
 }
