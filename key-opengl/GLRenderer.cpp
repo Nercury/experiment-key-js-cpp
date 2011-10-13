@@ -397,7 +397,7 @@ bool GLRenderer::runWindowLoop(v8::Handle<v8::Context> context)
 								if (keyWindow->onWindowClose.IsEmpty()) {
 									keyWindow->close();
 								} else {
-									auto val = keyWindow->onWindowClose->Call(v8::Object::New(), 0, NULL);
+									auto val = keyWindow->onWindowClose->Call(keyWindow->JsObject(), 0, NULL);
 									if (!val->IsBoolean() || val->BooleanValue()) {
 										keyWindow->close();
 									}
@@ -430,7 +430,7 @@ bool GLRenderer::runWindowLoop(v8::Handle<v8::Context> context)
 							motion->bX1 = event.motion.state && SDL_BUTTON_X1MASK;
 							motion->bX2 = event.motion.state && SDL_BUTTON_X2MASK;
 
-							keyWindow->onMouseMotion->Call(v8::Object::New(), 1, &mouseMotion.JsObject());
+							keyWindow->onMouseMotion->Call(keyWindow->JsObject(), 1, &mouseMotion.JsObject());
 						}
 
 						break;
@@ -454,9 +454,9 @@ bool GLRenderer::runWindowLoop(v8::Handle<v8::Context> context)
 							key->mod = event.key.keysym.mod;
 
 							if (event.key.type == SDL_KEYUP)
-								keyWindow->onKeyUp->Call(v8::Object::New(), 1, &keyEvent.JsObject());
+								keyWindow->onKeyUp->Call(keyWindow->JsObject(), 1, &keyEvent.JsObject());
 							else
-								keyWindow->onKeyDown->Call(v8::Object::New(), 1, &keyEvent.JsObject());
+								keyWindow->onKeyDown->Call(keyWindow->JsObject(), 1, &keyEvent.JsObject());
 						}
 
 						break;

@@ -2,7 +2,7 @@
 { var r = js_main.executeFile('engine/lib.js'); if (r !== true) js_main.textLog(r);}
 /* end load main lib, use js.script to execute other scripts */
 
-for (var i = 1; i < 200000; i++)
+for (var i = 1; i < 20; i++)
 	window = new Window();
 window.windowTitle = "Hello";
 
@@ -12,6 +12,11 @@ window.onWindowInit = function() {
 
 window.onMouseMotion = function(event) {
     app.log(event.x + ", " + event.y);
+};
+
+window.onWindowClose = function() {
+	js.help(this);
+	return false;
 };
 
 /*window.onKeyDown = function(event) {

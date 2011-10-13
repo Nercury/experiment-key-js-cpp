@@ -29,6 +29,7 @@ namespace key {
 		Window(const v8::Arguments & args);
 		LIB_KEY_WINDOW virtual ~Window();
 
+		v8::Handle<v8::Object> JsObject() { return jsObject.As<v8::Object>(); }
 		uint64_t getId() { return this->id; }
 
 		FLECT_GS(key::Window, windowTitle, 
@@ -224,6 +225,7 @@ namespace key {
 			REFLECT(onMouseMotion)
 			REFLECT(onKeyUp)
 			REFLECT(onKeyDown)
+			REFLECT(onWindowClose)
 			REFLECT(onWindowInit)
 			REFLECT(onWindowResize)
 			REFLECT(open)

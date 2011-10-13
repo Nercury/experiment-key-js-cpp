@@ -54,7 +54,7 @@ key::Window::Window(const v8::Arguments & args) :
 }
 
 static void make_weak_callback(v8::Persistent<v8::Value> object, void *parameter) {
-	object.Dispose();
+	object.Dispose(); // if there is no reference from js, surelly this can be disposed.
 	object.Clear();
 }
 
