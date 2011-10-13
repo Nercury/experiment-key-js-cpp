@@ -164,6 +164,15 @@ void key::Window::setOnKeyDown(Handle<Value> value) {
 		cout << "Warning! Tried to set non-function as onKeyDown event callback!" << endl;
 }
 
+void key::Window::setOnWindowClose(Handle<Value> value) {
+	HandleScope handle_scope;
+	if (value->IsFunction()) {
+		auto func = Handle<Function>::Cast(value);
+		this->onWindowClose = Persistent<Function>::New(func);
+	} else
+		cout << "Warning! Tried to set non-function as onWindowClose event callback!" << endl;
+}
+
 void key::Window::setOnWindowInit(Handle<Value> value) {
 	HandleScope handle_scope;
 	if (value->IsFunction()) {

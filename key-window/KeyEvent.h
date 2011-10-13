@@ -1,7 +1,7 @@
 #pragma once
 
 #include <boost/format.hpp>
-
+#include <boost/function.hpp>
 #include <key-v8/expose_headers.hpp>
 #include <key-v8/reflect.hpp>
 
@@ -19,7 +19,8 @@ namespace key {
 		FLECT_PROP(key::KeyEvent, mod, uint16_t, "int", "Current key modifiers (Ctrl, Alt, Shift).")
 		uint16_t mod;
 
-		// following two methods require linking key-window with SDL. This should be generally avoided.
+		// assign to this function callback to get human-readable name for a key code
+		boost::function<std::string (int32_t)> onGetKeyName;
 
 		FLECT_M(key::KeyEvent, getVk, std::string (), "string", "()", 
 			"Get string for virtual key code (if not available, returns false).")
@@ -30,7 +31,11 @@ namespace key {
 		FLECT_M(key::KeyEvent, getVkName, std::string (), "string", "()", 
 			"Use this function to get a human-readable name for a key.")
 		std::string getVkName() { 
-			return keyCode == SDLK_UNKNOWN ? "" : std::string(SDL_GetKeyName(keyCode));
+			if (onGetKeyName) {
+				return keyCode == SDLK_UNKNOWN ? "" : std::string(onGetKeyName(keyCode));
+			} else {
+				return "Unknown Name";
+			}
 		} 
 
 		/* reflection */

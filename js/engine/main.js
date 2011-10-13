@@ -13,13 +13,12 @@ window.onMouseMotion = function(event) {
     app.log(event.x + ", " + event.y);
 };
 
-window.onKeyDown = function(event) {
+/*window.onKeyDown = function(event) {
 	app.log("Key " + event.getVkName() + " pressed");
-};
+};*/
 
 window.onKeyUp = function(event) {
-	js.help(event);
-	//app.log("Key " + event.getVkName() + " released");
+	app.log("Key " + event.getVkName() + " released");
 };
 
 window.displayMode = window.getDesktopDisplayMode();

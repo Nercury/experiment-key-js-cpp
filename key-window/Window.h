@@ -151,6 +151,12 @@ namespace key {
 			"function", "Set key down callback")
 		v8::Persistent<v8::Function> onKeyDown; void setOnKeyDown(v8::Handle<v8::Value> value);
 
+		FLECT_GS(key::Window, onWindowClose, 
+			Member, v8::Persistent<v8::Function>, onWindowClose, 
+			Method, void (v8::Handle<v8::Value>), setOnWindowClose, 
+			"function", "Set window close callback")
+		v8::Persistent<v8::Function> onWindowClose; void setOnWindowClose(v8::Handle<v8::Value> value);
+
 		FLECT_GS(key::Window, onWindowInit, 
 			Member, v8::Persistent<v8::Function>, onWindowInit, 
 			Method, void (v8::Handle<v8::Value>), setOnWindowInit, 

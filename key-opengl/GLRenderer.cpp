@@ -294,6 +294,8 @@ bool GLRenderer::runWindowLoop(v8::Handle<v8::Context> context)
 	KeyV8::NewObjectRef<key::MouseMotion>(this->mouseMotion, context, 0, NULL);
 	KeyV8::NewObjectRef<key::KeyEvent>(this->keyEvent, context, 0, NULL);
 
+	this->keyEvent.NativeObject()->onGetKeyName = SDL_GetKeyName;
+
 	auto runResult = true;
 
 	SDL_Event event;
