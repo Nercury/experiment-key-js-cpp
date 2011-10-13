@@ -2,32 +2,48 @@
 { var r = js_main.executeFile('engine/lib.js'); if (r !== true) js_main.textLog(r);}
 /* end load main lib, use js.script to execute other scripts */
 
-window = new Window();
-window.windowTitle = "Hello";
+var MyWindow = function() {
+	var self = new Window();
 
-window.onWindowInit = function() {
-	app.log("running init");
+	self.windowTitle = "Hello";
+	
+	self.onWindowInit = function() {
+		app.log("running init");
+	};
+	
+	self.onMouseMotion = function(event) {
+		//app.log(event.x + ", " + event.y);
+	};
+	
+	self.onWindowClose = function() {
+		return true;
+	};
+
+	self.onKeyDown = function(event) {
+		app.log("Key " + event.getVkName() + " pressed");
+	};
+
+	self.onKeyUp = function(event) {
+		if (event.scanCode == ScanCode.ESCAPE)
+			this.close();
+		else if (event.scanCode == ScanCode.N)
+		{
+			var w = MyWindow();
+			w.open();
+		}
+	};	
+
+	self.displayMode = self.getDesktopDisplayMode();
+	
+	return self;
 };
 
-window.onMouseMotion = function(event) {
-    app.log(event.x + ", " + event.y);
-};
+w1 = MyWindow();
+//w2 = MyWindow();
+//w3 = MyWindow();
 
-window.onWindowClose = function() {
-	return true;
-};
+w1.open();
+//w2.open();
+//w3.open();
 
-/*window.onKeyDown = function(event) {
-	app.log("Key " + event.getVkName() + " pressed");
-};*/
-
-window.onKeyUp = function(event) {
-	app.log("Key " + event.getVkName() + " released");
-	if (event.scanCode == ScanCode.ESCAPE)
-		this.close();
-};
-
-window.displayMode = window.getDesktopDisplayMode();
-
-window.open();
-window.run();
+w1.run();

@@ -35,5 +35,7 @@ int main(int argc, char* argv[])
 		v8->Run(config.js_main_file);
 	}
 
+	system("PAUSE");
+
 	return 0;
 }

@@ -33,6 +33,7 @@ namespace key {
 		SDL_GLContext context;
 
 		void makeCurrent();
+		void resize();
 		void render();
 	};
 
