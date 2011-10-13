@@ -24,7 +24,6 @@ int main(int argc, char* argv[])
 	{
 		auto v8 = KeyV8::New(js_dir);
 		v8->Reflect<Window>();
-		v8->Reflect<MouseMotion>();
 
 		v8->Run(config.js_main_file);
 	}

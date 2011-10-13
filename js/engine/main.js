@@ -6,7 +6,7 @@ window = new Window();
 window.windowTitle = "Hello";
 
 window.onWindowInit = function() {
-	app.log("running init");
+	//app.log("running init");
 };
 
 window.onMouseMotion = function(event) {
