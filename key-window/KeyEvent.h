@@ -12,9 +12,9 @@ namespace key {
 	struct KeyEvent
 	{
 	public:
-		FLECT_PROP(key::KeyEvent, keyCode, int32_t, "int", "Virtual key code. Use Keycode enumeration to compare values.")
+		FLECT_PROP(key::KeyEvent, keyCode, int32_t, "int", "Virtual key code. Use KeyCode enumeration to compare values.")
 		int32_t keyCode;
-		FLECT_PROP(key::KeyEvent, scanCode, uint16_t, "int", "Physical key code. Use Scancode enumeration to compare values.")
+		FLECT_PROP(key::KeyEvent, scanCode, uint16_t, "int", "Physical key code. Use ScanCode enumeration to compare values.")
 		uint16_t scanCode;
 		FLECT_PROP(key::KeyEvent, mod, uint16_t, "int", "Current key modifiers (Ctrl, Alt, Shift).")
 		uint16_t mod;

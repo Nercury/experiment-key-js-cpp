@@ -270,11 +270,6 @@ bool GLRenderer::createWindow(SDLWindowInfo & wi) {
 	return true;
 }
 
-void SDLWindowInfo::makeCurrent()
-{
-	SDL_GL_MakeCurrent(sdlWindow, context);
-}
-
 void GLRenderer::destroyWindow(SDLWindowInfo & wi) {
 	SDL_GL_DeleteContext(wi.context);
 	SDL_DestroyWindow(wi.sdlWindow);
@@ -473,7 +468,10 @@ bool GLRenderer::runWindowLoop(v8::Handle<v8::Context> context)
 		if (this->windowRemoved) // if some window was removed as a result of some event, restart loop
 			continue;
 
-		//SDL_Delay(5);
+		SDL_Delay(1);
+
+		for (it = this->openedWindows.begin(); it != this->openedWindows.end(); ++it)
+			it->render();
 
 		sec_frames[0]++;
 

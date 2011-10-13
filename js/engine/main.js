@@ -2,8 +2,7 @@
 { var r = js_main.executeFile('engine/lib.js'); if (r !== true) js_main.textLog(r);}
 /* end load main lib, use js.script to execute other scripts */
 
-for (var i = 1; i < 20; i++)
-	window = new Window();
+window = new Window();
 window.windowTitle = "Hello";
 
 window.onWindowInit = function() {
@@ -15,8 +14,7 @@ window.onMouseMotion = function(event) {
 };
 
 window.onWindowClose = function() {
-	js.help(this);
-	return false;
+	return true;
 };
 
 /*window.onKeyDown = function(event) {
@@ -25,6 +23,8 @@ window.onWindowClose = function() {
 
 window.onKeyUp = function(event) {
 	app.log("Key " + event.getVkName() + " released");
+	if (event.scanCode == ScanCode.ESCAPE)
+		this.close();
 };
 
 window.displayMode = window.getDesktopDisplayMode();

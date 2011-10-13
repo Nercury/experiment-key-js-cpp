@@ -13,10 +13,10 @@ add_library(key-window STATIC
 	Window.cpp
 	MouseMotion.h
 	MouseMotion.cpp
-	Keycode.h
-	Keycode.cpp
-	Scancode.h
-	Scancode.cpp
+	KeyCode.h
+	KeyCode.cpp
+	ScanCode.h
+	ScanCode.cpp
 	KeyEvent.h
 	KeyEvent.cpp
 	)

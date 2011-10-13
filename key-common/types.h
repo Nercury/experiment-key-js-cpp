@@ -1,5 +1,7 @@
 #pragma once
 
+#define SDL_NO_COMPAT
+
 #if defined(__sparc__)
 #  include <sys/inttypes.h>
 #else

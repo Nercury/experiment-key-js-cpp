@@ -1,4 +1,4 @@
-#include "Scancode.h"
+#include "ScanCode.h"
 
 #include <vector>
 #include <string>
@@ -10,10 +10,10 @@
 using namespace v8;
 
 namespace cvv8 {
-    CVV8_TypeName_IMPL((key::Scancode),"Scancode");
+    CVV8_TypeName_IMPL((key::ScanCode),"ScanCode");
 }
 
-void key::Scancode::loadScancodes(std::vector<std::string> & items, cvv8::ClassCreator<key::Scancode> & cc, v8::Handle<v8::ObjectTemplate> proto)
+void key::ScanCode::loadScanCodes(std::vector<std::string> & items, cvv8::ClassCreator<key::ScanCode> & cc, v8::Handle<v8::ObjectTemplate> proto)
 {
 	std::vector<boost::tuple<std::string, uint16_t, std::string>> enum_items =
 	boost::assign::tuple_list_of

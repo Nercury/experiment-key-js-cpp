@@ -9,6 +9,8 @@ add_library(key-opengl STATIC
 	lib_key_opengl.h
 	GLRenderer.h
 	GLRenderer.cpp
+	SDLWindowInfo.h
+	SDLWindowInfo.cpp
 	)
 
 target_link_libraries(key-opengl 

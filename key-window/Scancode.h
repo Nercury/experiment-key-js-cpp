@@ -5,35 +5,35 @@
 
 namespace key {
 
-	struct Scancode
+	struct ScanCode
 	{
 	private:
-		static void loadScancodes(std::vector<std::string> & items, cvv8::ClassCreator<key::Scancode> & cc, v8::Handle<v8::ObjectTemplate> proto);
+		static void loadScanCodes(std::vector<std::string> & items, cvv8::ClassCreator<key::ScanCode> & cc, v8::Handle<v8::ObjectTemplate> proto);
 	public:
 		/* reflection */
-		typedef cvv8::Signature<key::Scancode (
+		typedef cvv8::Signature<key::ScanCode (
 		)> Ctors;
 		
-		static void reflect(std::vector<std::string> & items, cvv8::ClassCreator<key::Scancode> & cc, 
+		static void reflect(std::vector<std::string> & items, cvv8::ClassCreator<key::ScanCode> & cc, 
 			v8::Handle<v8::ObjectTemplate> proto, bool for_static) {
 
 			if (for_static) {
-				loadScancodes(items, cc, proto);
+				loadScanCodes(items, cc, proto);
 			}
 		}
 	};
 }
 
 namespace cvv8 {
-    CVV8_TypeName_DECL((key::Scancode));
+    CVV8_TypeName_DECL((key::ScanCode));
 
     template <>
-    class ClassCreator_Factory<key::Scancode>
-     : public ClassCreator_Factory_Dispatcher< key::Scancode,
-          CtorArityDispatcher<key::Scancode::Ctors> >
+    class ClassCreator_Factory<key::ScanCode>
+     : public ClassCreator_Factory_Dispatcher< key::ScanCode,
+          CtorArityDispatcher<key::ScanCode::Ctors> >
     {};
 
     template <>
-    struct JSToNative< key::Scancode > : JSToNative_ClassCreator< key::Scancode >
+    struct JSToNative< key::ScanCode > : JSToNative_ClassCreator< key::ScanCode >
     {};
 }
