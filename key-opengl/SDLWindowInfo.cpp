@@ -11,6 +11,8 @@ void SDLWindowInfo::resize()
 {
 	this->makeCurrent();
 
+	SDL_GL_SetSwapInterval(1);
+
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 	glOrtho(0.0f, renderWidth, renderHeight, 0.0f, 0.0f, 1000.0f);
@@ -33,7 +35,7 @@ void SDLWindowInfo::render()
         glColor3f(1, 1, 1); glVertex3f(0, 100, 0);
     glEnd();
 
-	glFlush();
+	//glFlush();
 
 	SDL_GL_SwapWindow(this->sdlWindow);
 }
