@@ -6,6 +6,7 @@
 #include <boost/assign.hpp>
 
 #include <key-window/Window.h>
+#include <key-v8/KeyV8.h>
 
 using namespace std;
 using namespace key;
@@ -181,12 +182,13 @@ bool GLRenderer::createWindow(SDLWindowInfo & wi) {
 		SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 4);
-		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 0);
 		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
 		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
 		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
 		SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
+		SDL_GL_SetSwapInterval(0);
 	}
 
 	uint32_t windowFlags = SDL_WINDOW_OPENGL;
@@ -262,16 +264,13 @@ bool GLRenderer::createWindow(SDLWindowInfo & wi) {
 	wi.sdlWindowID = SDL_GetWindowID(wi.sdlWindow);
 
 	wi.context = SDL_GL_CreateContext(wi.sdlWindow);
-	wi.makeCurrent();
+	//wi.makeCurrent();
 
-	SDL_GL_SetSwapInterval(1);
+	//SDL_GL_SetSwapInterval(1);
+
+	wi.resize();
 
 	return true;
-}
-
-void SDLWindowInfo::makeCurrent()
-{
-	SDL_GL_MakeCurrent(sdlWindow, context);
 }
 
 void GLRenderer::destroyWindow(SDLWindowInfo & wi) {
@@ -290,7 +289,10 @@ void GLRenderer::unuseSdlIfNoWindows() {
 
 bool GLRenderer::runWindowLoop(v8::Handle<v8::Context> context)
 {
-	this->mouseMotion = KeyV8::NewObject<key::MouseMotion>(context, 0, NULL);
+	KeyV8::NewObjectRef<key::MouseMotion>(this->mouseMotion, context, 0, NULL);
+	KeyV8::NewObjectRef<key::KeyEvent>(this->keyEvent, context, 0, NULL);
+
+	this->keyEvent.NativeObject()->onGetKeyName = SDL_GetKeyName;
 
 	auto runResult = true;
 
@@ -352,6 +354,7 @@ bool GLRenderer::runWindowLoop(v8::Handle<v8::Context> context)
 								keyWindow->windowSize = boost::assign::list_of((int32_t)event.window.data1)((int32_t)event.window.data2);
 								it->renderWidth = (int32_t)event.window.data1;
 								it->renderHeight = (int32_t)event.window.data2;
+								it->resize();
 								break;
 							case SDL_WINDOWEVENT_MINIMIZED:
 								fprintf(stderr, "Window %d minimized\n", event.window.windowID);
@@ -390,7 +393,14 @@ bool GLRenderer::runWindowLoop(v8::Handle<v8::Context> context)
 							case SDL_WINDOWEVENT_CLOSE:
 								fprintf(stderr, "Window %d closed\n", event.window.windowID);
 
-								keyWindow->close();
+								if (keyWindow->onWindowClose.IsEmpty()) {
+									keyWindow->close();
+								} else {
+									auto val = keyWindow->onWindowClose->Call(keyWindow->JsObject(), 0, NULL);
+									if (!val->IsBoolean() || val->BooleanValue()) {
+										keyWindow->close();
+									}
+								}
 								break;
 						default:
 							break;
@@ -407,7 +417,7 @@ bool GLRenderer::runWindowLoop(v8::Handle<v8::Context> context)
 						keyWindow = it->refV8->NativeObject();
 
 						if (!keyWindow->onMouseMotion.IsEmpty()) {
-							auto motion = this->mouseMotion->NativeObject();
+							auto motion = mouseMotion.NativeObject();
 
 							motion->x = event.motion.x;
 							motion->y = event.motion.y;
@@ -419,8 +429,7 @@ bool GLRenderer::runWindowLoop(v8::Handle<v8::Context> context)
 							motion->bX1 = event.motion.state && SDL_BUTTON_X1MASK;
 							motion->bX2 = event.motion.state && SDL_BUTTON_X2MASK;
 
-							v8::Handle<v8::Value> values[] = { this->mouseMotion->JsObject() };
-							keyWindow->onMouseMotion->Call(v8::Object::New(), 1, values);
+							keyWindow->onMouseMotion->Call(keyWindow->JsObject(), 1, &mouseMotion.JsObject());
 						}
 
 						break;
@@ -428,6 +437,33 @@ bool GLRenderer::runWindowLoop(v8::Handle<v8::Context> context)
 				}
 				
 				break;
+			case SDL_KEYUP:
+			case SDL_KEYDOWN:
+				for (it = this->openedWindows.begin(); it != this->openedWindows.end(); ++it) {
+					if (it->hasKeyboardFocus) {
+
+						keyWindow = it->refV8->NativeObject();
+
+						if ((event.key.type == SDL_KEYUP && !keyWindow->onKeyUp.IsEmpty())
+							|| (event.key.type == SDL_KEYDOWN && !keyWindow->onKeyDown.IsEmpty())) {
+							auto key = keyEvent.NativeObject();
+
+							key->keyCode = event.key.keysym.sym;
+							key->scanCode = event.key.keysym.scancode;
+							key->mod = event.key.keysym.mod;
+
+							if (event.key.type == SDL_KEYUP)
+								keyWindow->onKeyUp->Call(keyWindow->JsObject(), 1, &keyEvent.JsObject());
+							else
+								keyWindow->onKeyDown->Call(keyWindow->JsObject(), 1, &keyEvent.JsObject());
+						}
+
+						break;
+					}
+				}
+				
+				break;
+
 			default:
 				break;
 			}
@@ -436,7 +472,10 @@ bool GLRenderer::runWindowLoop(v8::Handle<v8::Context> context)
 		if (this->windowRemoved) // if some window was removed as a result of some event, restart loop
 			continue;
 
-		//SDL_Delay(5);
+		//SDL_Delay(0);
+
+		for (it = this->openedWindows.begin(); it != this->openedWindows.end(); ++it)
+			it->render();
 
 		sec_frames[0]++;
 
@@ -459,7 +498,8 @@ bool GLRenderer::runWindowLoop(v8::Handle<v8::Context> context)
 		}
 	}
 
-	this->mouseMotion.reset();
+	this->mouseMotion.Reset();
+	this->keyEvent.Reset();
 
 	return runResult;
 }

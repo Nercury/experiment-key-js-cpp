@@ -4,35 +4,12 @@
 
 #include <key-v8/lib_key_v8.h>
 #include <key-v8/expose_headers.hpp>
+#include <key-v8/PersistentV8.h>
 
 #include <cvv8/arguments.hpp>
 
 namespace key
 {
-	/**
-	Persistent handle wrapper for objects created from javascript.
-	Keeps v8::Persistent reference to prevent javascript from deleting the
-	object while it is in use by C++. Wrap this class in shared ptr.
-	*/
-	template<class T>
-	class PersistentV8
-	{
-	private:
-		bool owned;
-		v8::Persistent<v8::Value> keeper;
-		PersistentV8& operator=(const PersistentV8&) {}
-	protected:
-		T * native;
-	public:
-		PersistentV8(v8::Handle<v8::Value> handle, bool owned = true) 
-			: keeper(v8::Persistent<v8::Value>::New(handle)), native(cvv8::CastFromJS<T>(handle)), owned(owned) {}
-
-		virtual ~PersistentV8() { if (owned) keeper.Dispose(); }
-
-		T * NativeObject() { return native; }
-		v8::Handle<v8::Value> JsObject() { return keeper; }
-	};
-
 	class PersistentKeyV8;
 
 	class KeyV8
@@ -52,7 +29,18 @@ namespace key
 		static bool ExecuteScript(v8::Handle<v8::String> script, std::string & short_filename);
 
 		template<class T>
-		static std::shared_ptr<key::PersistentV8<T>> NewObject(v8::Handle<v8::Context> context, int argc, v8::Handle<v8::Value> * argv)
+		static void NewObjectRef(key::PersistentV8<T> & persistentRef, v8::Handle<v8::Context> context, int argc, v8::Handle<v8::Value> * argv)
+		{
+			v8::HandleScope handle_scope;
+
+			auto & cc = KeyV8::Class<T>();
+			auto value = cc.CtorFunction()->CallAsConstructor(argc, argv);
+
+			persistentRef.Assign(value, true);
+		}
+
+		template<class T>
+		static std::shared_ptr<key::PersistentV8<T>> NewSharedObject(v8::Handle<v8::Context> context, int argc, v8::Handle<v8::Value> * argv)
 		{
 			v8::HandleScope handle_scope;
 

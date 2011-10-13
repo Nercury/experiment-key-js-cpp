@@ -24,11 +24,12 @@ namespace key {
 		uint64_t id;
 		std::map<std::string, std::shared_ptr<key::Renderer>> allRenderers;
 		std::shared_ptr<key::Renderer> getCurrentRenderer();
-		v8::Persistent<v8::Context> context;
+		v8::Persistent<v8::Value> jsObject;
 	public:
 		Window(const v8::Arguments & args);
 		LIB_KEY_WINDOW virtual ~Window();
 
+		v8::Handle<v8::Object> JsObject() { return jsObject.As<v8::Object>(); }
 		uint64_t getId() { return this->id; }
 
 		FLECT_GS(key::Window, windowTitle, 
@@ -139,6 +140,24 @@ namespace key {
 			"function", "Set mouse motion callback")
 		v8::Persistent<v8::Function> onMouseMotion; void setOnMouseMotion(v8::Handle<v8::Value> value);
 
+		FLECT_GS(key::Window, onKeyUp, 
+			Member, v8::Persistent<v8::Function>, onKeyUp, 
+			Method, void (v8::Handle<v8::Value>), setOnKeyUp, 
+			"function", "Set key up callback")
+		v8::Persistent<v8::Function> onKeyUp; void setOnKeyUp(v8::Handle<v8::Value> value);
+
+		FLECT_GS(key::Window, onKeyDown, 
+			Member, v8::Persistent<v8::Function>, onKeyDown, 
+			Method, void (v8::Handle<v8::Value>), setOnKeyDown, 
+			"function", "Set key down callback")
+		v8::Persistent<v8::Function> onKeyDown; void setOnKeyDown(v8::Handle<v8::Value> value);
+
+		FLECT_GS(key::Window, onWindowClose, 
+			Member, v8::Persistent<v8::Function>, onWindowClose, 
+			Method, void (v8::Handle<v8::Value>), setOnWindowClose, 
+			"function", "Set window close callback")
+		v8::Persistent<v8::Function> onWindowClose; void setOnWindowClose(v8::Handle<v8::Value> value);
+
 		FLECT_GS(key::Window, onWindowInit, 
 			Member, v8::Persistent<v8::Function>, onWindowInit, 
 			Method, void (v8::Handle<v8::Value>), setOnWindowInit, 
@@ -204,6 +223,9 @@ namespace key {
 			REFLECT(allRenderDevices)
 			REFLECT(currentDevice)
 			REFLECT(onMouseMotion)
+			REFLECT(onKeyUp)
+			REFLECT(onKeyDown)
+			REFLECT(onWindowClose)
 			REFLECT(onWindowInit)
 			REFLECT(onWindowResize)
 			REFLECT(open)

@@ -39,7 +39,7 @@
 	static void __reflect_ ## property_name ## (cvv8::ClassCreator<class_definition> & cc, v8::Handle<v8::ObjectTemplate> proto, bool for_static) { \
 		if (!for_static) { FLECT_GS_ND(class_definition, property_name, get_accessor, get_definition, get_field, set_accessor, set_definition, set_field) } \
 		if (for_static) { \
-			cc.CtorFunction()->SetAccessor(JSTR(#property_name), \
+			cc.CtorFunction()->SetAccessor(JSTR("reflect__" #property_name), \
 				cvv8::FunctionToGetter< std::map<std::string,std::string> (), & ## class_definition ## :: ## __get_ ## property_name ## _reflection ## >::Get \
 			); \
 		} \
@@ -58,7 +58,7 @@
 	static void __reflect_ ## property_name ## (cvv8::ClassCreator<class_definition> & cc, v8::Handle<v8::ObjectTemplate> proto, bool for_static) { \
 		if (!for_static) { FLECT_G_ND(class_definition, property_name, get_accessor, get_definition, get_field) } \
 		if (for_static) { \
-			cc.CtorFunction()->SetAccessor(JSTR(#property_name), \
+			cc.CtorFunction()->SetAccessor(JSTR("reflect__" #property_name), \
 				cvv8::FunctionToGetter< std::map<std::string,std::string> (), & ## class_definition ## :: ## __get_ ## property_name ## _reflection ## >::Get \
 			); \
 		} \
@@ -77,7 +77,7 @@
 	static void __reflect_ ## property_name ## (cvv8::ClassCreator<class_definition> & cc, v8::Handle<v8::ObjectTemplate> proto, bool for_static) { \
 		if (!for_static) { FLECT_PROP_ND(class_definition, property_name, cpp_type) } \
 		if (for_static) { \
-			cc.CtorFunction()->SetAccessor(JSTR(#property_name), \
+			cc.CtorFunction()->SetAccessor(JSTR("reflect__" #property_name), \
 				cvv8::FunctionToGetter< std::map<std::string,std::string> (), & ## class_definition ## :: ## __get_ ## property_name ## _reflection ## >::Get \
 			); \
 		} \
@@ -97,7 +97,7 @@
 		cc(#method_name, cvv8::MethodToInCa<class_definition, method_definition, & ## class_definition ## :: ## method_name ## >::Call); \
 		} \
 		if (for_static) { \
-			cc.CtorFunction()->SetAccessor(JSTR(#method_name), \
+			cc.CtorFunction()->SetAccessor(JSTR("reflect__" #method_name), \
 				cvv8::FunctionToGetter< std::map<std::string,std::string> (), & ## class_definition ## :: ## __get_ ## method_name ## _reflection ## >::Get \
 			); \
 		} \

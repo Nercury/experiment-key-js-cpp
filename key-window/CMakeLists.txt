@@ -13,6 +13,12 @@ add_library(key-window STATIC
 	Window.cpp
 	MouseMotion.h
 	MouseMotion.cpp
+	KeyCode.h
+	KeyCode.cpp
+	ScanCode.h
+	ScanCode.cpp
+	KeyEvent.h
+	KeyEvent.cpp
 	)
 
 target_link_libraries(key-window 

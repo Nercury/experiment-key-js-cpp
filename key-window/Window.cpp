@@ -4,7 +4,10 @@
 
 #include <key-v8/exception.h>
 #include <key-window/Renderer.h>
+#include <key-v8/PersistentV8.h>
 
+#include <functional>
+#include <algorithm>
 #include <iostream>
 
 using namespace key;
@@ -22,6 +25,8 @@ static uint64_t get_next_window_id() {
 	next_window_id++;
 	return next_window_id;
 }
+
+static void make_weak_callback(v8::Persistent<v8::Value> object, void *parameter);
 
 key::Window::Window(const v8::Arguments & args) : 
 	windowTitle("Key Window"), 
@@ -44,7 +49,13 @@ key::Window::Window(const v8::Arguments & args) :
 		this->allRenderDevices.push_back(it->first);
 	}
 
-	this->context = v8::Persistent<v8::Context>(args.This()->CreationContext());
+	this->jsObject = v8::Persistent<v8::Value>::New(args.This());
+	this->jsObject.MakeWeak(NULL, make_weak_callback);
+}
+
+static void make_weak_callback(v8::Persistent<v8::Value> object, void *parameter) {
+	object.Dispose(); // if there is no reference from js, surelly this can be disposed.
+	object.Clear();
 }
 
 key::Window::~Window() {
@@ -54,10 +65,12 @@ key::Window::~Window() {
 		onWindowResize.Dispose();
 	if (!onMouseMotion.IsEmpty())
 		onMouseMotion.Dispose();
+	// js object gets disposed on weak ref callback.
 }
 
 void key::Window::setCurrentDevice(std::string value) {
 	if (this->isOpened) {
+		// might be possible, but could overcomplicate already messy code :)
 		cout << "Can not change render device while window is opened." << endl;
 	} else {
 		this->currentDevice = value;
@@ -130,7 +143,7 @@ bool key::Window::run(const v8::Arguments & args)
 				return false;
 			}
 
-			return renderer->runWindowLoop(context);
+			return renderer->runWindowLoop(jsObject.As<v8::Object>()->CreationContext());
 		}
 	}
 
@@ -143,7 +156,34 @@ void key::Window::setOnMouseMotion(Handle<Value> value) {
 		auto func = Handle<Function>::Cast(value);
 		this->onMouseMotion = Persistent<Function>::New(func);
 	} else
-		cout << "Warning! Tried to set non-function as onWindowInit event callback!" << endl;
+		cout << "Warning! Tried to set non-function as onMouseMotion event callback!" << endl;
+}
+
+void key::Window::setOnKeyUp(Handle<Value> value) {
+	HandleScope handle_scope;
+	if (value->IsFunction()) {
+		auto func = Handle<Function>::Cast(value);
+		this->onKeyUp = Persistent<Function>::New(func);
+	} else
+		cout << "Warning! Tried to set non-function as onKeyUp event callback!" << endl;
+}
+
+void key::Window::setOnKeyDown(Handle<Value> value) {
+	HandleScope handle_scope;
+	if (value->IsFunction()) {
+		auto func = Handle<Function>::Cast(value);
+		this->onKeyDown = Persistent<Function>::New(func);
+	} else
+		cout << "Warning! Tried to set non-function as onKeyDown event callback!" << endl;
+}
+
+void key::Window::setOnWindowClose(Handle<Value> value) {
+	HandleScope handle_scope;
+	if (value->IsFunction()) {
+		auto func = Handle<Function>::Cast(value);
+		this->onWindowClose = Persistent<Function>::New(func);
+	} else
+		cout << "Warning! Tried to set non-function as onWindowClose event callback!" << endl;
 }
 
 void key::Window::setOnWindowInit(Handle<Value> value) {
