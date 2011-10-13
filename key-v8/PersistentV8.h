@@ -3,7 +3,7 @@
 #include <key-v8/expose_headers.hpp>
 
 namespace key {
-/**
+	/**
 	Persistent handle wrapper for objects created from javascript.
 	Keeps v8::Persistent reference to prevent javascript from deleting the
 	object while it is in use by C++. Wrap this class in shared ptr.
@@ -45,4 +45,11 @@ namespace key {
 		T * NativeObject() { return native; }
 		inline v8::Persistent<v8::Value> & JsObject() { return this->keeper; }
 	};
+
+	/** return a pointer to lambda function. very unsafe if misused. */
+	template<class FunctorT>
+	void* getcodeptr(const FunctorT& f) {
+		auto ptr = &FunctorT::operator();
+		return *(void**)&ptr; // <<-- looks nice, doesn't it?
+	} 
 }

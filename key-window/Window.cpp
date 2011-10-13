@@ -4,7 +4,10 @@
 
 #include <key-v8/exception.h>
 #include <key-window/Renderer.h>
+#include <key-v8/PersistentV8.h>
 
+#include <functional>
+#include <algorithm>
 #include <iostream>
 
 using namespace key;
@@ -22,6 +25,8 @@ static uint64_t get_next_window_id() {
 	next_window_id++;
 	return next_window_id;
 }
+
+static void make_weak_callback(v8::Persistent<v8::Value> object, void *parameter);
 
 key::Window::Window(const v8::Arguments & args) : 
 	windowTitle("Key Window"), 
@@ -44,7 +49,13 @@ key::Window::Window(const v8::Arguments & args) :
 		this->allRenderDevices.push_back(it->first);
 	}
 
-	this->context = v8::Persistent<v8::Context>(args.This()->CreationContext());
+	this->jsObject = v8::Persistent<v8::Value>::New(args.This());
+	this->jsObject.MakeWeak(NULL, make_weak_callback);
+}
+
+static void make_weak_callback(v8::Persistent<v8::Value> object, void *parameter) {
+	object.Dispose();
+	object.Clear();
 }
 
 key::Window::~Window() {
@@ -54,10 +65,12 @@ key::Window::~Window() {
 		onWindowResize.Dispose();
 	if (!onMouseMotion.IsEmpty())
 		onMouseMotion.Dispose();
+	// js object gets disposed on weak ref callback.
 }
 
 void key::Window::setCurrentDevice(std::string value) {
 	if (this->isOpened) {
+		// might be possible, but could overcomplicate already messy code :)
 		cout << "Can not change render device while window is opened." << endl;
 	} else {
 		this->currentDevice = value;
@@ -130,7 +143,7 @@ bool key::Window::run(const v8::Arguments & args)
 				return false;
 			}
 
-			return renderer->runWindowLoop(context);
+			return renderer->runWindowLoop(jsObject.As<v8::Object>()->CreationContext());
 		}
 	}
 

@@ -24,7 +24,7 @@ namespace key {
 		uint64_t id;
 		std::map<std::string, std::shared_ptr<key::Renderer>> allRenderers;
 		std::shared_ptr<key::Renderer> getCurrentRenderer();
-		v8::Persistent<v8::Context> context;
+		v8::Persistent<v8::Value> jsObject;
 	public:
 		Window(const v8::Arguments & args);
 		LIB_KEY_WINDOW virtual ~Window();

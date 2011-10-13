@@ -394,7 +394,14 @@ bool GLRenderer::runWindowLoop(v8::Handle<v8::Context> context)
 							case SDL_WINDOWEVENT_CLOSE:
 								fprintf(stderr, "Window %d closed\n", event.window.windowID);
 
-								keyWindow->close();
+								if (keyWindow->onWindowClose.IsEmpty()) {
+									keyWindow->close();
+								} else {
+									auto val = keyWindow->onWindowClose->Call(v8::Object::New(), 0, NULL);
+									if (!val->IsBoolean() || val->BooleanValue()) {
+										keyWindow->close();
+									}
+								}
 								break;
 						default:
 							break;
