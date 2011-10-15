@@ -2,6 +2,30 @@
 { var r = js_main.executeFile('engine/lib.js'); if (r !== true) js_main.textLog(r);}
 /* end load main lib, use js.script to execute other scripts */
 
+function key() {}
+key.DrawList = function () {
+}
+key.DrawList.prototype.at = function () {
+    return this;
+};
+key.DrawList.prototype.add = function () {
+    return this;
+};
+key.Translate = function () {
+}
+key.Rotate = function () {
+}
+key.Camera = function () {
+}
+key.Model = function () {
+}
+key.Viewport = function () {
+}
+key.Perspective = function () {
+}
+key.ModelIdentity = function () {
+}
+
 var MyWindow = function() {
 	var self = new Window();
 
@@ -34,7 +58,17 @@ var MyWindow = function() {
 	};	
 
 	self.displayMode = self.getDesktopDisplayMode();
-	
+
+	var viewer = new key.DrawList()
+        .at([new key.Translate(5, 20, 0), new key.Rotate(1, 2, 3)], new key.Camera())
+        .at([new key.Translate(0, 5, 0)], new key.Model("great"))
+	    .add(new key.Model("hat"));
+
+	self.displayList = new key.DrawList()
+        .add(new key.Viewport(0, 0, 500, 400))
+        .add(new key.Perspective(60, 1, 0.1, 500))
+        .at([new key.ModelIdentity()], viewer);
+
 	return self;
 };
 

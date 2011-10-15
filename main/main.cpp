@@ -1,5 +1,5 @@
 #include <memory>
-
+#include <iostream>
 #include <key-common/app.h>
 #include <key-common/JsonConfig.h>
 
