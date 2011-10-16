@@ -1,5 +1,4 @@
 #include <memory>
-#include <iostream>
 #include <key-common/app.h>
 #include <key-common/JsonConfig.h>
 
@@ -11,15 +10,15 @@
 #include <key-window/ScanCode.h>
 #include <key-window/Keycode.h>
 #include <key-window/KeyEvent.h>
+#include <key-window/DrawList.h>
 
-using namespace std;
 using namespace key;
 
 int main(int argc, char* argv[])
 {
 	setAppPath(*argv);
 	
-	Renderer::addRenderer("OpenGL", make_shared<key::GLRenderer>());
+	Renderer::addRenderer("OpenGL", std::make_shared<key::GLRenderer>());
 
 	JsonConfig config("config.js");
 	std::string js_dir(joinPath(getAppPath(), config.js_root_dir));
@@ -31,8 +30,11 @@ int main(int argc, char* argv[])
 		v8->Reflect<ScanCode>();
 		v8->Reflect<KeyCode>();
 		v8->Reflect<KeyEvent>();
+		v8->Reflect<DrawList>();
 
 		v8->Run(config.js_main_file);
+
+		v8::V8::Dispose();
 	}
 
 	system("PAUSE");
