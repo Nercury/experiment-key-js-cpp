@@ -14,7 +14,8 @@ DrawList::DrawList()
 }
 
 DrawList::~DrawList()
-{}
+{
+}
 
 v8::Handle<v8::Object> DrawList::at(const v8::Arguments & args)
 {

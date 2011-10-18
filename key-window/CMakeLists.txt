@@ -21,6 +21,10 @@ add_library(key-window STATIC
 	KeyEvent.cpp
 	DrawList.h
 	DrawList.cpp
+	DrawLoop.h
+	DrawLoop.cpp
+	Translate.h
+	Translate.cpp
 	)
 
 target_link_libraries(key-window 
