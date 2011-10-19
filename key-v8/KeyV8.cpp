@@ -74,6 +74,7 @@ bool key::KeyV8::ExecuteScript(Handle<String> script, std::string & short_filena
 		report_exception(&try_catch);
 		return false;
 	}
+
 	return true;
 }
 

@@ -73,8 +73,16 @@ namespace key
 			v8::HandleScope handle_scope;
 			v8::Context::Scope context_scope(context);
 
+			auto fun = context->Global()->Get(JSTR("key")).As<v8::Function>();
+			if (fun->IsUndefined()) {
+				auto functionTemplate = v8::FunctionTemplate::New();
+				functionTemplate->SetClassName(v8::String::NewSymbol("key"));
+				fun = functionTemplate->GetFunction();
+				context->Global()->Set(JSTR("key"), fun.As<v8::Object>());
+			}
+
 			auto cc = KeyV8::Class<T>();
-			cc.AddClassTo( cvv8::TypeName<T>::Value, context->Global() );
+			cc.AddClassTo( cvv8::TypeName<T>::Value, fun );
 		}
 
 		typedef cvv8::Signature<key::KeyV8 (
