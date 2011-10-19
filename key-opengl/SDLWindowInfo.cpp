@@ -64,5 +64,9 @@ void SDLWindowInfo::render()
 		glColor3f(1, 1, 1); glVertex3f(0, 100, 0);
 	glEnd();*/
 
+	auto keyWindow = this->refV8->NativeObject();
+
+	//keyWindow->
+
 	SDL_GL_SwapWindow(this->sdlWindow);
 }

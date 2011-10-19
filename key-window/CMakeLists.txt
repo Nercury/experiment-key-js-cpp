@@ -19,10 +19,10 @@ add_library(key-window STATIC
 	ScanCode.cpp
 	KeyEvent.h
 	KeyEvent.cpp
-	DrawList.h
-	DrawList.cpp
-	DrawLoop.h
-	DrawLoop.cpp
+	DrawTree.h
+	DrawTree.cpp
+	DrawSequence.h
+	DrawSequence.cpp
 	Translate.h
 	Translate.cpp
 	)

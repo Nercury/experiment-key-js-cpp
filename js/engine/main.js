@@ -38,19 +38,20 @@ var MyWindow = function () {
 
 	self.displayMode = self.getDesktopDisplayMode();
 
-	for (var i = 0; i < 50000; i++) {
-	    var viewer = new key.DrawList()
-        .at([new Rotate(1, 2, 3)], new Camera(), new Model())
-        .at([new key.Translate(0, 5, 0)], new Model("great"))
-	    .add(new Model("hat"))
-        ;
+    
 
-	    var display = new key.DrawList()
-        .add(new Viewport(0, 0, 500, 400))
-        .add(new Perspective(60, 1, 0.1, 500))
-        .at([new ModelIdentity()], viewer)
-        ;
-	}
+	var viewer = new key.DrawTree()
+    .at([new Rotate(1, 2, 3)], new CameraPosition(), new Model())
+    .at([new key.Translate(0, 5, 0)], new Model("great"))
+	.add(new Model("hat"))
+    ;
+
+    var display = new key.DrawTree()
+    .add(new Viewport(0, 0, 500, 400))
+    .add(new Perspective(60, 1, 0.1, 500))
+    .add(new CameraTransform())
+    .at([new ModelIdentity()], viewer)
+    ;
 
 	return self;
 };

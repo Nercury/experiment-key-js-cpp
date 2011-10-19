@@ -10,7 +10,7 @@
 #include <key-window/ScanCode.h>
 #include <key-window/Keycode.h>
 #include <key-window/KeyEvent.h>
-#include <key-window/DrawList.h>
+#include <key-window/DrawTree.h>
 #include <key-window/Translate.h>
 
 using namespace key;
@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
 		v8->Reflect<ScanCode>();
 		v8->Reflect<KeyCode>();
 		v8->Reflect<KeyEvent>();
-		v8->Reflect<DrawList>();
+		v8->Reflect<DrawTree>();
 		v8->Reflect<Translate>();
 
 		v8->Run(config.js_main_file);

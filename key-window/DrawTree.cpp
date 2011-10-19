@@ -1,4 +1,4 @@
-#include "DrawList.h"
+#include "DrawTree.h"
 
 #include <key-v8/KeyV8.h>
 
@@ -6,24 +6,24 @@ using namespace key;
 using namespace v8;
 
 namespace cvv8 {
-    CVV8_TypeName_IMPL((key::DrawList),"DrawList");
+    CVV8_TypeName_IMPL((key::DrawTree),"DrawTree");
 }
 
-DrawList::DrawList()
+DrawTree::DrawTree()
 {
 }
 
-DrawList::~DrawList()
+DrawTree::~DrawTree()
 {
 }
 
-v8::Handle<v8::Object> DrawList::at(const v8::Arguments & args)
+v8::Handle<v8::Object> DrawTree::at(const v8::Arguments & args)
 {
 	HandleScope handle_scope;
 
 	if (args.Length() > 1) {
 		auto transformations = args[0];
-		DrawListItem li;
+		DrawTreeItem li;
 		if (transformations->IsArray()) {
 			auto transformationsArray = transformations.As<Array>();
 			for (uint32_t i = 0; i < transformationsArray->Length(); i++) {
@@ -47,8 +47,8 @@ v8::Handle<v8::Object> DrawList::at(const v8::Arguments & args)
 					li.item = value.As<v8::Object>();
 				}
 			} else {
-				auto drawList = KeyV8::Class<DrawList>().CtorFunction()->CallAsConstructor(0, NULL);
-				auto drawListNative = cvv8::CastFromJS<DrawList>(drawList);
+				auto drawList = KeyV8::Class<DrawTree>().CtorFunction()->CallAsConstructor(0, NULL);
+				auto drawListNative = cvv8::CastFromJS<DrawTree>(drawList);
 
 				for (int i = 1; i < args.Length(); i++) {
 					auto value = args[i];
@@ -69,14 +69,14 @@ v8::Handle<v8::Object> DrawList::at(const v8::Arguments & args)
 	return handle_scope.Close(args.This());
 }
 
-v8::Handle<v8::Object> DrawList::add(const v8::Arguments & args)
+v8::Handle<v8::Object> DrawTree::add(const v8::Arguments & args)
 {
 	HandleScope handle_scope;
 
 	for (int i = 0; i < args.Length(); i++) {
 		auto value = args[i];
 		if (value->IsObject()) {
-			DrawListItem li;
+			DrawTreeItem li;
 			li.item = args[i].As<v8::Object>();
 			list.push_back(li);
 		}
