@@ -32,6 +32,10 @@ namespace key
 			"Use this to add child to this render list.")
 		v8::Handle<v8::Object> add(const v8::Arguments & args);
 
+		void clear() { 
+			list.clear();
+		}
+
 		typedef cvv8::Signature<key::DrawTree (
 			cvv8::CtorForwarder<key::DrawTree *()>
 		)> Ctors;
