@@ -10,29 +10,29 @@ var Viewport = function () { };
 var Perspective = function () { };
 var ModelIdentity = function () { };
 
-js.help(key.input.Window);
-
 var MyWindow = function () {
 	var self = new key.input.Window();
 
 	self.windowTitle = "Hello";
-	
+	self.resizable = false;
+
 	self.onWindowInit = function() {
 		app.log("running init");
 	};
 	
 	self.onMouseMotion = function(event) {
-		//app.log(event.x + ", " + event.y);
+		app.log(event.x + ", " + event.y);
 	};
 	
 	self.onKeyDown = function(event) {
 		app.log("Key " + event.getVkName() + " pressed");
 	};
 
-	self.onKeyUp = function(event) {
-		if (event.scanCode == ScanCode.ESCAPE)
+	self.onKeyUp = function (event) {
+	    app.log("keyup");
+		if (event.scanCode == key.input.ScanCode.ESCAPE)
 			this.close();
-		else if (event.scanCode == ScanCode.N) {
+		else if (event.scanCode == key.input.ScanCode.N) {
 			var w = MyWindow();
 			w.open();
 		}
@@ -42,7 +42,7 @@ var MyWindow = function () {
 
     
 
-	var viewer = new key.scene.DrawTree()
+	/*var viewer = new key.scene.DrawTree()
     .at([new Rotate(1, 2, 3)], new CameraPosition(), new Model())
     .at([new key.Translate(0, 5, 0)], new Model("great"))
 	.add(new Model("hat"))
@@ -53,7 +53,7 @@ var MyWindow = function () {
     .add(new Perspective(60, 1, 0.1, 500))
     .add(new CameraTransform())
     .at([new ModelIdentity()], viewer)
-    ;
+    ;*/
 
 	return self;
 };

@@ -6,6 +6,7 @@
 #include <boost/assign.hpp>
 
 #include <key-window/Window.h>
+#include <key-v8/exception.h>
 #include <key-v8/KeyV8.h>
 
 using namespace std;
@@ -376,9 +377,9 @@ bool GLRenderer::runWindowLoop(v8::Handle<v8::Context> context)
 								it->hasMouseFocus = true;
 								break;
 							// seems like bug, mouse leave does not fire under windows.
-							/*case SDL_WINDOWEVENT_LEAVE:
+							case SDL_WINDOWEVENT_LEAVE:
 								fprintf(stderr, "Mouse left window %d\n", event.window.windowID);
-								break;*/
+								break;
 							case SDL_WINDOWEVENT_FOCUS_GAINED:
 								fprintf(stderr, "Window %d gained keyboard focus\n",
 										event.window.windowID);
@@ -395,9 +396,14 @@ bool GLRenderer::runWindowLoop(v8::Handle<v8::Context> context)
 								if (keyWindow->onWindowClose.IsEmpty()) {
 									keyWindow->close();
 								} else {
-									auto val = keyWindow->onWindowClose->Call(keyWindow->JsObject(), 0, NULL);
-									if (!val->IsBoolean() || val->BooleanValue()) {
-										keyWindow->close();
+									v8::TryCatch try_catch;
+									v8::Handle<v8::Value> result = keyWindow->onWindowClose->Call(keyWindow->JsObject(), 0, NULL);
+									if (result.IsEmpty())
+										report_exception(&try_catch);
+									else {
+										if (!result->IsBoolean() || result->BooleanValue()) {
+											keyWindow->close();
+										}
 									}
 								}
 								break;
@@ -428,7 +434,9 @@ bool GLRenderer::runWindowLoop(v8::Handle<v8::Context> context)
 							motion->bX1 = event.motion.state && SDL_BUTTON_X1MASK;
 							motion->bX2 = event.motion.state && SDL_BUTTON_X2MASK;
 
-							keyWindow->onMouseMotion->Call(keyWindow->JsObject(), 1, &mouseMotion.JsObject());
+							v8::TryCatch try_catch;
+							v8::Handle<v8::Value> result = keyWindow->onMouseMotion->Call(keyWindow->JsObject(), 1, &mouseMotion.JsObject());
+							if (result.IsEmpty()) report_exception(&try_catch);
 						}
 
 						break;
@@ -451,10 +459,16 @@ bool GLRenderer::runWindowLoop(v8::Handle<v8::Context> context)
 							key->scanCode = event.key.keysym.scancode;
 							key->mod = event.key.keysym.mod;
 
+							v8::TryCatch try_catch;
+							v8::Handle<v8::Value> result;
+
 							if (event.key.type == SDL_KEYUP)
-								keyWindow->onKeyUp->Call(keyWindow->JsObject(), 1, &keyEvent.JsObject());
+								result = keyWindow->onKeyUp->Call(keyWindow->JsObject(), 1, &keyEvent.JsObject());
 							else
-								keyWindow->onKeyDown->Call(keyWindow->JsObject(), 1, &keyEvent.JsObject());
+								result = keyWindow->onKeyDown->Call(keyWindow->JsObject(), 1, &keyEvent.JsObject());
+
+							if (result.IsEmpty())
+								report_exception(&try_catch);
 						}
 
 						break;
