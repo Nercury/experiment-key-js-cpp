@@ -18,6 +18,8 @@ using namespace key;
 int main(int argc, char* argv[])
 {
 	setAppPath(*argv);
+
+	std::cout << getAppPath() << std::endl;
 	
 	Renderer::addRenderer("OpenGL", std::make_shared<key::GLRenderer>());
 
@@ -26,13 +28,13 @@ int main(int argc, char* argv[])
 
 	{
 		auto v8 = KeyV8::New(js_dir);
-		v8->Reflect<Window>();
-		v8->Reflect<MouseMotion>();
-		v8->Reflect<ScanCode>();
-		v8->Reflect<KeyCode>();
-		v8->Reflect<KeyEvent>();
-		v8->Reflect<DrawTree>();
-		v8->Reflect<Translate>();
+		v8->Reflect<Window>("key.input");
+		v8->Reflect<MouseMotion>("key.input");
+		v8->Reflect<ScanCode>("key.input");
+		v8->Reflect<KeyCode>("key.input");
+		v8->Reflect<KeyEvent>("key.input");
+		v8->Reflect<DrawTree>("key.scene");
+		v8->Reflect<Translate>("key.scene");
 
 		v8->Run(config.js_main_file);
 

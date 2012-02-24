@@ -66,7 +66,7 @@ void SDLWindowInfo::render()
 
 	auto keyWindow = this->refV8->NativeObject();
 
-	keyWindow->
+	//keyWindow->
 
 	SDL_GL_SwapWindow(this->sdlWindow);
 }

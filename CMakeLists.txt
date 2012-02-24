@@ -173,10 +173,8 @@ if(WIN32) # libraries for windows are prepared in known location
 		set(V8_LIBRARIES 
 				Ws2_32.lib
 				WINMM.LIB
-				${KEYLIB_LIBRARIES}/v8/preparser_lib.lib
-				${KEYLIB_LIBRARIES}/v8/v8_base.lib
-				${KEYLIB_LIBRARIES}/v8/v8_nosnapshot.lib
-				${KEYLIB_LIBRARIES}/v8/v8_snapshot.lib
+				${KEYLIB_LIBRARIES}/v8/v8preparser.lib
+				${KEYLIB_LIBRARIES}/v8/v8.lib
 			)
 	elseif(MINGW)
 		message("Using mingw for V8 on windows is not yet implemented.")

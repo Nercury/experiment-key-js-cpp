@@ -10,8 +10,10 @@ var Viewport = function () { };
 var Perspective = function () { };
 var ModelIdentity = function () { };
 
+js.help(key.input.Window);
+
 var MyWindow = function () {
-	var self = new key.Window();
+	var self = new key.input.Window();
 
 	self.windowTitle = "Hello";
 	
@@ -40,7 +42,7 @@ var MyWindow = function () {
 
     
 
-	var viewer = new key.DrawTree()
+	var viewer = new key.scene.DrawTree()
     .at([new Rotate(1, 2, 3)], new CameraPosition(), new Model())
     .at([new key.Translate(0, 5, 0)], new Model("great"))
 	.add(new Model("hat"))
