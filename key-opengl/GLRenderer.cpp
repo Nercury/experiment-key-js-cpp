@@ -303,7 +303,7 @@ bool GLRenderer::runWindowLoop(v8::Handle<v8::Context> context)
 	uint64_t second_dt = 0;
 
 	const int secs_for_avg = 20;
-	int sec_frames[secs_for_avg] = {0, 0, 0, 0,0, 0, 0, 0,0, 0, 0, 0,0, 0, 0, 0,0, 0, 0, 0};
+	int sec_frames[secs_for_avg] = {0, 0, 0};
 
 	vector<SDLWindowInfo>::iterator it;
 

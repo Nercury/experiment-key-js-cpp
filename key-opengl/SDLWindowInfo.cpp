@@ -18,7 +18,7 @@ void SDLWindowInfo::resize()
 {
 	this->makeCurrent();
 
-	SDL_GL_SetSwapInterval(1);
+	//SDL_GL_SetSwapInterval(1);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();

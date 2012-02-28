@@ -1,5 +1,6 @@
 function Js() {
-	this.class2type = {};
+    this.class2type = {};
+    this.usedScripts = {};
 	var class2type_items = "Boolean Number String Function Array Date RegExp Object".split(" ");
 	for (var i = 0; i < class2type_items.length; i++) {
 		var name = class2type_items[i];
@@ -8,7 +9,11 @@ function Js() {
 	// Check for digits
 	this.rdigit = /\d/
 }
-Js.prototype.script = function(filename) {
+
+/**
+    Run another javascript file.
+*/
+Js.prototype.run = function(filename) {
 	var execute_result = js_main.executeFile(filename);
 	if (execute_result === true) {
 		return true;
@@ -18,9 +23,28 @@ Js.prototype.script = function(filename) {
 		return false;
 	}
 }
+
+/**
+    Run another javascript file once.
+*/
+Js.prototype.use = function (filename) {
+    if (this.usedScripts.hasOwnProperty(filename)) {
+        return true;
+    }
+    this.usedScripts[filename] = true;
+    return this.run(filename);
+}
+
+/**
+    Get a type of javascript object.
+*/
 Js.prototype.typeOf = function(obj){
     return Object.prototype.toString.call(obj).match(/^\[object (.*)\]$/)[1];
 }
+
+/**
+    Get a manual for key engine object.
+*/
 Js.prototype.man = function(obj, finalLookup) {
 	var fields = obj.__fields;
 	var str = '';
@@ -44,9 +68,17 @@ Js.prototype.man = function(obj, finalLookup) {
 	}
 	return str;
 }
+
+/**
+    Print help for key engine object: for example, js.help(key.input.Window)
+*/
 Js.prototype.help = function(obj) {
 	return app.log(js.man(obj));
 }
+
+/**
+    Iterate each element of something. Works the same as jQuery.each, because it is actually the same.
+*/
 Js.prototype.each = function( object, callback, args ) {
 	var name, i = 0,
 		length = object.length,
@@ -69,17 +101,33 @@ Js.prototype.each = function( object, callback, args ) {
 
 	return object;
 };
+
+/**
+    Get object type.
+*/
 Js.prototype.type = function( obj ) {
 	return obj == null ?
 		String( obj ) :
 		this.class2type[ Object.prototype.toString.call(obj) ] || "object";
 };
+
+/**
+    Check if something is a function.
+*/
 Js.prototype.isFunction = function( obj ) {
 	return js.type(obj) === "function";
 };
+
+/**
+    Check if something is an array.
+*/
 Js.prototype.isArray = Array.isArray || function( obj ) {
 	return js.type(obj) === "array";
 };
+
+/**
+    Check if something is Not a Number
+*/
 Js.prototype.isNaN = function( obj ) {
 	return obj == null || !this.rdigit.test( obj ) || isNaN( obj );
 };
@@ -90,12 +138,24 @@ function App()
 	this.nativePath = js_main_app_path;
 	this.pathSeparator = js_main_app_path_separator;
 }
+
+/**
+    Output critical message: usefull if you want to scare bejeezus out of your application user.
+*/
 App.prototype.criticalMessage = function(title, text) {
 	return js_main.criticalMessage(title, text);
 }
+
+/**
+    Kill the app right now, without cleaning anything up. Usefull if you want to get away quick after scaring your user.
+*/
 App.prototype.kill = function() {
 	return js_main.terminateApp();
 }
+
+/**
+    Print something to console.
+*/
 App.prototype.log = function(o) {
 	if (typeof o == 'undefined')
 		js_main.textLog('[undefined]');
