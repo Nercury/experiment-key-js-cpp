@@ -6,6 +6,7 @@ key-common
 key-v8
 key-window
 key-opengl
+key-render
 ${SDLMAIN_LIBRARY}
 )
 
