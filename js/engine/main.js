@@ -6,6 +6,11 @@ app.log("Hello World!");
 
 js.use('gui/GuiWindow.js');
 
-w1 = GuiWindow();
-w1.open();
-w1.run();
+list = new key.render.RenderList();
+js.help(key.render.RenderList);
+
+list.append(new key.render.RenderList(), { a: 15 }, new key.scene.Translate());
+
+//w1 = GuiWindow();
+//w1.open();
+//w1.run();
