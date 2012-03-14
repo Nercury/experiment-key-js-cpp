@@ -10,6 +10,8 @@
 #include <key-v8/reflect.hpp>
 #include <key-window/lib_key_window.h>
 #include <key-window/Renderer.h>
+#include <key-render/RenderList.h>
+#include <key-v8/PersistentV8.h>
 
 namespace key {
 
@@ -28,6 +30,9 @@ namespace key {
 	public:
 		Window(const v8::Arguments & args);
 		LIB_KEY_WINDOW virtual ~Window();
+
+		PersistentV8<RenderList> initRenderList;
+		PersistentV8<RenderList> renderList;
 
 		v8::Handle<v8::Object> JsObject() { return jsObject.As<v8::Object>(); }
 		uint64_t getId() { return this->id; }

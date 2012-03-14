@@ -6,6 +6,27 @@ namespace cvv8 {
     CVV8_TypeName_IMPL((key::RenderList),"RenderList");
 }
 
+internal::RenderListItemWrapper::RenderListItemWrapper(key::RenderItemBase * nativeItem, v8::Handle<v8::Object> obj) 
+	: object(object), nativeItem(nativeItem) {
+		
+}
+
+internal::RenderListItemWrapper::~RenderListItemWrapper() {
+
+}
+
+void internal::RenderListItemWrapper::process() {
+	if (this->nativeItem != NULL) {
+		this->nativeItem->process();
+		return;
+	}
+}
+
+v8::Handle<v8::Object> internal::RenderListItemWrapper::getObject() {
+	v8::HandleScope scope;
+	return scope.Close(this->object);
+}
+
 RenderList::RenderList() {
 
 }
@@ -19,26 +40,27 @@ static const char* ToCString(const v8::String::Utf8Value& value) {return*value ?
 uint32_t RenderList::appendRenderObject(v8::Handle<v8::Object> & obj) {
 	auto count = obj->InternalFieldCount();
 	// our objects *have* internal field count
-	if (count > 0) {
-		// and first internal field contains pointer to char * name of the object
-		auto className = (const char*)obj->GetPointerFromInternalField(0);
+	RenderItemBase * nativeItem = NULL;
 
-		// if this is another list
-		if (strcmp(className, cvv8::TypeName<RenderList>::Value) == 0) {
-			// make it as sub-render
-		} else {
-			// if this an object
-			// make it construct render sequence
+	if (count > 1) {
+		// and first internal field contains pointer to char * name of the object
+		auto typeId = obj->GetPointerFromInternalField(0); // type
+		if (typeId == cvv8::TypeName<RenderList>::Value) {
+			auto ext = obj->GetPointerFromInternalField(1); // object data
+			if (ext != NULL) {
+				nativeItem = static_cast<RenderItemBase *>(ext);
+			}
 		}
-		auto res = cvv8::CastFromJS<RenderList>(obj);
-		
-		//std::cout << val << std::endl;
 	}
 
-	auto v = *obj;
+	if (nativeItem != NULL) {
+		internal::RenderListItemWrapper w(nativeItem, obj);
+		items.push_back(w);
 
-	items.push_back(obj);
-	return 1;
+		return 1;
+	}
+
+	return 0;
 }
 
 uint32_t RenderList::appendArray(v8::Handle<v8::Array> & items) {
@@ -80,7 +102,7 @@ v8::Handle<v8::Object> RenderList::replace(const v8::Arguments & args) {
 
 	auto arr = v8::Array::New((int)this->items.size());
 	for (size_t i = 0; i < this->items.size(); i++) {
-		arr->Set((uint32_t)i, this->items.at(i));
+		arr->Set((uint32_t)i, this->items.at(i).getObject());
 	}
 	this->items.clear();
 
@@ -93,3 +115,8 @@ void RenderList::setVisible(bool value) {
 
 }
 
+void RenderList::process() {
+	for each (auto i in this->items) {
+		i.process();
+	}
+}

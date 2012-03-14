@@ -18,6 +18,7 @@ add_library(key-opengl STATIC
 target_link_libraries(key-opengl 
 	key-common
 	key-window
+	key-render
 	${SDL_LIBRARY}
 	${OPENGL_LIBRARY}
 	)

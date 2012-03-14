@@ -1,17 +1,34 @@
 #pragma once
 
 #include <memory>
+#include <key-render/CollectionBase.h>
 
 #include <key-render/lib_key_render.h>
 #include <key-common/types.h>
 #include <key-v8/reflect.hpp>
 
+#include <key-render/RenderItemBase.h>
+
 namespace key {
 
+	namespace internal {
+		class RenderListItemWrapper {
+		private:
+			RenderItemBase * nativeItem;
+			v8::Handle<v8::Object> object;
+		public:
+			RenderListItemWrapper(key::RenderItemBase * nativeItem, v8::Handle<v8::Object> obj);
+			~RenderListItemWrapper();
+			void process();
+			v8::Handle<v8::Object> getObject();
+		};
+	}
+
 	class RenderList
+		: public RenderItemBase
 	{
 	private:
-		std::vector<v8::Handle<v8::Object>> items;
+		std::vector<internal::RenderListItemWrapper> items;
 
 		uint32_t appendRenderObject(v8::Handle<v8::Object> & obj);
 		uint32_t appendArray(v8::Handle<v8::Array> & items);
@@ -33,6 +50,8 @@ namespace key {
 			"bool", "Get or set visibility of this render list item")
 		bool visible; void setVisible(bool value);
 
+		virtual void process();
+
 		typedef cvv8::Signature<key::RenderList (
 			cvv8::CtorForwarder<key::RenderList *()>
 		)> Ctors;
@@ -40,9 +59,9 @@ namespace key {
 		static void reflect(std::vector<std::string> & items, cvv8::ClassCreator<key::RenderList> & cc, 
 			v8::Handle<v8::ObjectTemplate> proto, bool for_static) {
 			
-				REFLECT(append);
-				REFLECT(replace);
-				REFLECT(visible);
+			REFLECT(append);
+			REFLECT(replace);
+			REFLECT(visible);
 
 		}
 	};

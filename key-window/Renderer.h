@@ -14,6 +14,7 @@
 namespace key {
 
 	class Window;
+
 	template<class T>
 	class PersistentV8;
 

@@ -30,4 +30,5 @@ add_library(key-window STATIC
 target_link_libraries(key-window 
 	key-common
 	key-v8
+	key-render
 	)

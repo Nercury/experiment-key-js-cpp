@@ -11,6 +11,7 @@ js.help(key.render.RenderList);
 
 list.append(new key.render.RenderList(), { a: 15 }, new key.scene.Translate());
 
-//w1 = GuiWindow();
-//w1.open();
-//w1.run();
+w1 = GuiWindow();
+w1.open();
+w1.run();
+

@@ -18,6 +18,8 @@ void SDLWindowInfo::resize()
 {
 	this->makeCurrent();
 
+	this->refV8->NativeObject()->initRenderList.NativeObject()->process();
+
 	//SDL_GL_SetSwapInterval(1);
 
     glMatrixMode(GL_PROJECTION);
@@ -34,27 +36,12 @@ void SDLWindowInfo::render()
 {
 	this->makeCurrent();
 
+	this->refV8->NativeObject()->renderList.NativeObject()->process();
+
 	glClearColor(0.3f, 0.6f, 0.9f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	vector<OpData> items = (boost::assign::list_of<OpData>
-		(OpData(fw_glLoadIdentity, 4))
-		(OpData(0.0f))
-		(OpData(0.0f))
-		(OpData(-500.0f))
-		(OpData(fw_glTranslatef, 1))
-		(OpData(fw_test, 0))
-	);
-
-	for (auto it = &items[0]; ; ) {
-		it->function(it);
-		if (it->next == 0)
-			break;
-		it += it->next;
-	}
-	
-
-	/*glLoadIdentity();
+	glLoadIdentity();
 	glTranslatef ( 0.0, 0.0, -500.0 );
 
 	glBegin(GL_QUADS);
@@ -62,9 +49,9 @@ void SDLWindowInfo::render()
 		glColor3f(1, 1, 0); glVertex3f(100, 0, 0);
 		glColor3f(1, 0, 1); glVertex3f(100, 100, 0);
 		glColor3f(1, 1, 1); glVertex3f(0, 100, 0);
-	glEnd();*/
+	glEnd();
 
-	auto keyWindow = this->refV8->NativeObject();
+	//auto keyWindow = this->refV8->NativeObject();
 
 	//keyWindow->
 

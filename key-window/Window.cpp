@@ -4,6 +4,7 @@
 
 #include <key-v8/exception.h>
 #include <key-window/Renderer.h>
+#include <key-v8/KeyV8.h>
 #include <key-v8/PersistentV8.h>
 
 #include <functional>
@@ -51,6 +52,10 @@ key::Window::Window(const v8::Arguments & args) :
 
 	this->jsObject = v8::Persistent<v8::Value>::New(args.This());
 	this->jsObject.MakeWeak(NULL, make_weak_callback);
+	V8::AdjustAmountOfExternalAllocatedMemory(50000000);
+
+	KeyV8::NewObjectRef<key::RenderList>(this->initRenderList, args.This()->CreationContext(), 0, NULL);
+	KeyV8::NewObjectRef<key::RenderList>(this->renderList, args.This()->CreationContext(), 0, NULL);
 }
 
 static void make_weak_callback(v8::Persistent<v8::Value> object, void *parameter) {
@@ -59,6 +64,9 @@ static void make_weak_callback(v8::Persistent<v8::Value> object, void *parameter
 }
 
 key::Window::~Window() {
+	this->initRenderList.Reset();
+	this->renderList.Reset();
+
 	if (!onWindowInit.IsEmpty())
 		onWindowInit.Dispose();
 	if (!onWindowResize.IsEmpty())
