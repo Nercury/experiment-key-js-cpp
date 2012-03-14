@@ -1,4 +1,6 @@
 *.suo
+*.pyc
+*.py~
 **/*.sdf
 **/*.user
 **/*.sln*
@@ -8,3 +10,7 @@ obj/
 .Trash-*/
 tmp/
 *_build/
+/nbproject/private/
+/nbproject
+/CMakeFiles
+CMakeCache.txt

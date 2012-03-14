@@ -15,7 +15,7 @@ set(KEYLIB_INCLUDES
 # Attempt to guess the compiler suffix
 # stolen from FindBoost cmake file
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel"
-	OR "${CMAKE_CXX_COMPILER}" MATCHES "icl" 
+	OR "${CMAKE_CXX_COMPILER}" MATCHES "icl"
 	OR "${CMAKE_CXX_COMPILER}" MATCHES "icpc")
   if(WIN32)
 	set (KEYLIB_LIB_COMPILER "iw")
@@ -52,6 +52,14 @@ elseif (UNIX)
   endif (CMAKE_COMPILER_IS_GNUCXX)
 endif()
 
+if (WIN32)
+
+else() # apple and unix, gcc
+
+    set(CMAKE_CXX_FLAGS "-std=c++0x") # use c++0x
+
+endif()
+
 message("CMAKE_SIZEOF_VOID_P = ${CMAKE_SIZEOF_VOID_P}")
 
 # detect architecture for windows
@@ -78,14 +86,14 @@ endif()
 
 if (MSVC)
 	set(WITH_SHARED_LIBS NO)
-	set(KEYLIB_LIBRARIES 
+	set(KEYLIB_LIBRARIES
 		"${CMAKE_SOURCE_DIR}/../third-party-lib/windows/${KEYLIB_LIB_ARCH}-${KEYLIB_LIB_COMPILER}/${CMAKE_CFG_INTDIR}")
 else()
 	if (WIN32)
-		set(KEYLIB_LIBRARIES 
+		set(KEYLIB_LIBRARIES
 		"${CMAKE_SOURCE_DIR}/../third-party-lib/windows/${KEYLIB_LIB_ARCH}-${KEYLIB_LIB_COMPILER}")
 	else()
-		set(KEYLIB_LIBRARIES 
+		set(KEYLIB_LIBRARIES
 		"${CMAKE_SOURCE_DIR}/../third-party-lib/linux/${KEYLIB_LIB_ARCH}-${KEYLIB_LIB_COMPILER}")
 	endif()
 endif()
@@ -170,7 +178,7 @@ include_directories("${KEYLIB_INCLUDES}/v8")
 if(WIN32) # libraries for windows are prepared in known location
 	if (MSVC)
 		message("Using msvc for V8 on windows...")
-		set(V8_LIBRARIES 
+		set(V8_LIBRARIES
 				Ws2_32.lib
 				WINMM.LIB
 				${KEYLIB_LIBRARIES}/v8/v8preparser.lib
@@ -190,7 +198,7 @@ include_directories("${KEYLIB_INCLUDES}/bullet")
 if(WIN32) # libraries for windows are prepared in known location
 	if (MSVC)
 		message("Using msvc for bullet on windows...")
-		set(BULLET_LIBRARIES 
+		set(BULLET_LIBRARIES
 				${KEYLIB_LIBRARIES}/bullet/BulletCollision.lib
 				${KEYLIB_LIBRARIES}/bullet/BulletDynamics.lib
 				${KEYLIB_LIBRARIES}/bullet/BulletFileLoader.lib
@@ -213,7 +221,7 @@ endif()
 if(WIN32) # libraries for windows are prepared in known location
 	if (MSVC)
 		message("Using msvc for OpenAL Soft on windows...")
-		set(OPENAL_LIBRARIES 
+		set(OPENAL_LIBRARIES
 				${KEYLIB_LIBRARIES}/openal-soft/OpenAL32.lib
 				)
 	elseif(MINGW)
