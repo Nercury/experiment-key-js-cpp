@@ -16,7 +16,11 @@ requires = {
     "v8" : {
         "update" : "v8/update_v8.py",
         "build" : "v8/build_v8.py"
-    }
+    },
+    "json" : {
+        "update" : "json/update_json.py",
+        "build" : "json/build_json.py"
+    },
 }
 
 build_tool = False
