@@ -1,4 +1,6 @@
 import platform
+import subprocess
+import os
 
 def get_build_variations(tool):
     tool_platforms = {
@@ -30,7 +32,7 @@ def get_build_variations(tool):
         else:
             tool_architectures[tool] = []
     elif tool == 'msvc-11':
-        tool_architectures = ["x86", "x64"]
+        tool_architectures[tool] = ["x86", "x64"]
     
     can_build = 4
     
@@ -113,3 +115,38 @@ def ensure_subdir(root, subdir):
             exit()
     
     return dir  
+	
+def get_stdout(line):
+	pipe = subprocess.Popen(line, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+	return pipe.stdout.read()
+	
+def get_variation_build_dir(root_build_dir, variation):
+	path = root_build_dir
+	if variation.has_key("platform") and variation["platform"] != False:
+		path = os.path.join(path, variation["platform"])
+	compiler = False
+	if variation.has_key("arch") and variation["arch"] != False:
+		compiler = variation["arch"]
+	if variation.has_key("compiler") and variation["compiler"] != False:
+		if compiler == False:
+			compiler = variation["compiler"]
+		else:
+			compiler += "-" + variation["compiler"]
+	if compiler != False:
+		path = os.path.join(path, compiler)
+	if variation.has_key("configuration") and variation["configuration"] != False:
+		path = os.path.join(path, variation["configuration"])
+	return path
+    
+def print_variation_build_message(variation, what):
+    print ""
+    message = "Building " + what + " on " + variation["platform"] + " with " + variation["arch"] + "-" + variation["compiler"] + " compiler"
+    if variation.has_key("configuration") and variation["configuration"] != False:
+        message += " in " + variation["configuration"] + " mode"
+    print message
+    print "..." * 25
+    print ""
+    
+def get_vs11_dir():
+    # todo: return dir properly
+    return "C:\\Program Files (x86)\Microsoft Visual Studio 11.0"

@@ -1,5 +1,4 @@
 import os
-import commands
 import sys
 import shutil
 import imp
@@ -14,7 +13,7 @@ def init():
     include_dir = sys.argv[1]
     cache_dir = tools.ensure_subdir(sys.argv[2], "v8")
     
-    if commands.getoutput("git --version")[:3] != "git":
+    if tools.get_stdout("git --version")[:3] != "git":
         print "You need to install git and make it available in your environment as \"git\" command to update v8 repository."
         print "So, again, see you later :P"
         exit()
@@ -27,7 +26,7 @@ def init():
     else:
         os.chdir(source_dir)
         os.system("git reset --hard")
-        os.system("git clean -d -x -n")
+        os.system("git clean -d -x -f")
         os.system("git pull")
         
     v8_include_files = os.path.join(source_dir, "include")
@@ -39,7 +38,7 @@ def init():
     os.chdir(source_dir)
     
     previous_commit_file = os.path.join(cache_dir, 'includes_at_commit.txt')
-    latest_commit = commands.getoutput("git log --no-decorate --format=oneline -n 1")
+    latest_commit = tools.get_stdout("git log --no-decorate --format=oneline -n 1")
     previous_latest_commit = tools.file_as_str(previous_commit_file)
     
     if previous_latest_commit == latest_commit:
