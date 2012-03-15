@@ -134,7 +134,18 @@ def update(abs_include_dir, abs_lib_dir, abs_cache_dir, abs_update_scripts_dir):
     
     # iterate over what is required for this project
     
+    specific_items = False
+    
+    if len(sys.argv) > 1:
+        specific_items = {}
+        for i in range(1, len(sys.argv)):
+            specific_items[sys.argv[i]] = True
+        
     for item in requires:
+        if specific_items != False:
+            if not specific_items.has_key(item):
+                continue
+                
         info = requires[item]
         print "Processing " + item + "..."
         
