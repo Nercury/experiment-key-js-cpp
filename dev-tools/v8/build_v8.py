@@ -3,6 +3,8 @@ import sys
 import platform
 import imp
 import shutil
+import time
+import traceback
 
 tools = imp.load_source('key_build_tools', os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "tools.py")))
 
@@ -76,14 +78,23 @@ def init():
             os.system(batch_build_file)
             
             lib_out_dir = tools.ensure_subdir(output_dir, what)
-            if debug:
-                shutil.move(os.path.join(source_dir, "vc110.pdb"), os.path.join(lib_out_dir, "vc110.pdb"))
-                shutil.move(os.path.join(source_dir, "vc110.idb"), os.path.join(lib_out_dir, "vc110.idb"))
-                shutil.move(os.path.join(source_dir, "v8_g.lib"), os.path.join(lib_out_dir, "v8.lib"))
-                shutil.move(os.path.join(source_dir, "v8preparser_g.lib"), os.path.join(lib_out_dir, "v8preparser.lib"))
-            else:
-                shutil.move(os.path.join(source_dir, "v8.lib"), os.path.join(lib_out_dir, "v8.lib"))
-                shutil.move(os.path.join(source_dir, "v8preparser.lib"), os.path.join(lib_out_dir, "v8preparser.lib"))
+            
+            try:
+                if debug:
+                    shutil.move(os.path.join(source_dir, "vc110.pdb"), os.path.join(lib_out_dir, "vc110.pdb"))
+                    shutil.move(os.path.join(source_dir, "vc110.idb"), os.path.join(lib_out_dir, "vc110.idb"))
+                    shutil.move(os.path.join(source_dir, "v8_g.lib"), os.path.join(lib_out_dir, "v8.lib"))
+                    shutil.move(os.path.join(source_dir, "v8preparser_g.lib"), os.path.join(lib_out_dir, "v8preparser.lib"))
+                else:
+                    shutil.move(os.path.join(source_dir, "v8.lib"), os.path.join(lib_out_dir, "v8.lib"))
+                    shutil.move(os.path.join(source_dir, "v8preparser.lib"), os.path.join(lib_out_dir, "v8preparser.lib"))
+            except:
+                print ""
+                print traceback.print_exc(file=sys.stdout)
+                print ""
+                print "Error while copying output library files! Will ignore that. Will continue in 8 seconds..."
+                print ""
+                time.sleep(8)
     
     tools.str_to_file(previous_commit_file, latest_commit)
     
