@@ -10,8 +10,11 @@ def init():
         print "Your argument is not good enough!"
         exit()
         
+    what = "v8"
+    
     include_dir = sys.argv[1]
-    cache_dir = tools.ensure_subdir(sys.argv[2], "v8")
+    root_cache_dir = sys.argv[2]
+    cache_dir = tools.ensure_subdir(root_cache_dir, what)
     
     if tools.get_stdout("git --version")[:3] != "git":
         print "You need to install git and make it available in your environment as \"git\" command to update v8 repository."
@@ -30,10 +33,7 @@ def init():
         os.system("git pull")
         
     v8_include_files = os.path.join(source_dir, "include")
-    if not os.path.isdir(v8_include_files):
-        print "Path \"" + v8_include_files + "\" was not found. Maybe something has changed?"
-        print "In that case, see you later."
-        exit()
+    tools.assert_dir(v8_include_files, "Path \"" + v8_include_files + "\" was not found. Maybe something has changed?")
     
     os.chdir(source_dir)
     

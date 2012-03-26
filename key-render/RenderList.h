@@ -1,13 +1,9 @@
 #pragma once
 
 #include <memory>
-#include <key-render/CollectionBase.h>
-
-#include <key-render/lib_key_render.h>
-#include <key-common/types.h>
 #include <key-v8/reflect.hpp>
 
-#include <key-render/RenderItemBase.h>
+#include <key-render/CollectionBase.h>
 
 namespace key {
 
@@ -25,30 +21,25 @@ namespace key {
 	}
 
 	class RenderList
-		: public RenderItemBase
+		: public CollectionBase
 	{
-	private:
-		std::vector<internal::RenderListItemWrapper> items;
-
-		uint32_t appendRenderObject(v8::Handle<v8::Object> & obj);
-		uint32_t appendArray(v8::Handle<v8::Array> & items);
 	public:
 		RenderList();
 		~RenderList();
 
 		FLECT_M(key::RenderList, append, uint32_t (const v8::Arguments &), "int", "(itemList)", 
 			"Append child list items to this render list. Return number of objects appended.")
-		uint32_t append(const v8::Arguments & args);
+		virtual uint32_t append(const v8::Arguments & args);
 
 		FLECT_M(key::RenderList, replace, v8::Handle<v8::Object> (const v8::Arguments &), "array", "(itemList)", 
 			"Set child list items to this render list. Returns items previously contained in the list.")
-		v8::Handle<v8::Object> replace(const v8::Arguments & args);
+		virtual v8::Handle<v8::Object> replace(const v8::Arguments & args);
 
 		FLECT_GS(key::RenderList, visible, 
 			Member, bool, visible, 
 			Method, void (bool), setVisible, 
 			"bool", "Get or set visibility of this render list item")
-		bool visible; void setVisible(bool value);
+		virtual void setVisible(bool value);
 
 		virtual void process();
 

@@ -16,30 +16,16 @@ def init():
     what = "v8"
         
     build_dir = sys.argv[1]
-    cache_dir = os.path.join(sys.argv[2], what)
+    root_cache_dir = sys.argv[2]
+    cache_dir = os.path.join(root_cache_dir, what)
     tool = sys.argv[3]
     
-    if not os.path.isdir(cache_dir):
-        print "Directory \"" + cache_dir + "\" does not exist. Can not build anything."
-        print "See you later when you fix that."
-        exit()
-        
+    tools.assert_dir(cache_dir)
+       
     source_dir = os.path.join(cache_dir, "git-source")
-    if not os.path.isdir(source_dir):
-        print "Directory \"" + source_dir + "\" does not exist. Can not build anything."
-        print "See you later when you fix that."
-        exit()    
-    
+    tools.assert_dir(source_dir)    
     os.chdir(source_dir)
     
-    previous_commit_file = os.path.join(cache_dir, 'built_at_commit.txt')
-    latest_commit = tools.get_stdout("git log --no-decorate --format=oneline -n 1")
-    previous_latest_commit = tools.file_as_str(previous_commit_file)
-    
-    if previous_latest_commit == latest_commit:
-        print "Libraries are up-to-date."
-        exit()
-
     variations = tools.get_build_variations(tool)
     
     if variations == False:
@@ -50,7 +36,12 @@ def init():
         print "You need to install SCons build tool to build v8. And SCons must be available in your PATH/ENV."
         exit()
         
+    latest_commit_str = tools.get_stdout("git log --no-decorate --format=oneline -n 1")
+        
     for variation in variations:
+        if not tools.needs_update(root_cache_dir, what, variation, latest_commit_str):
+            continue
+    
         output_dir = tools.get_variation_build_dir(build_dir, variation)
         tools.print_variation_build_message(variation, what)
         
@@ -73,29 +64,35 @@ def init():
             else:
                 build_str += " mode=release"
             
-            batch_build_file = os.path.join(cache_dir, "build_env_" + variation["arch"] + "_" + variation["configuration"] + ".bat")
+            batch_build_file = os.path.join(root_cache_dir, "build_env_" + variation["arch"] + "_" + variation["configuration"] + ".bat")
             tools.str_to_file(batch_build_file, build_str)
             os.system(batch_build_file)
             
             lib_out_dir = tools.ensure_subdir(output_dir, what)
+
+            if debug:
+                move_files = [
+                    [os.path.join(source_dir, "vc110.pdb"), os.path.join(lib_out_dir, "vc110.pdb")]
+                    [os.path.join(source_dir, "vc110.idb"), os.path.join(lib_out_dir, "vc110.idb")]
+                    [os.path.join(source_dir, "v8_g.lib"), os.path.join(lib_out_dir, "v8.lib")]
+                    [os.path.join(source_dir, "v8preparser_g.lib"), os.path.join(lib_out_dir, "v8preparser.lib")]
+                ]
+                #shutil.move(os.path.join(source_dir, "vc110.pdb"), os.path.join(lib_out_dir, "vc110.pdb"))
+                #shutil.move(os.path.join(source_dir, "vc110.idb"), os.path.join(lib_out_dir, "vc110.idb"))
+                #shutil.move(os.path.join(source_dir, "v8_g.lib"), os.path.join(lib_out_dir, "v8.lib"))
+                #shutil.move(os.path.join(source_dir, "v8preparser_g.lib"), os.path.join(lib_out_dir, "v8preparser.lib"))
+            else:
+                move_files = [
+                    [os.path.join(source_dir, "v8.lib"), os.path.join(lib_out_dir, "v8.lib")]
+                    [os.path.join(source_dir, "v8preparser.lib"), os.path.join(lib_out_dir, "v8preparser.lib")]
+                ]
+                #shutil.move(os.path.join(source_dir, "v8.lib"), os.path.join(lib_out_dir, "v8.lib"))
+                #shutil.move(os.path.join(source_dir, "v8preparser.lib"), os.path.join(lib_out_dir, "v8preparser.lib"))
             
-            try:
-                if debug:
-                    shutil.move(os.path.join(source_dir, "vc110.pdb"), os.path.join(lib_out_dir, "vc110.pdb"))
-                    shutil.move(os.path.join(source_dir, "vc110.idb"), os.path.join(lib_out_dir, "vc110.idb"))
-                    shutil.move(os.path.join(source_dir, "v8_g.lib"), os.path.join(lib_out_dir, "v8.lib"))
-                    shutil.move(os.path.join(source_dir, "v8preparser_g.lib"), os.path.join(lib_out_dir, "v8preparser.lib"))
-                else:
-                    shutil.move(os.path.join(source_dir, "v8.lib"), os.path.join(lib_out_dir, "v8.lib"))
-                    shutil.move(os.path.join(source_dir, "v8preparser.lib"), os.path.join(lib_out_dir, "v8preparser.lib"))
-            except:
-                print ""
-                print traceback.print_exc(file=sys.stdout)
-                print ""
-                print "Error while copying output library files! Will ignore that. Will continue in 8 seconds..."
-                print ""
-                time.sleep(8)
-    
-    tools.str_to_file(previous_commit_file, latest_commit)
+            result = tools.destructive_move(move_files)
+            if result.ok:
+                tools.log_variation_updated(root_cache_dir, what, variation)
+            else:
+                tools.log_update_failed(root_cache_dir, what, variation, move_result.failures)
     
 init()

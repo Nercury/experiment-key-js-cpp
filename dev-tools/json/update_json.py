@@ -13,7 +13,8 @@ def init():
     what = "json"
     
     include_dir = sys.argv[1]
-    cache_dir = tools.ensure_subdir(sys.argv[2], what)
+    root_cache_dir = sys.argv[2]
+    cache_dir = tools.ensure_subdir(root_cache_dir, what)
     
     if tools.get_stdout("svn --version")[:3] != "svn":
         print "You need to install subversion and make it available in your environment as \"svn\" command to update " + what + " repository."
@@ -31,10 +32,7 @@ def init():
         os.system("svn update")
         
     upstream_include_files = os.path.join(source_dir, "jsoncpp", "include", "json")
-    if not os.path.isdir(upstream_include_files):
-        print "Path \"" + upstream_include_files + "\" was not found. Maybe something has changed?"
-        print "In that case, see you later."
-        exit()
+    tools.assert_dir(upstream_include_files, "Path \"" + upstream_include_files + "\" was not found. Maybe something has changed?")
     
     os.chdir(source_dir)
     

@@ -16,19 +16,14 @@ def init():
     what = "json"
         
     build_dir = sys.argv[1]
-    cache_dir = os.path.join(sys.argv[2], what)
+    root_cache_dir = sys.argv[2]
+    cache_dir = os.path.join(root_cache_dir, what)
     tool = sys.argv[3]
     
-    if not os.path.isdir(cache_dir):
-        print "Directory \"" + cache_dir + "\" does not exist. Can not build anything."
-        print "See you later when you fix that."
-        exit()
+    tools.assert_dir(cache_dir)
         
     source_dir = os.path.join(cache_dir, "svn-source")
-    if not os.path.isdir(source_dir):
-        print "Directory \"" + source_dir + "\" does not exist. Can not build anything."
-        print "See you later when you fix that."
-        exit()
+    tools.assert_dir(source_dir)
     
     os.chdir(source_dir)
     

@@ -233,7 +233,7 @@ endif()
 
 #JSON
 
-set(JSON_LIBRARY "json_vc71")
+set(JSON_LIBRARY ${KEYLIB_LIBRARIES}/json/json_vc71.lib)
 
 include_directories(${CMAKE_SOURCE_DIR})
 include_directories(${KEYLIB_INCLUDES})
